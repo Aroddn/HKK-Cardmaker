@@ -17,24 +17,24 @@ const factions = [
   { key: 'raia', label: 'Raia', image: 'resources/Raia base.png', fallback: '#a99a88' },
   { key: 'rhatt', label: 'Rhatt', image: 'resources/Rhatt base.png', fallback: '#6c604c' },
   { key: 'sheran', label: 'Sheran', image: 'resources/Sheran base.png', fallback: '#7b7192' },
-  { key: 'colorless', label: 'Colorless', image: 'resources/Colorless base.png', fallback: '#898b88' },
-  { key: 'no-color', label: 'No color', image: 'resources/No color base.png', fallback: '#343b3c', exclusive: true }
+  { key: 'colorless', label: 'Színtelen', image: 'resources/Colorless base.png', fallback: '#898b88' },
+  { key: 'no-color', label: 'Nincs szín', image: 'resources/No color base.png', fallback: '#343b3c', exclusive: true }
 ];
 const factionByKey = new Map(factions.map((faction) => [faction.key, faction]));
 const exclusiveFactionKeys = new Set(['bufa', 'no-color']);
 
 const iconDetails = {
-  beast: { symbol: '&#9876;', label: 'Beast', image: 'resources/icon-beast.png' },
-  magic: { symbol: '&#10022;', label: 'Magic', image: 'resources/icon-magic.png' },
-  flying: { symbol: '&#10038;', label: 'Flying', image: 'resources/icon-flying.png' },
-  rare: { symbol: '&#9733;', label: 'Rare', image: 'resources/icon-rare.png' }
+  beast: { symbol: '&#9876;', label: 'Vad', image: 'resources/icon-beast.png' },
+  magic: { symbol: '&#10022;', label: 'Varázslat', image: 'resources/icon-magic.png' },
+  flying: { symbol: '&#10038;', label: 'Repülés', image: 'resources/icon-flying.png' },
+  rare: { symbol: '&#9733;', label: 'Ritka', image: 'resources/icon-rare.png' }
 };
 
 const costDetails = [
   { key: 'mana', label: 'Mana', symbol: 'M', style: 'mana', image: 'resources/cost-mana.png' },
   { key: 'nekron', label: 'Nekron', symbol: 'N', style: 'nekron', image: 'resources/cost-nekron.png' },
   { key: 'zsz', label: 'ZSZ', symbol: 'Z', style: 'zsz', image: 'resources/cost-zsz.png' },
-  { key: 'build', label: 'Build', symbol: 'B', style: 'build', image: 'resources/cost-build.png' }
+  { key: 'build', label: 'Építés', symbol: 'B', style: 'build', image: 'resources/cost-build.png' }
 ];
 
 function watchResourceImages(root = document) {
@@ -66,11 +66,11 @@ function updateFactionImageStatus() {
     .map((layer) => layer.dataset.factionLabel);
   const status = document.querySelector('#faction-image-status');
   status.textContent = missingBases.length
-    ? `Missing base image: ${missingBases.join(', ')}. Add its PNG to resources.`
+    ? `Hiányzó alapszín-kép: ${missingBases.join(', ')}. Add hozzá a PNG fájlt a resources mappába.`
     : '';
 }
 
-function updateFactionControls(message = 'Choose up to two. Bufa and No color must be selected alone.') {
+function updateFactionControls(message = 'Legfeljebb kettőt válassz. A Bufa és a Nincs szín külön kell legyen kiválasztva.') {
   const selected = factionInputs.filter((input) => input.checked);
   const hasExclusive = selected.some((input) => exclusiveFactionKeys.has(input.value));
 
@@ -78,7 +78,7 @@ function updateFactionControls(message = 'Choose up to two. Bufa and No color mu
     input.disabled = !input.checked && (selected.length >= 2 || hasExclusive);
   });
 
-  document.querySelector('#faction-count').textContent = `${selected.length} / 2 selected`;
+  document.querySelector('#faction-count').textContent = `${selected.length} / 2 kiválasztva`;
   document.querySelector('#faction-guidance').textContent = message;
 }
 
@@ -88,13 +88,13 @@ function handleFactionChange(event) {
 
   if (input.checked && selected.length > 2) {
     input.checked = false;
-    updateFactionControls('A card can use at most two base colors.');
+    updateFactionControls('Egy kártyán legfeljebb két alapszín lehet.');
   } else if (input.checked && selected.some((option) => option !== input && exclusiveFactionKeys.has(option.value))) {
     input.checked = false;
-    updateFactionControls(`${factionByKey.get(input.value).label} cannot be combined with Bufa or No color.`);
+    updateFactionControls(`${factionByKey.get(input.value).label} nem kombinálható a Bufával vagy a Nincs színnel.`);
   } else if (input.checked && exclusiveFactionKeys.has(input.value) && selected.length > 1) {
     input.checked = false;
-    updateFactionControls(`${factionByKey.get(input.value).label} must be used alone.`);
+    updateFactionControls(`${factionByKey.get(input.value).label} külön kell legyen kiválasztva.`);
   } else {
     updateFactionControls();
   }
@@ -108,8 +108,8 @@ function updatePreview() {
   const text = values.get('text').trim();
   const selectedFactions = values.getAll('faction');
 
-  document.querySelector('#preview-name').textContent = name || 'Untitled Card';
-  document.querySelector('#preview-text').textContent = text || 'No card text.';
+  document.querySelector('#preview-name').textContent = name || 'Névtelen kártya';
+  document.querySelector('#preview-text').textContent = text || 'Nincs kártyaszöveg.';
   document.querySelector('#text-count').textContent = values.get('text').length;
   const activeCostCount = costDetails.filter(({ key }) => Number(values.get(key)) > 0).length;
   card.dataset.costCount = String(activeCostCount);
@@ -150,7 +150,7 @@ imageInput.addEventListener('change', () => {
   previewImage.hidden = !imageUrl;
   artPlaceholder.hidden = Boolean(imageUrl);
   if (imageUrl) previewImage.src = imageUrl;
-  fileName.textContent = file ? file.name : 'No image selected';
+  fileName.textContent = file ? file.name : 'Nincs kép kiválasztva';
 });
 
 document.querySelector('#reset-button').addEventListener('click', () => {
@@ -160,7 +160,7 @@ document.querySelector('#reset-button').addEventListener('click', () => {
   previewImage.removeAttribute('src');
   previewImage.hidden = true;
   artPlaceholder.hidden = false;
-  fileName.textContent = 'No image selected';
+  fileName.textContent = 'Nincs kép kiválasztva';
   updateFactionControls();
   updatePreview();
 });
@@ -434,7 +434,7 @@ downloadButton.addEventListener('click', async () => {
     status.textContent = `Created ${link.download}`;
     setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
   } catch (error) {
-    status.textContent = 'Could not create PNG. Check that the card images are valid PNG, JPG, or GIF files.';
+    status.textContent = 'Nem sikerült elkészíteni a PNG fájlt. Ellenőrizd, hogy a kártyaképek érvényes PNG, JPG vagy GIF fájlok legyenek.';
     console.error(error);
   } finally {
     downloadButton.disabled = false;
