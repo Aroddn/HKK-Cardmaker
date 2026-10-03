@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#183e68">
+  <title>HKK Card Workshop</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="desktop-shell">
+    <header class="masthead">
+      <div class="brand-lockup" aria-label="HKK Card Workshop">
+        <div class="brand-mark">HKK</div>
+        <div class="brand-copy">
+          <p class="brand-kicker">Hungarian Fantasy Card Game</p>
+          <h1>Card Workshop <span>2000</span></h1>
+        </div>
+      </div>
+      <div class="masthead-stamp" aria-label="Card creator version 1.0">
+        <span class="stamp-star">&#10022;</span>
+        <span>DESIGNER<br>EDITION 1.0</span>
+      </div>
+    </header>
+
+    <nav class="toolbar" aria-label="Card actions">
+      <span class="toolbar-location"><span class="tiny-led"></span> CARD EDITOR</span>
+      <div class="toolbar-actions">
+        <button class="toolbar-button" id="reset-button" type="button" title="Restore the sample card">
+          <span aria-hidden="true">&#8634;</span> Reset
+        </button>
+        <button class="toolbar-button download-button" id="download-button" type="button" aria-label="Download card as PNG" title="Download card as PNG">
+          <span aria-hidden="true">&#8681;</span> Download image
+        </button>
+        <span id="download-status" class="download-status" role="status" aria-live="polite"></span>
+      </div>
+    </nav>
+
+    <main class="workbench">
+      <section class="editor-panel" aria-labelledby="editor-title">
+        <div class="panel-heading">
+          <div>
+            <p class="section-eyebrow">YOUR NEXT LEGEND</p>
+            <h2 id="editor-title">Card details</h2>
+          </div>
+          <span class="step-tag">01 / BUILD</span>
+        </div>
+
+        <form id="card-form">
+          <div class="field-row">
+            <label class="field-label" for="card-name">Card name</label>
+            <input id="card-name" name="name" type="text" maxlength="32" value="Sapphire Sky Drake" placeholder="Name your card">
+          </div>
+
+          <fieldset class="field-row faction-fieldset">
+            <legend class="field-label">Base colors <span id="faction-count" class="optional-label">0 / 2 selected</span></legend>
+            <div class="faction-grid">
+              <label class="faction-option"><input type="checkbox" name="faction" value="bufa"><span>Bufa</span></label>
+              <label class="faction-option"><input type="checkbox" name="faction" value="chara-din"><span>Chara-din</span></label>
+              <label class="faction-option"><input type="checkbox" name="faction" value="dornodon"><span>Dornodon</span></label>
+              <label class="faction-option"><input type="checkbox" name="faction" value="elenios"><span>Elenios</span></label>
+              <label class="faction-option"><input type="checkbox" name="faction" value="fairlight"><span>Fairlight</span></label>
+              <label class="faction-option"><input type="checkbox" name="faction" value="leah"><span>Leah</span></label>
+              <label class="faction-option"><input type="checkbox" name="faction" value="raia" checked><span>Raia</span></label>
+              <label class="faction-option"><input type="checkbox" name="faction" value="rhatt"><span>Rhatt</span></label>
+              <label class="faction-option"><input type="checkbox" name="faction" value="sheran"><span>Sheran</span></label>
+              <label class="faction-option"><input type="checkbox" name="faction" value="colorless"><span>Colorless</span></label>
+              <label class="faction-option"><input type="checkbox" name="faction" value="no-color"><span>No color</span></label>
+            </div>
+            <p class="field-hint faction-hint" id="faction-guidance" aria-live="polite">Choose up to two. Bufa and No color must be selected alone.</p>
+            <p class="field-hint faction-image-status" id="faction-image-status" aria-live="polite"></p>
+          </fieldset>
+
+          <div class="field-row image-field">
+            <label class="field-label" for="card-image">Card image <span class="optional-label">OPTIONAL</span></label>
+            <div class="upload-control">
+              <input id="card-image" name="image" type="file" accept="image/*">
+              <label class="upload-button" for="card-image"><span aria-hidden="true">&#8682;</span> Choose image</label>
+              <span class="file-name" id="file-name">No image selected</span>
+            </div>
+            <span class="field-hint">JPG, PNG or GIF. Stays on this device.</span>
+          </div>
+
+          <fieldset class="field-row icon-fieldset">
+            <legend class="field-label">Icons <span class="optional-label">UNDER THE IMAGE</span></legend>
+            <div class="icon-choices">
+              <label class="icon-choice"><input type="checkbox" name="icon" value="beast" checked><img class="resource-image" src="resources/icon-beast.png" alt="" aria-hidden="true"><span class="icon-fallback" aria-hidden="true">&#9876;</span> Beast</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="magic" checked><img class="resource-image" src="resources/icon-magic.png" alt="" aria-hidden="true"><span class="icon-fallback" aria-hidden="true">&#10022;</span> Magic</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="flying"><img class="resource-image" src="resources/icon-flying.png" alt="" aria-hidden="true"><span class="icon-fallback" aria-hidden="true">&#10038;</span> Flying</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="rare"><img class="resource-image" src="resources/icon-rare.png" alt="" aria-hidden="true"><span class="icon-fallback" aria-hidden="true">&#9733;</span> Rare</label>
+            </div>
+          </fieldset>
+
+          <div class="field-row cost-field">
+            <div class="cost-heading">
+              <span class="field-label">Cost</span>
+              <span class="field-hint">Set any combination</span>
+            </div>
+            <div class="cost-grid">
+            <label class="cost-input cost-mana"><span class="cost-symbol"><img class="resource-image" src="resources/cost-mana.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">M</span><input class="cost-value" name="mana" type="number" min="0" max="99" value="3" aria-label="Mana cost"></span><span class="cost-name">Mana</span></label>
+            <label class="cost-input cost-nekron"><span class="cost-symbol"><img class="resource-image" src="resources/cost-nekron.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">N</span><input class="cost-value" name="nekron" type="number" min="0" max="99" value="0" aria-label="Nekron cost"></span><span class="cost-name">Nekron</span></label>
+            <label class="cost-input cost-zsz"><span class="cost-symbol"><img class="resource-image" src="resources/cost-zsz.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">Z</span><input class="cost-value" name="zsz" type="number" min="0" max="99" value="1" aria-label="ZSZ cost"></span><span class="cost-name">ZSZ</span></label>
+            <label class="cost-input cost-build"><span class="cost-symbol"><img class="resource-image" src="resources/cost-build.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">B</span><input class="cost-value" name="build" type="number" min="0" max="99" value="0" aria-label="Build cost"></span><span class="cost-name">Build</span></label>
+            </div>
+          </div>
+
+          <div class="field-row text-field">
+            <label class="field-label" for="card-text">Card text</label>
+            <textarea id="card-text" name="text" rows="4" maxlength="260" placeholder="Write the rules text...">When Sapphire Sky Drake enters play, draw a card. Once each turn, it may fly over one opposing creature.</textarea>
+            <div class="text-meta"><span>Rules, flavor, or both</span><span><b id="text-count">0</b> / 260</span></div>
+          </div>
+        </form>
+        <div class="editor-footnote"><span class="footnote-gem">&#9670;</span> Changes appear on your card instantly.</div>
+      </section>
+
+      <section class="preview-panel" aria-labelledby="preview-title">
+        <div class="preview-heading">
+          <div>
+            <p class="section-eyebrow">LIVE PREVIEW</p>
+            <h2 id="preview-title">Your card</h2>
+          </div>
+          <span class="preview-status"><span></span> READY</span>
+        </div>
+
+        <div class="preview-stage">
+          <article class="hkk-card theme-blue" id="hkk-card" aria-label="Card preview">
+            <div class="base-color-layers" id="base-color-layers" aria-hidden="true"></div>
+            <div class="card-inner">
+              <header class="card-titlebar">
+                <div class="card-title-content">
+                  <div class="card-costs" id="preview-costs" aria-label="Card costs"></div>
+                  <h3 id="preview-name">Sapphire Sky Drake</h3>
+                </div>
+              </header>
+              <div class="art-frame">
+                <div class="art-placeholder" id="art-placeholder">
+                  <span class="art-sun"></span>
+                  <span class="art-wing wing-left"></span>
+                  <span class="art-wing wing-right"></span>
+                  <span class="art-mountain mountain-back"></span>
+                  <span class="art-mountain mountain-front"></span>
+                  <span class="art-caption">THE SAPPHIRE REACH</span>
+                </div>
+                <img id="preview-image" class="preview-image" alt="Uploaded card artwork" hidden>
+              </div>
+              <div class="card-icons" id="preview-icons" aria-label="Card icons"></div>
+              <div class="card-rules">
+                <p id="preview-text"></p>
+                <span class="rules-flourish" aria-hidden="true">&#10022; &nbsp; &#10022; &nbsp; &#10022;</span>
+              </div>
+              <footer class="card-footer">
+                <span class="card-set">HKK &bull; 001</span>
+              </footer>
+            </div>
+          </article>
+        </div>
+        <div class="preview-caption"><span class="caption-rule"></span> ONE CARD. MANY POSSIBILITIES. <span class="caption-rule"></span></div>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <span>HKK CARD WORKSHOP</span>
+      <span class="footer-center">UNOFFICIAL FAN-MADE CARD DESIGNER</span>
+      <span>EST. 2000 <span class="footer-star">&#10022;</span></span>
+    </footer>
+  </div>
+</body>
+</html>
