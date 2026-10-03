@@ -105,12 +105,102 @@
             </div>
           </div>
 
+          <div class="field-row metadata-grid">
+            <div class="field-group">
+              <label class="field-label" for="card-type">Kártyatípus</label>
+              <div class="select-wrap">
+                <select id="card-type" name="cardType">
+                  <option value="creature" selected>Lény</option>
+                  <option value="spell">Varázslat</option>
+                  <option value="enchantment">Bűbájvarázslat</option>
+                  <option value="artifact">Eszköz</option>
+                  <option value="support">Támogató</option>
+                  <option value="event">Esemény</option>
+                  <option value="structure">Épület</option>
+                  <option value="token">Token</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="card-subtype">Altípus</label>
+              <input id="card-subtype" name="subtype" type="text" list="subtype-options" value="Sárkány" placeholder="pl. Sárkány, Lovag, druid, horda">
+            </div>
+          </div>
+
+          <div class="field-row metadata-grid">
+            <div class="field-group">
+              <label class="field-label" for="card-rarity">Gyakoriság</label>
+              <div class="select-wrap">
+                <select id="card-rarity" name="rarity">
+                  <option value="Gyakori" selected>Gyakori</option>
+                  <option value="Nem gyakori">Nem gyakori</option>
+                  <option value="Ritka">Ritka</option>
+                  <option value="Ultra ritka">Ultra ritka</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="card-edition">Kiadás</label>
+              <div class="select-wrap">
+                <select id="card-edition" name="edition">
+                  <option value="Zén" selected>Zén</option>
+                  <option value="Csillagképek">Csillagképek</option>
+                  <option value="Invázió">Invázió</option>
+                  <option value="Alfa pakli">Alfa pakli</option>
+                  <option value="HKK">HKK</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row stat-grid">
+            <div class="field-group">
+              <label class="field-label" for="card-power">Erő</label>
+              <input id="card-power" name="power" type="number" min="0" max="99" value="3" placeholder="0">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="card-toughness">Védettség</label>
+              <input id="card-toughness" name="toughness" type="number" min="0" max="99" value="3" placeholder="0">
+            </div>
+          </div>
+
+          <fieldset class="field-row keyword-fieldset">
+            <legend class="field-label">Kártyajelölések</legend>
+            <div class="keyword-grid">
+              <label class="keyword-option"><input type="checkbox" name="keyword" value="leszedes"><span>Leszedés</span></label>
+              <label class="keyword-option"><input type="checkbox" name="keyword" value="reakcio"><span>Reakció</span></label>
+              <label class="keyword-option"><input type="checkbox" name="keyword" value="huzas"><span>Húzás</span></label>
+              <label class="keyword-option"><input type="checkbox" name="keyword" value="kereses"><span>Keresés</span></label>
+              <label class="keyword-option"><input type="checkbox" name="keyword" value="eroforras"><span>Erőforrás</span></label>
+              <label class="keyword-option"><input type="checkbox" name="keyword" value="sebzes"><span>Sebzés</span></label>
+              <label class="keyword-option"><input type="checkbox" name="keyword" value="gyogyulas"><span>Gyógyulás</span></label>
+              <label class="keyword-option"><input type="checkbox" name="keyword" value="dobatas"><span>Dobatás</span></label>
+              <label class="keyword-option"><input type="checkbox" name="keyword" value="lopas"><span>Lopás</span></label>
+              <label class="keyword-option"><input type="checkbox" name="keyword" value="semmizes"><span>Szemmisítés</span></label>
+              <label class="keyword-option"><input type="checkbox" name="keyword" value="visszavetel"><span>Visszavétel</span></label>
+              <label class="keyword-option"><input type="checkbox" name="keyword" value="token"><span>Token</span></label>
+            </div>
+          </fieldset>
+
           <div class="field-row text-field">
             <label class="field-label" for="card-text">Kártyaszöveg</label>
             <textarea id="card-text" name="text" rows="4" maxlength="260" placeholder="Írd le a szabályszöveget...">Amikor a Sapphire Sky Drake a játékba lép, húzz egy kártyát. Minden körben egyszer átrepülhet egy ellenfél lényén.</textarea>
             <div class="text-meta"><span>Szabály, hangulat, vagy mindkettő</span><span><b id="text-count">0</b> / 260</span></div>
           </div>
         </form>
+
+        <datalist id="subtype-options">
+          <option value="Sárkány"></option>
+          <option value="Lovag"></option>
+          <option value="Mágus"></option>
+          <option value="Druid"></option>
+          <option value="Harcos"></option>
+          <option value="Állat"></option>
+          <option value="Kő"></option>
+          <option value="Varázslat"></option>
+          <option value="Épület"></option>
+          <option value="Ritmus"></option>
+        </datalist>
         <div class="editor-footnote"><span class="footnote-gem">&#9670;</span> A módosítások azonnal látszanak a kártyán.</div>
       </section>
 
@@ -130,7 +220,14 @@
               <header class="card-titlebar">
                 <div class="card-title-content">
                   <div class="card-costs" id="preview-costs" aria-label="Kártyaköltségek"></div>
-                  <h3 id="preview-name">Sapphire Sky Drake</h3>
+                  <div class="card-name-stack">
+                    <div class="card-topline">
+                      <span id="preview-card-type">Lény</span>
+                      <span class="meta-separator">•</span>
+                      <span id="preview-subtype">Sárkány</span>
+                    </div>
+                    <h3 id="preview-name">Sapphire Sky Drake</h3>
+                  </div>
                 </div>
               </header>
               <div class="art-frame">
@@ -145,12 +242,18 @@
                 <img id="preview-image" class="preview-image" alt="Feltöltött kártyaművészet" hidden>
               </div>
               <div class="card-icons" id="preview-icons" aria-label="Kártya ikonok"></div>
+              <div class="card-keywords" id="preview-keywords" aria-label="Kártyajelölések"></div>
               <div class="card-rules">
                 <p id="preview-text"></p>
                 <span class="rules-flourish" aria-hidden="true">&#10022; &nbsp; &#10022; &nbsp; &#10022;</span>
               </div>
+              <div class="card-stats" id="preview-stats" aria-live="polite">
+                <span class="stat-box stat-power"><span class="stat-label">ERŐ</span><strong id="preview-power">3</strong></span>
+                <span class="stat-box stat-toughness"><span class="stat-label">VÉDELEM</span><strong id="preview-toughness">3</strong></span>
+              </div>
               <footer class="card-footer">
-                <span class="card-set">HKK &bull; 001</span>
+                <span class="card-set" id="preview-edition">Zén • 001</span>
+                <span class="card-rarity" id="preview-rarity">Gyakori</span>
               </footer>
             </div>
           </article>

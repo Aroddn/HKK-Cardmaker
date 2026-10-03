@@ -37,6 +37,21 @@ const costDetails = [
   { key: 'build', label: 'Építés', symbol: 'B', style: 'build', image: 'resources/cost-build.png' }
 ];
 
+const keywordLabels = {
+  leszedes: 'Leszedés',
+  reakcio: 'Reakció',
+  huzas: 'Húzás',
+  kereses: 'Keresés',
+  eroforras: 'Erőforrás',
+  sebzes: 'Sebzés',
+  gyogyulas: 'Gyógyulás',
+  dobatas: 'Dobatás',
+  lopas: 'Lopás',
+  semmizes: 'Szemmisítés',
+  visszavetel: 'Visszavétel',
+  token: 'Token'
+};
+
 function watchResourceImages(root = document) {
   root.querySelectorAll('.resource-image').forEach((image) => {
     const imageContainer = image.parentElement;
@@ -107,10 +122,37 @@ function updatePreview() {
   const name = values.get('name').trim();
   const text = values.get('text').trim();
   const selectedFactions = values.getAll('faction');
+  const cardType = values.get('cardType') || 'creature';
+  const subtype = values.get('subtype').trim() || 'Kategória';
+  const edition = values.get('edition') || 'Zén';
+  const rarity = values.get('rarity') || 'Gyakori';
+  const power = Number(values.get('power')) || 0;
+  const toughness = Number(values.get('toughness')) || 0;
+  const typeLabels = {
+    creature: 'Lény',
+    spell: 'Varázslat',
+    enchantment: 'Bűbájvarázslat',
+    artifact: 'Eszköz',
+    support: 'Támogató',
+    event: 'Esemény',
+    structure: 'Épület',
+    token: 'Token'
+  };
 
   document.querySelector('#preview-name').textContent = name || 'Névtelen kártya';
+  document.querySelector('#preview-card-type').textContent = typeLabels[cardType] || 'Lény';
+  document.querySelector('#preview-subtype').textContent = subtype;
+  document.querySelector('#preview-rarity').textContent = rarity;
+  document.querySelector('#preview-edition').textContent = `${edition} • ${cardType === 'creature' ? '001' : 'HKK'}`;
   document.querySelector('#preview-text').textContent = text || 'Nincs kártyaszöveg.';
   document.querySelector('#text-count').textContent = values.get('text').length;
+
+  const showStats = cardType === 'creature';
+  const statsPanel = document.querySelector('#preview-stats');
+  statsPanel.hidden = !showStats;
+  document.querySelector('#preview-power').textContent = power;
+  document.querySelector('#preview-toughness').textContent = toughness;
+
   const activeCostCount = costDetails.filter(({ key }) => Number(values.get(key)) > 0).length;
   card.dataset.costCount = String(activeCostCount);
   const baseLayers = document.querySelector('#base-color-layers');
@@ -127,6 +169,9 @@ function updatePreview() {
     const detail = iconDetails[icon];
     return `<span class="card-icon"><img class="resource-image" src="${detail.image}" alt="" aria-hidden="true"><span class="icon-fallback" aria-hidden="true">${detail.symbol}</span>${detail.label}</span>`;
   }).join('');
+
+  const selectedKeywords = values.getAll('keyword');
+  document.querySelector('#preview-keywords').innerHTML = selectedKeywords.map((keyword) => `<span class="card-keyword">${keywordLabels[keyword] || keyword}</span>`).join('');
 
   document.querySelector('#preview-costs').innerHTML = costDetails.map(({ key, label, symbol, style, image }) => {
     const amount = Number(values.get(key)) || 0;
@@ -330,6 +375,17 @@ async function renderCardPng() {
   context.shadowBlur = 0;
   context.shadowOffsetY = 0;
 
+  const metaType = document.querySelector('#preview-card-type');
+  const metaSubtype = document.querySelector('#preview-subtype');
+  if (metaType && metaSubtype) {
+    const metaRect = getCanvasRect(document.querySelector('.card-topline'), cardRect, scaleX, scaleY);
+    context.fillStyle = '#2f3a38';
+    context.font = `600 ${Math.max(9, parseFloat(getComputedStyle(metaType).fontSize) * scaleY)}px ${getComputedStyle(metaType).fontFamily}`;
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(`${metaType.textContent} • ${metaSubtype.textContent}`, metaRect.x + metaRect.width / 2, metaRect.y + metaRect.height / 2);
+  }
+
   document.querySelectorAll('#preview-costs .card-cost').forEach((cost) => {
     const badge = cost.querySelector('b');
     const rect = getCanvasRect(badge, cardRect, scaleX, scaleY);
@@ -402,6 +458,38 @@ async function renderCardPng() {
     height: rulesRect.height - 15 * scaleY
   }, `${rulesStyle.fontStyle} ${rulesStyle.fontWeight} ${fontSize}px ${rulesStyle.fontFamily}`, rulesStyle.color, lineHeight, rulesStyle.textAlign);
 
+  const statsPanel = document.querySelector('#preview-stats');
+  if (!statsPanel.hidden) {
+    const statBoxes = statsPanel.querySelectorAll('.stat-box');
+    statBoxes.forEach((box) => {
+      const boxRect = getCanvasRect(box, cardRect, scaleX, scaleY);
+      context.fillStyle = '#101a20';
+      context.fillRect(boxRect.x, boxRect.y, boxRect.width, boxRect.height);
+      context.strokeStyle = '#d2b15e';
+      context.lineWidth = Math.max(1, scaleX);
+      context.strokeRect(boxRect.x, boxRect.y, boxRect.width, boxRect.height);
+
+      const label = box.querySelector('.stat-label');
+      const value = box.querySelector('strong');
+      if (label) {
+        const labelRect = getCanvasRect(label, cardRect, scaleX, scaleY);
+        context.fillStyle = '#d2b15e';
+        context.font = `${getComputedStyle(label).fontWeight} ${Math.max(8, labelRect.height * .5)}px ${getComputedStyle(label).fontFamily}`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(label.textContent, labelRect.x + labelRect.width / 2, labelRect.y + labelRect.height / 2);
+      }
+      if (value) {
+        const valueRect = getCanvasRect(value, cardRect, scaleX, scaleY);
+        context.fillStyle = '#fff';
+        context.font = `700 ${Math.max(18, valueRect.height * 1.6)}px ${getComputedStyle(value).fontFamily}`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(value.textContent, valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
+      }
+    });
+  }
+
   const setMark = document.querySelector('.card-set');
   const setRect = getCanvasRect(setMark, cardRect, scaleX, scaleY);
   const setStyle = getComputedStyle(setMark);
@@ -410,6 +498,17 @@ async function renderCardPng() {
   context.textAlign = 'left';
   context.textBaseline = 'top';
   context.fillText(setMark.textContent, setRect.x, setRect.y);
+
+  const rarityMark = document.querySelector('.card-rarity');
+  if (rarityMark) {
+    const rarityRect = getCanvasRect(rarityMark, cardRect, scaleX, scaleY);
+    const rarityStyle = getComputedStyle(rarityMark);
+    context.fillStyle = rarityStyle.color;
+    context.font = `${rarityStyle.fontWeight} ${parseFloat(rarityStyle.fontSize) * scaleY}px ${rarityStyle.fontFamily}`;
+    context.textAlign = 'right';
+    context.textBaseline = 'top';
+    context.fillText(rarityMark.textContent, rarityRect.x + rarityRect.width, rarityRect.y);
+  }
 
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('Could not encode the card image.')), 'image/png');
