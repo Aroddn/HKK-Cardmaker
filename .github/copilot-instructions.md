@@ -2,7 +2,7 @@
 
 ## Project context
 
-This repository is a vanilla HTML/CSS/JavaScript web app. There is no framework, build system, or package manager setup. Keep changes small, direct, and compatible with browser-only execution.
+This repository is a vanilla HTML/CSS/JavaScript web app. There is no framework, build system, or package manager setup. Keep changes small(unless required), direct, and compatible with browser-only execution.
 
 ## Coding conventions
 
