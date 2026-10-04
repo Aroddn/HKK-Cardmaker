@@ -23,34 +23,14 @@ const factions = [
 const factionByKey = new Map(factions.map((faction) => [faction.key, faction]));
 const exclusiveFactionKeys = new Set(['bufa', 'no-color']);
 
-const iconDetails = {
-  beast: { symbol: '&#9876;', label: 'Vad', image: 'resources/icon-beast.png' },
-  magic: { symbol: '&#10022;', label: 'Varázslat', image: 'resources/icon-magic.png' },
-  flying: { symbol: '&#10038;', label: 'Repülés', image: 'resources/icon-flying.png' },
-  rare: { symbol: '&#9733;', label: 'Ritka', image: 'resources/icon-rare.png' }
-};
-
 const costDetails = [
-  { key: 'mana', label: 'Mana', symbol: 'M', style: 'mana', image: 'resources/cost-mana.png' },
+  { key: 'vp', label: 'VP', symbol: 'VP', style: 'vp', image: 'resources/cost-vp.png' },
+  { key: 'zanszilank', label: 'Zanszilánk', symbol: 'Z', style: 'zanszilank', image: 'resources/cost-zanszilank.png' },
   { key: 'nekron', label: 'Nekron', symbol: 'N', style: 'nekron', image: 'resources/cost-nekron.png' },
-  { key: 'zsz', label: 'ZSZ', symbol: 'Z', style: 'zsz', image: 'resources/cost-zsz.png' },
-  { key: 'build', label: 'Építés', symbol: 'B', style: 'build', image: 'resources/cost-build.png' }
+  { key: 'szk', label: 'SZK', symbol: 'SZK', style: 'szk', image: 'resources/cost-szk.png' },
+  { key: 'epito', label: 'Építő', symbol: 'É', style: 'builder', image: 'resources/cost-builder.png' },
+  { key: 'aldozas', label: 'Áldozás', symbol: 'Á', style: 'sacrifice', image: 'resources/cost-sacrifice.png' }
 ];
-
-const keywordLabels = {
-  leszedes: 'Leszedés',
-  reakcio: 'Reakció',
-  huzas: 'Húzás',
-  kereses: 'Keresés',
-  eroforras: 'Erőforrás',
-  sebzes: 'Sebzés',
-  gyogyulas: 'Gyógyulás',
-  dobatas: 'Dobatás',
-  lopas: 'Lopás',
-  semmizes: 'Szemmisítés',
-  visszavetel: 'Visszavétel',
-  token: 'Token'
-};
 
 function watchResourceImages(root = document) {
   root.querySelectorAll('.resource-image').forEach((image) => {
@@ -121,39 +101,28 @@ function updatePreview() {
   const values = new FormData(form);
   const name = values.get('name').trim();
   const text = values.get('text').trim();
+  const flavorText = String(values.get('flavorText') || '').trim();
   const selectedFactions = values.getAll('faction');
-  const cardType = values.get('cardType') || 'creature';
-  const subtype = values.get('subtype').trim() || 'Kategória';
-  const edition = values.get('edition') || 'Zén';
+  const subtype = String(values.get('subtype') || '').trim();
   const rarity = values.get('rarity') || 'Gyakori';
   const power = Number(values.get('power')) || 0;
   const toughness = Number(values.get('toughness')) || 0;
-  const typeLabels = {
-    creature: 'Lény',
-    spell: 'Varázslat',
-    enchantment: 'Bűbájvarázslat',
-    artifact: 'Eszköz',
-    support: 'Támogató',
-    event: 'Esemény',
-    structure: 'Épület',
-    token: 'Token'
-  };
 
   document.querySelector('#preview-name').textContent = name || 'Névtelen kártya';
-  document.querySelector('#preview-card-type').textContent = typeLabels[cardType] || 'Lény';
   document.querySelector('#preview-subtype').textContent = subtype;
+  document.querySelector('.meta-separator').hidden = !subtype;
+  document.querySelector('#preview-subtype').hidden = !subtype;
   document.querySelector('#preview-rarity').textContent = rarity;
-  document.querySelector('#preview-edition').textContent = `${edition} • ${cardType === 'creature' ? '001' : 'HKK'}`;
   document.querySelector('#preview-text').textContent = text || 'Nincs kártyaszöveg.';
+  const previewFlavorText = document.querySelector('#preview-flavor-text');
+  previewFlavorText.textContent = flavorText;
+  previewFlavorText.hidden = !flavorText;
   document.querySelector('#text-count').textContent = values.get('text').length;
 
-  const showStats = cardType === 'creature';
-  const statsPanel = document.querySelector('#preview-stats');
-  statsPanel.hidden = !showStats;
   document.querySelector('#preview-power').textContent = power;
   document.querySelector('#preview-toughness').textContent = toughness;
 
-  const activeCostCount = costDetails.filter(({ key }) => Number(values.get(key)) > 0).length;
+  const activeCostCount = costDetails.filter(({ key }) => String(values.get(key) || '').trim() !== '').length;
   card.dataset.costCount = String(activeCostCount);
   const baseLayers = document.querySelector('#base-color-layers');
   baseLayers.classList.toggle('multi-color', selectedFactions.length === 2);
@@ -165,27 +134,64 @@ function updatePreview() {
   watchResourceImages(baseLayers);
 
   const selectedIcons = values.getAll('icon');
-  document.querySelector('#preview-icons').innerHTML = selectedIcons.map((icon) => {
-    const detail = iconDetails[icon];
-    return `<span class="card-icon"><img class="resource-image" src="${detail.image}" alt="" aria-hidden="true"><span class="icon-fallback" aria-hidden="true">${detail.symbol}</span>${detail.label}</span>`;
-  }).join('');
-
-  const selectedKeywords = values.getAll('keyword');
-  document.querySelector('#preview-keywords').innerHTML = selectedKeywords.map((keyword) => `<span class="card-keyword">${keywordLabels[keyword] || keyword}</span>`).join('');
+  const reactionSurcharge = String(values.get('reactionSurcharge') || '').trim();
+  if (selectedIcons.includes('Reakció drágítás') && reactionSurcharge) {
+    selectedIcons[selectedIcons.indexOf('Reakció drágítás')] = `Reakció drágítás: ${reactionSurcharge}`;
+  }
+  const protection = values.get('protection');
+  if (selectedIcons.includes('Oltalom') && protection) {
+    selectedIcons[selectedIcons.indexOf('Oltalom')] = `Oltalom: ${String(protection).trim()}`;
+  }
+  const monsterComponent = Number(values.get('monsterComponent'));
+  if (selectedIcons.includes('Szörnykomponens')) {
+    const componentCount = Number.isInteger(monsterComponent) && monsterComponent > 0 ? monsterComponent : 1;
+    selectedIcons.splice(selectedIcons.indexOf('Szörnykomponens'), 1, ...Array(componentCount).fill('Szörnykomponens'));
+  }
+  document.querySelector('#preview-icons').replaceChildren(...selectedIcons.map((label) => {
+    const icon = document.createElement('span');
+    icon.className = 'card-icon';
+    icon.textContent = label;
+    return icon;
+  }));
 
   document.querySelector('#preview-costs').innerHTML = costDetails.map(({ key, label, symbol, style, image }) => {
-    const amount = Number(values.get(key)) || 0;
-    return amount > 0
+    const amount = String(values.get(key) || '').trim();
+    return amount
       ? `<span class="card-cost ${style}" aria-label="${label}: ${amount}"><b aria-hidden="true"><img class="resource-image" src="${image}" alt=""><span class="cost-glyph">${symbol}</span><span class="cost-amount">${amount}</span></b></span>`
       : '';
   }).join('');
 
-  watchResourceImages(document.querySelector('#preview-icons'));
   watchResourceImages(document.querySelector('#preview-costs'));
 }
 
+form.querySelector('#subtype-picker').addEventListener('change', (event) => {
+  const selectedSubtype = event.currentTarget.value;
+  const subtypeInput = form.querySelector('#card-subtype');
+  if (!selectedSubtype) {
+    subtypeInput.value = '';
+  } else {
+    const existingSubtypes = subtypeInput.value
+      .split(',')
+      .map((subtype) => subtype.trim())
+      .filter(Boolean);
+    if (!existingSubtypes.some((subtype) => subtype.toLowerCase() === selectedSubtype.toLowerCase())) {
+      existingSubtypes.push(selectedSubtype);
+      subtypeInput.value = existingSubtypes.join(', ');
+    }
+  }
+  updatePreview();
+});
 form.addEventListener('input', updatePreview);
 form.addEventListener('change', updatePreview);
+form.querySelectorAll('.icon-choice-numeric').forEach((choice) => {
+  const toggle = choice.querySelector('input[name="icon"]');
+  const valueInput = choice.querySelector('.icon-value, .icon-quantity');
+  const updateValueVisibility = () => {
+    valueInput.hidden = !toggle.checked;
+    valueInput.disabled = !toggle.checked;
+  };
+  toggle.addEventListener('change', updateValueVisibility);
+});
 factionInputs.forEach((input) => input.addEventListener('change', handleFactionChange));
 
 imageInput.addEventListener('change', () => {
@@ -206,6 +212,12 @@ document.querySelector('#reset-button').addEventListener('click', () => {
   previewImage.hidden = true;
   artPlaceholder.hidden = false;
   fileName.textContent = 'Nincs kép kiválasztva';
+  form.querySelectorAll('.icon-choice-numeric').forEach((choice) => {
+    const toggle = choice.querySelector('input[name="icon"]');
+    const valueInput = choice.querySelector('.icon-value, .icon-quantity');
+    valueInput.hidden = !toggle.checked;
+    valueInput.disabled = !toggle.checked;
+  });
   updateFactionControls();
   updatePreview();
 });
@@ -222,14 +234,17 @@ function getCanvasRect(element, cardRect, scaleX, scaleY) {
 
 function traceCostShape(context, style, x, y, width, height) {
   context.beginPath();
-  if (style === 'mana') {
+  if (style === 'vp') {
     context.ellipse(x + width / 2, y + height / 2, width / 2, height / 2, 0, 0, Math.PI * 2);
   } else {
-    const points = style === 'nekron'
-      ? [[.25, 0], [.75, 0], [1, .5], [.75, 1], [.25, 1], [0, .5]]
-      : style === 'zsz'
-        ? [[.5, 0], [1, .5], [.5, 1], [0, .5]]
-        : [[.28, 0], [.72, 0], [1, .28], [1, .72], [.72, 1], [.28, 1], [0, .72], [0, .28]];
+    const shapes = {
+      zanszilank: [[.5, 0], [1, .5], [.5, 1], [0, .5]],
+      nekron: [[.25, 0], [.75, 0], [1, .5], [.75, 1], [.25, 1], [0, .5]],
+      szk: [[.28, 0], [.72, 0], [1, .28], [1, .72], [.72, 1], [.28, 1], [0, .72], [0, .28]],
+      builder: [[.5, 0], [1, 1], [0, 1]],
+      sacrifice: [[.5, 0], [1, .25], [.82, .85], [.5, 1], [.18, .85], [0, .25]]
+    };
+    const points = shapes[style] || shapes.szk;
     points.forEach(([pointX, pointY], index) => {
       const px = x + pointX * width;
       const py = y + pointY * height;
@@ -383,13 +398,16 @@ async function renderCardPng() {
     context.font = `600 ${Math.max(9, parseFloat(getComputedStyle(metaType).fontSize) * scaleY)}px ${getComputedStyle(metaType).fontFamily}`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillText(`${metaType.textContent} • ${metaSubtype.textContent}`, metaRect.x + metaRect.width / 2, metaRect.y + metaRect.height / 2);
+    const metaText = metaSubtype.textContent
+      ? `${metaType.textContent} • ${metaSubtype.textContent}`
+      : metaType.textContent;
+    context.fillText(metaText, metaRect.x + metaRect.width / 2, metaRect.y + metaRect.height / 2);
   }
 
   document.querySelectorAll('#preview-costs .card-cost').forEach((cost) => {
     const badge = cost.querySelector('b');
     const rect = getCanvasRect(badge, cardRect, scaleX, scaleY);
-    const style = ['mana', 'nekron', 'zsz', 'build'].find((name) => cost.classList.contains(name));
+    const style = ['vp', 'zanszilank', 'nekron', 'szk', 'builder', 'sacrifice'].find((name) => cost.classList.contains(name));
     traceCostShape(context, style, rect.x, rect.y, rect.width, rect.height);
     context.fillStyle = getComputedStyle(badge).backgroundColor;
     context.fill();
@@ -410,10 +428,11 @@ async function renderCardPng() {
     const amount = badge.querySelector('.cost-amount');
     const amountRect = getCanvasRect(amount, cardRect, scaleX, scaleY);
     context.fillStyle = '#fff';
-    context.font = `600 ${Math.max(16, amountRect.height * 1.4)}px monospace`;
+    const amountFontSize = Math.max(8, Math.min(16, amountRect.height * 1.4 / amount.textContent.length));
+    context.font = `600 ${amountFontSize}px monospace`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillText(amount.textContent, rect.x + rect.width / 2, amountRect.y + amountRect.height / 2);
+    context.fillText(amount.textContent, rect.x + rect.width / 2, amountRect.y + amountRect.height / 2, rect.width * .9);
   });
 
   document.querySelectorAll('#preview-icons .card-icon').forEach((icon) => {
@@ -423,40 +442,36 @@ async function renderCardPng() {
     context.strokeStyle = '#777970';
     context.lineWidth = Math.max(1, scaleX);
     context.strokeRect(rect.x, rect.y, rect.width, rect.height);
-    const iconImage = icon.querySelector('img');
-    const fallback = icon.querySelector('.icon-fallback');
-    if (iconImage?.naturalWidth) {
-      const iconRect = getCanvasRect(iconImage, cardRect, scaleX, scaleY);
-      context.drawImage(iconImage, iconRect.x, iconRect.y, iconRect.width, iconRect.height);
-    } else if (fallback && getComputedStyle(fallback).display !== 'none') {
-      const iconRect = getCanvasRect(fallback, cardRect, scaleX, scaleY);
-      context.fillStyle = '#d0b775';
-      context.font = `${Math.max(14, iconRect.height)}px Georgia, serif`;
-      context.textAlign = 'left';
-      context.textBaseline = 'middle';
-      context.fillText(fallback.textContent, iconRect.x, iconRect.y + iconRect.height / 2);
-    }
-    const fallbackText = fallback?.textContent || '';
-    const label = icon.textContent.replace(fallbackText, '').trim();
     const iconStyle = getComputedStyle(icon);
     context.fillStyle = iconStyle.color;
     context.font = `700 ${parseFloat(iconStyle.fontSize) * scaleY}px ${iconStyle.fontFamily}`;
-    context.textAlign = 'left';
+    context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillText(label, rect.x + 22 * scaleX, rect.y + rect.height / 2);
+    context.fillText(icon.textContent, rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width - 4 * scaleX);
   });
 
   const rules = document.querySelector('#preview-text');
-  const rulesRect = getCanvasRect(document.querySelector('.card-rules'), cardRect, scaleX, scaleY);
+  const rulesRect = getCanvasRect(rules, cardRect, scaleX, scaleY);
   const rulesStyle = getComputedStyle(rules);
   const fontSize = parseFloat(rulesStyle.fontSize) * scaleY;
   const lineHeight = parseFloat(rulesStyle.lineHeight) * scaleY || fontSize * 1.42;
   drawWrappedText(context, rules.textContent, {
-    x: rulesRect.x + 10 * scaleX,
-    y: rulesRect.y + 9 * scaleY,
-    width: rulesRect.width - 20 * scaleX,
-    height: rulesRect.height - 15 * scaleY
+    x: rulesRect.x,
+    y: rulesRect.y,
+    width: rulesRect.width,
+    height: rulesRect.height
   }, `${rulesStyle.fontStyle} ${rulesStyle.fontWeight} ${fontSize}px ${rulesStyle.fontFamily}`, rulesStyle.color, lineHeight, rulesStyle.textAlign);
+
+  const flavor = document.querySelector('#preview-flavor-text');
+  if (!flavor.hidden) {
+    const flavorRect = getCanvasRect(flavor, cardRect, scaleX, scaleY);
+    const flavorStyle = getComputedStyle(flavor);
+    const flavorFontSize = parseFloat(flavorStyle.fontSize) * scaleY;
+    const flavorLineHeight = parseFloat(flavorStyle.lineHeight) * scaleY || flavorFontSize * 1.2;
+    drawWrappedText(context, flavor.textContent, flavorRect,
+      `${flavorStyle.fontStyle} ${flavorStyle.fontWeight} ${flavorFontSize}px ${flavorStyle.fontFamily}`,
+      flavorStyle.color, flavorLineHeight, flavorStyle.textAlign);
+  }
 
   const statsPanel = document.querySelector('#preview-stats');
   if (!statsPanel.hidden) {

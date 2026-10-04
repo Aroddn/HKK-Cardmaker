@@ -85,49 +85,183 @@
           <fieldset class="field-row icon-fieldset">
             <legend class="field-label">Ikonok <span class="optional-label">A KÉP ALATT</span></legend>
             <div class="icon-choices">
-              <label class="icon-choice"><input type="checkbox" name="icon" value="beast" checked><img class="resource-image" src="resources/icon-beast.png" alt="" aria-hidden="true"><span class="icon-fallback" aria-hidden="true">&#9876;</span> Vad</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="magic" checked><img class="resource-image" src="resources/icon-magic.png" alt="" aria-hidden="true"><span class="icon-fallback" aria-hidden="true">&#10022;</span> Varázslat</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="flying"><img class="resource-image" src="resources/icon-flying.png" alt="" aria-hidden="true"><span class="icon-fallback" aria-hidden="true">&#10038;</span> Repülés</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="rare"><img class="resource-image" src="resources/icon-rare.png" alt="" aria-hidden="true"><span class="icon-fallback" aria-hidden="true">&#9733;</span> Ritka</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="életkioltó">életkioltó</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="élőholt">élőholt</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="ereklye">ereklye</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="erőd">erőd</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="etnikum">etnikum</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="fa">fa</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="fém">fém</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="háló">háló</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="hegymélyi">hegymélyi</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="hideg">hideg</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="horgony">horgony</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="idézés">idézés</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="isteni">isteni</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="kegy">kegy</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="KF">KF</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="kincs">kincs</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="köd">köd</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="legendás">legendás</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="mentális">mentális</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="őrző">őrző</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="ősmágia">ősmágia</label>
+              <label class="icon-choice icon-choice-numeric"><input type="checkbox" name="icon" value="Reakció drágítás">Reakció drágítás<input class="icon-value" name="reactionSurcharge" type="text" placeholder="Érték" aria-label="Reakció drágítás értéke" hidden disabled></label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="repül">repül</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="rezisztencia">rezisztencia</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="sav">sav</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="tűz">tűz</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="védekezés">védekezés</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="villám">villám</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="mágikus védelem">mágikus védelem</label>
+              <label class="icon-choice"><input type="checkbox" name="icon" value="mágikus támadás">mágikus támadás</label>
+              <label class="icon-choice icon-choice-numeric"><input type="checkbox" name="icon" value="Oltalom">Oltalom<input class="icon-value" name="protection" type="text" placeholder="Érték" aria-label="Oltalom értéke" hidden disabled></label>
+              <label class="icon-choice icon-choice-numeric"><input type="checkbox" name="icon" value="Szörnykomponens">Szörnykomponens<input class="icon-quantity" name="monsterComponent" type="number" min="1" max="99" step="1" value="1" aria-label="Szörnykomponens mennyisége" hidden disabled></label>
             </div>
           </fieldset>
 
           <div class="field-row cost-field">
             <div class="cost-heading">
               <span class="field-label">Költség</span>
-              <span class="field-hint">Bármilyen kombináció</span>
+              <span class="field-hint">Bármilyen kombináció • szám vagy X</span>
             </div>
             <div class="cost-grid">
-            <label class="cost-input cost-mana"><span class="cost-symbol"><img class="resource-image" src="resources/cost-mana.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">M</span><input class="cost-value" name="mana" type="number" min="0" max="99" value="3" aria-label="Mana költség"></span><span class="cost-name">Mana</span></label>
-            <label class="cost-input cost-nekron"><span class="cost-symbol"><img class="resource-image" src="resources/cost-nekron.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">N</span><input class="cost-value" name="nekron" type="number" min="0" max="99" value="0" aria-label="Nekron költség"></span><span class="cost-name">Nekron</span></label>
-            <label class="cost-input cost-zsz"><span class="cost-symbol"><img class="resource-image" src="resources/cost-zsz.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">Z</span><input class="cost-value" name="zsz" type="number" min="0" max="99" value="1" aria-label="ZSZ költség"></span><span class="cost-name">ZSZ</span></label>
-            <label class="cost-input cost-build"><span class="cost-symbol"><img class="resource-image" src="resources/cost-build.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">B</span><input class="cost-value" name="build" type="number" min="0" max="99" value="0" aria-label="Építés költség"></span><span class="cost-name">Építés</span></label>
+              <label class="cost-input cost-vp"><span class="cost-symbol"><img class="resource-image" src="resources/cost-vp.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">VP</span><input class="cost-value" name="vp" type="text" value="3" aria-label="VP költség"></span><span class="cost-name">VP</span></label>
+              <label class="cost-input cost-zanszilank"><span class="cost-symbol"><img class="resource-image" src="resources/cost-zanszilank.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">Z</span><input class="cost-value" name="zanszilank" type="text" aria-label="Zanszilánk költség"></span><span class="cost-name">Zanszilánk</span></label>
+              <label class="cost-input cost-nekron"><span class="cost-symbol"><img class="resource-image" src="resources/cost-nekron.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">N</span><input class="cost-value" name="nekron" type="text" aria-label="Nekron költség"></span><span class="cost-name">Nekron</span></label>
+              <label class="cost-input cost-szk"><span class="cost-symbol"><img class="resource-image" src="resources/cost-szk.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">SZK</span><input class="cost-value" name="szk" type="text" aria-label="SZK költség"></span><span class="cost-name">SZK</span></label>
+              <label class="cost-input cost-builder"><span class="cost-symbol"><img class="resource-image" src="resources/cost-builder.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">É</span><input class="cost-value" name="epito" type="text" aria-label="Építő költség"></span><span class="cost-name">Építő</span></label>
+              <label class="cost-input cost-sacrifice"><span class="cost-symbol"><img class="resource-image" src="resources/cost-sacrifice.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">Á</span><input class="cost-value" name="aldozas" type="text" aria-label="Áldozás költség"></span><span class="cost-name">Áldozás</span></label>
             </div>
           </div>
 
-          <div class="field-row metadata-grid">
+          <div class="field-row metadata-grid subtype-row">
             <div class="field-group">
-              <label class="field-label" for="card-type">Kártyatípus</label>
+              <label class="field-label" for="card-subtype">Altípus</label>
+              <textarea id="card-subtype" name="subtype" rows="2" placeholder="Írj be tetszőleges altípust...">sárkány</textarea>
+              <label class="field-label subtype-picker-label" for="subtype-picker">Altípus hozzáadása a listából</label>
               <div class="select-wrap">
-                <select id="card-type" name="cardType">
-                  <option value="creature" selected>Lény</option>
-                  <option value="spell">Varázslat</option>
-                  <option value="enchantment">Bűbájvarázslat</option>
-                  <option value="artifact">Eszköz</option>
-                  <option value="support">Támogató</option>
-                  <option value="event">Esemény</option>
-                  <option value="structure">Épület</option>
-                  <option value="token">Token</option>
+                <select id="subtype-picker" aria-label="Altípus kiválasztása a listából">
+                  <option value="">--nincs--</option>
+                  <option value="?">?</option>
+                  <option value="alakváltó">alakváltó</option>
+                  <option value="angyal">angyal</option>
+                  <option value="árnymanó">árnymanó</option>
+                  <option value="bánya">bánya</option>
+                  <option value="bazaltelementál">bazaltelementál</option>
+                  <option value="betegség">betegség</option>
+                  <option value="burástya">burástya</option>
+                  <option value="cápa">cápa</option>
+                  <option value="chara-din fattya">chara-din fattya</option>
+                  <option value="csapda">csapda</option>
+                  <option value="csontváz">csontváz</option>
+                  <option value="dinó">dinó</option>
+                  <option value="druida">druida</option>
+                  <option value="dzsinn">dzsinn</option>
+                  <option value="ében íjász">ében íjász</option>
+                  <option value="éjfatty">éjfatty</option>
+                  <option value="ékszer">ékszer</option>
+                  <option value="elektromos">elektromos</option>
+                  <option value="elementál">elementál</option>
+                  <option value="elf">elf</option>
+                  <option value="ember">ember</option>
+                  <option value="epikus">epikus</option>
+                  <option value="falu">falu</option>
+                  <option value="fegyver">fegyver</option>
+                  <option value="féreg">féreg</option>
+                  <option value="fókuszkristály">fókuszkristály</option>
+                  <option value="főnix">főnix</option>
+                  <option value="ganüid">ganüid</option>
+                  <option value="gnóm">gnóm</option>
+                  <option value="goblin">goblin</option>
+                  <option value="gólem">gólem</option>
+                  <option value="griff">griff</option>
+                  <option value="grok képződmény">grok képződmény</option>
+                  <option value="hadvezér">hadvezér</option>
+                  <option value="hajó">hajó</option>
+                  <option value="hangszer">hangszer</option>
+                  <option value="hátas">hátas</option>
+                  <option value="helyszín">helyszín</option>
+                  <option value="hideg">hideg</option>
+                  <option value="hordaparancsnok">hordaparancsnok</option>
+                  <option value="íjász">íjász</option>
+                  <option value="jég">jég</option>
+                  <option value="kalóz">kalóz</option>
+                  <option value="káoszszellem">káoszszellem</option>
+                  <option value="kígyó">kígyó</option>
+                  <option value="kísértet">kísértet</option>
+                  <option value="kobudera">kobudera</option>
+                  <option value="Közös Tudat">Közös Tudat</option>
+                  <option value="krabber">krabber</option>
+                  <option value="légelementál">légelementál</option>
+                  <option value="lovas">lovas</option>
+                  <option value="manó">manó</option>
+                  <option value="minotaurusz">minotaurusz</option>
+                  <option value="moa">moa</option>
+                  <option value="morf">morf</option>
+                  <option value="motyogó">motyogó</option>
+                  <option value="mutáns">mutáns</option>
+                  <option value="nekromanta">nekromanta</option>
+                  <option value="nerub">nerub</option>
+                  <option value="oltár">oltár</option>
+                  <option value="orgling">orgling</option>
+                  <option value="óriás">óriás</option>
+                  <option value="ork">ork</option>
+                  <option value="őshangya">őshangya</option>
+                  <option value="pajzs">pajzs</option>
+                  <option value="páncél">páncél</option>
+                  <option value="pegazus">pegazus</option>
+                  <option value="pók">pók</option>
+                  <option value="polip">polip</option>
+                  <option value="politika">politika</option>
+                  <option value="praglonc">praglonc</option>
+                  <option value="próféta">próféta</option>
+                  <option value="pulzáló">pulzáló</option>
+                  <option value="quwarg">quwarg</option>
+                  <option value="quwarg boly">quwarg boly</option>
+                  <option value="rák">rák</option>
+                  <option value="reakció">reakció</option>
+                  <option value="sárkány" selected>sárkány</option>
+                  <option value="sav">sav</option>
+                  <option value="sisak">sisak</option>
+                  <option value="skorpió">skorpió</option>
+                  <option value="szentély">szentély</option>
+                  <option value="szilmill">szilmill</option>
+                  <option value="szinguláris">szinguláris</option>
+                  <option value="szingularitás">szingularitás</option>
+                  <option value="szintlépés">szintlépés</option>
+                  <option value="sziránusz">sziránusz</option>
+                  <option value="szirén">szirén</option>
+                  <option value="szkritter">szkritter</option>
+                  <option value="teknős">teknős</option>
+                  <option value="templom">templom</option>
+                  <option value="termik">termik</option>
+                  <option value="thargodan">thargodan</option>
+                  <option value="tojás">tojás</option>
+                  <option value="torony">torony</option>
+                  <option value="törpe">törpe</option>
+                  <option value="triklem drakolder">triklem drakolder</option>
+                  <option value="troglodita">troglodita</option>
+                  <option value="troll">troll</option>
+                  <option value="tűzelementál">tűzelementál</option>
+                  <option value="vámpír">vámpír</option>
+                  <option value="varkaudar">varkaudar</option>
+                  <option value="végzetúr">végzetúr</option>
+                  <option value="vérfarkas">vérfarkas</option>
+                  <option value="villám">villám</option>
+                  <option value="víz">víz</option>
+                  <option value="vízelementál">vízelementál</option>
+                  <option value="vízió">vízió</option>
+                  <option value="womath">womath</option>
+                  <option value="xenó">xenó</option>
+                  <option value="yeti">yeti</option>
+                  <option value="zan indukátor">zan indukátor</option>
                 </select>
               </div>
             </div>
-            <div class="field-group">
-              <label class="field-label" for="card-subtype">Altípus</label>
-              <input id="card-subtype" name="subtype" type="text" list="subtype-options" value="Sárkány" placeholder="pl. Sárkány, Lovag, druid, horda">
-            </div>
           </div>
 
-          <div class="field-row metadata-grid">
+          <div class="field-row metadata-grid rarity-row">
             <div class="field-group">
               <label class="field-label" for="card-rarity">Gyakoriság</label>
               <div class="select-wrap">
@@ -136,18 +270,6 @@
                   <option value="Nem gyakori">Nem gyakori</option>
                   <option value="Ritka">Ritka</option>
                   <option value="Ultra ritka">Ultra ritka</option>
-                </select>
-              </div>
-            </div>
-            <div class="field-group">
-              <label class="field-label" for="card-edition">Kiadás</label>
-              <div class="select-wrap">
-                <select id="card-edition" name="edition">
-                  <option value="Zén" selected>Zén</option>
-                  <option value="Csillagképek">Csillagképek</option>
-                  <option value="Invázió">Invázió</option>
-                  <option value="Alfa pakli">Alfa pakli</option>
-                  <option value="HKK">HKK</option>
                 </select>
               </div>
             </div>
@@ -164,43 +286,18 @@
             </div>
           </div>
 
-          <fieldset class="field-row keyword-fieldset">
-            <legend class="field-label">Kártyajelölések</legend>
-            <div class="keyword-grid">
-              <label class="keyword-option"><input type="checkbox" name="keyword" value="leszedes"><span>Leszedés</span></label>
-              <label class="keyword-option"><input type="checkbox" name="keyword" value="reakcio"><span>Reakció</span></label>
-              <label class="keyword-option"><input type="checkbox" name="keyword" value="huzas"><span>Húzás</span></label>
-              <label class="keyword-option"><input type="checkbox" name="keyword" value="kereses"><span>Keresés</span></label>
-              <label class="keyword-option"><input type="checkbox" name="keyword" value="eroforras"><span>Erőforrás</span></label>
-              <label class="keyword-option"><input type="checkbox" name="keyword" value="sebzes"><span>Sebzés</span></label>
-              <label class="keyword-option"><input type="checkbox" name="keyword" value="gyogyulas"><span>Gyógyulás</span></label>
-              <label class="keyword-option"><input type="checkbox" name="keyword" value="dobatas"><span>Dobatás</span></label>
-              <label class="keyword-option"><input type="checkbox" name="keyword" value="lopas"><span>Lopás</span></label>
-              <label class="keyword-option"><input type="checkbox" name="keyword" value="semmizes"><span>Szemmisítés</span></label>
-              <label class="keyword-option"><input type="checkbox" name="keyword" value="visszavetel"><span>Visszavétel</span></label>
-              <label class="keyword-option"><input type="checkbox" name="keyword" value="token"><span>Token</span></label>
-            </div>
-          </fieldset>
-
           <div class="field-row text-field">
             <label class="field-label" for="card-text">Kártyaszöveg</label>
             <textarea id="card-text" name="text" rows="4" maxlength="260" placeholder="Írd le a szabályszöveget...">Amikor a Sapphire Sky Drake a játékba lép, húzz egy kártyát. Minden körben egyszer átrepülhet egy ellenfél lényén.</textarea>
             <div class="text-meta"><span>Szabály, hangulat, vagy mindkettő</span><span><b id="text-count">0</b> / 260</span></div>
           </div>
+
+          <div class="field-row text-field">
+            <label class="field-label" for="card-flavor-text">Ízszöveg <span class="optional-label">OPCIONÁLIS</span></label>
+            <textarea id="card-flavor-text" name="flavorText" rows="2" maxlength="180" placeholder="Írd le a kártya hangulati szövegét..."></textarea>
+          </div>
         </form>
 
-        <datalist id="subtype-options">
-          <option value="Sárkány"></option>
-          <option value="Lovag"></option>
-          <option value="Mágus"></option>
-          <option value="Druid"></option>
-          <option value="Harcos"></option>
-          <option value="Állat"></option>
-          <option value="Kő"></option>
-          <option value="Varázslat"></option>
-          <option value="Épület"></option>
-          <option value="Ritmus"></option>
-        </datalist>
         <div class="editor-footnote"><span class="footnote-gem">&#9670;</span> A módosítások azonnal látszanak a kártyán.</div>
       </section>
 
@@ -242,9 +339,9 @@
                 <img id="preview-image" class="preview-image" alt="Feltöltött kártyaművészet" hidden>
               </div>
               <div class="card-icons" id="preview-icons" aria-label="Kártya ikonok"></div>
-              <div class="card-keywords" id="preview-keywords" aria-label="Kártyajelölések"></div>
               <div class="card-rules">
                 <p id="preview-text"></p>
+                <p id="preview-flavor-text" class="card-flavor" hidden></p>
                 <span class="rules-flourish" aria-hidden="true">&#10022; &nbsp; &#10022; &nbsp; &#10022;</span>
               </div>
               <div class="card-stats" id="preview-stats" aria-live="polite">
@@ -252,7 +349,7 @@
                 <span class="stat-box stat-toughness"><span class="stat-label">VÉDELEM</span><strong id="preview-toughness">3</strong></span>
               </div>
               <footer class="card-footer">
-                <span class="card-set" id="preview-edition">Zén • 001</span>
+                <span class="card-set">HKK • 001</span>
                 <span class="card-rarity" id="preview-rarity">Gyakori</span>
               </footer>
             </div>

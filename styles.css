@@ -236,32 +236,37 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .field-hint { display: block; margin-top: 4px; }
 .icon-fieldset { margin-top: 1px; }
 .icon-choices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-.icon-choice { display: flex; align-items: center; gap: 4px; min-height: 29px; padding: 3px 5px; color: #586b71; background: #eeefe9; border: 1px solid #d4d8d0; border-radius: 2px; font-size: 10px; cursor: pointer; }
+.icon-choice { display: flex; align-items: center; gap: 4px; min-width: 0; min-height: 29px; padding: 3px 5px; color: #586b71; background: #eeefe9; border: 1px solid #d4d8d0; border-radius: 2px; font-size: 10px; cursor: pointer; }
 .icon-choice:has(input:checked) { color: #315764; background: #e4eeea; border-color: #a8c1b7; }
 .icon-choice input { width: 12px; height: 12px; margin: 0; accent-color: #568477; }
-.icon-choice span { color: #ae8844; font-size: 13px; }
+.icon-choice-numeric { flex-wrap: wrap; }
+.icon-choice .icon-quantity, .icon-choice .icon-value { width: 48px; height: 22px; margin-left: auto; padding: 2px 4px; color: #243a45; background: #fffdf8; border: 1px solid #b9c4c2; border-radius: 2px; font-size: 11px; }
+.icon-choice .icon-quantity[hidden], .icon-choice .icon-value[hidden] { display: none; }
 .cost-field { margin-bottom: 16px; }
 .cost-heading { display: flex; align-items: baseline; justify-content: space-between; }
 .cost-heading .field-label { margin-bottom: 7px; }
 .cost-heading .field-hint { margin: 0; }
-.cost-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }
+.cost-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
 .cost-input { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 0; padding: 4px; background: #f0f0e9; border: 1px solid #d5d9d1; border-radius: 2px; }
 .cost-input .cost-symbol, .card-cost b { position: relative; display: grid; place-items: center; flex: none; width: 26px; height: 26px; overflow: hidden; color: #fff; border: 1px solid #fff9; box-shadow: inset 0 1px 1px #fff7, 0 1px 1px #172c3a33; }
 .resource-image { object-fit: contain; }
 .cost-symbol .resource-image { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; }
 .cost-glyph { position: absolute; top: 3px; left: 0; width: 100%; color: #fff; font-family: Georgia, serif; font-size: 7px; font-weight: 700; line-height: 1; text-align: center; opacity: .76; }
-.cost-symbol.has-resource-image .cost-glyph, .card-cost b.has-resource-image .cost-glyph, .icon-choice.has-resource-image .icon-fallback, .card-icon.has-resource-image .icon-fallback { display: none; }
-.cost-input.cost-mana .cost-symbol, .card-cost.mana b { background: #4e879a; border-radius: 50%; }
+.cost-symbol.has-resource-image .cost-glyph, .card-cost b.has-resource-image .cost-glyph { display: none; }
+.cost-input.cost-vp .cost-symbol, .card-cost.vp b { background: #4e879a; border-radius: 50%; }
+.cost-input.cost-zanszilank .cost-symbol, .card-cost.zanszilank b { background: #b57e3f; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
 .cost-input.cost-nekron .cost-symbol, .card-cost.nekron b { background: #754f74; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); }
-.cost-input.cost-zsz .cost-symbol, .card-cost.zsz b { background: #b57e3f; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
-.cost-input.cost-build .cost-symbol, .card-cost.build b { background: #667f50; clip-path: polygon(28% 0, 72% 0, 100% 28%, 100% 72%, 72% 100%, 28% 100%, 0 72%, 0 28%); }
-.cost-value { position: relative; z-index: 1; width: 100%; min-width: 0; height: 100%; padding: 7px 1px 0; color: #fff; background: transparent; border: 0; border-radius: inherit; outline: 0; font-family: 'DM Mono', Consolas, monospace; font-size: 10px; font-weight: 500; line-height: 1; text-align: center; text-shadow: 0 1px 2px #172c3a99; appearance: textfield; }
+.cost-input.cost-szk .cost-symbol, .card-cost.szk b { background: #496e5d; clip-path: polygon(28% 0, 72% 0, 100% 28%, 100% 72%, 72% 100%, 28% 100%, 0 72%, 0 28%); }
+.cost-input.cost-builder .cost-symbol, .card-cost.builder b { background: #667f50; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.cost-input.cost-sacrifice .cost-symbol, .card-cost.sacrifice b { background: #a0473f; clip-path: polygon(50% 0, 100% 25%, 85% 85%, 50% 100%, 15% 85%, 0 25%); }
+.cost-value { position: relative; z-index: 1; width: 100%; min-width: 0; height: 100%; padding: 5px 0 0; color: #fff; background: transparent; border: 0; border-radius: inherit; outline: 0; font-family: 'DM Mono', Consolas, monospace; font-size: 9px; font-weight: 600; line-height: 1; text-align: center; text-shadow: 0 1px 2px #172c3a99; }
 .cost-value:focus-visible { background: #ffffff22; }
-.cost-value::-webkit-inner-spin-button, .cost-value::-webkit-outer-spin-button { margin: 0; appearance: none; }
 .cost-name { color: #68767a; font-size: 9px; line-height: 1; }
 .metadata-grid, .stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.rarity-row { grid-template-columns: minmax(0, 1fr); }
+.subtype-row { grid-template-columns: minmax(0, 1fr); }
 .field-group { min-width: 0; }
-#card-name, #card-subtype, #card-power, #card-toughness, #card-type, #card-rarity, #card-edition, #card-text, .select-wrap select {
+#card-name, #card-subtype, #card-power, #card-toughness, #card-rarity, #card-text, .select-wrap select {
   width: 100%;
   color: #243a45;
   background: linear-gradient(180deg, #fffdf8, #f4efe5);
@@ -271,8 +276,11 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
   outline: none;
 }
 #card-subtype, #card-power, #card-toughness { height: 35px; padding: 0 10px; font-size: 13px; }
+#card-subtype { min-height: 58px; padding: 8px 10px; resize: none; font-size: 12px; line-height: 1.4; }
+.subtype-picker-label { margin-top: 7px; }
 #card-power, #card-toughness { text-align: center; }
-#card-text { display: block; min-height: 87px; padding: 9px 10px; resize: vertical; font-size: 12px; line-height: 1.45; }
+#card-text, #card-flavor-text { display: block; min-height: 70px; padding: 9px 10px; resize: none; font-size: 12px; line-height: 1.45; }
+#card-text { min-height: 87px; }
 .text-meta { display: flex; justify-content: space-between; margin-top: 4px; color: #929b9b; font-family: 'DM Mono', Consolas, monospace; font-size: 8px; }
 .text-meta b { color: #64787e; font-weight: 400; }
 .editor-footnote { display: flex; align-items: center; gap: 7px; margin-top: 3px; padding-top: 12px; color: #829090; border-top: 1px dotted #ccd1c9; font-size: 10px; }
@@ -393,21 +401,14 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .art-corner { position: absolute; z-index: 4; top: 5px; left: 6px; color: #fff0bc; font-size: 13px; text-shadow: 1px 1px #335567; }
 .preview-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .card-titlebar .card-costs { position: absolute; z-index: 3; top: 4.8%; left: 5.5%; gap: 3px; margin: 0; }
-.card-icons { position: absolute; z-index: 3; top: 55.6%; left: 12%; display: flex; align-items: center; gap: 3px; width: 76%; height: 4.3%; min-height: 0; overflow: hidden; padding: 0 2px; background: transparent; }
-.card-icon { display: inline-grid; grid-auto-flow: column; align-items: center; gap: 2px; min-height: 14px; padding: 1px 3px; color: #e4e0d4; background: #292d2ccc; border: 1px solid #777970; border-radius: 1px; box-shadow: inset 0 1px #ffffff22; font-size: 8px; line-height: 1; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
-.icon-choice .resource-image { width: 14px; height: 14px; flex: none; }
-.card-icon .resource-image { width: 11px; height: 11px; flex: none; }
-.icon-choice .icon-fallback { color: #ae8844; font-size: 13px; }
-.card-icon .icon-fallback { color: #d0b775; font-size: 10px; line-height: .8; }
-.keyword-fieldset { margin-top: 8px; }
-.keyword-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
-.keyword-option { display: flex; align-items: center; gap: 5px; min-width: 0; min-height: 29px; padding: 3px 6px; color: #586b71; background: linear-gradient(180deg, #f5f2eb, #e9ece4); border: 1px solid #d4d8d0; border-radius: 2px; font-size: 10px; cursor: pointer; box-shadow: inset 0 1px rgba(255,255,255,0.75); }
-.keyword-option input { width: 12px; height: 12px; flex: none; margin: 0; accent-color: #8b7352; }
-.card-keywords { position: absolute; z-index: 3; top: 58%; left: 12%; right: 12%; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; min-height: 18px; }
-.card-keyword { display: inline-block; padding: 2px 5px; color: #f9efc6; background: rgba(36, 46, 55, 0.75); border: 1px solid rgba(209, 174, 93, 0.7); border-radius: 999px; font-family: 'DM Mono', Consolas, monospace; font-size: 6px; letter-spacing: 0.08em; text-transform: uppercase; }
-.card-rules { position: absolute; top: 61.5%; left: 8%; width: 84%; height: 32%; overflow: hidden; padding: 4% 5% 2%; color: #292c2b; background: transparent; border: 0; box-shadow: none; }
+.card-icons { position: absolute; z-index: 3; top: 55.2%; left: 12%; display: flex; flex-wrap: wrap; align-content: flex-start; align-items: center; gap: 2px; width: 76%; height: 5.8%; min-height: 0; overflow: hidden; padding: 0 2px; background: transparent; }
+.card-icon { display: inline-block; max-width: 100%; min-height: 12px; overflow: hidden; padding: 2px 3px; color: #e4e0d4; background: #292d2ccc; border: 1px solid #777970; border-radius: 1px; box-shadow: inset 0 1px #ffffff22; font-size: 6px; line-height: 1; font-weight: 700; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+.card-rules { position: absolute; top: 61.5%; left: 8%; width: 84%; height: 32%; display: flex; flex-direction: column; overflow: hidden; padding: 4% 5% 2%; color: #292c2b; background: transparent; border: 0; box-shadow: none; }
 .card-rules::before { content: none; }
 .card-rules p { position: relative; z-index: 1; margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 12px; line-height: 1.28; text-align: center; white-space: pre-wrap; overflow-wrap: anywhere; }
+#preview-text { flex: 1; overflow: hidden; }
+.card-rules .card-flavor { flex: none; padding-top: 2%; font-size: 9px; font-style: italic; line-height: 1.2; text-align: right; }
+.card-rules .card-flavor[hidden] { display: none; }
 .rules-flourish { display: none; }
 .card-stats {
   position: absolute;
