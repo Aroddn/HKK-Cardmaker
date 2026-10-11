@@ -8,7 +8,7 @@ Unofficial HKK Card Maker is a lightweight browser-based card designer for creat
 - Select custom card icons and resource-based cost symbols
 - Mix up to two base colors with built-in validation rules
 - Download the final card as an image
-- Use optional PNG overrides from the `resources/` directory for faction bases and symbols
+- Use the included JPG base-card images for supported factions, with fallback colors for factions without an image
 
 ## Project structure
 
@@ -39,9 +39,11 @@ Then visit:
 http://localhost:8000/
 ```
 
-## Optional artwork and overrides
+## Base-card images and optional overrides
 
-The `resources/` folder can contain PNG files that replace default card bases and icon assets. See [resources/README.md](resources/README.md) for the supported files and their naming requirements.
+Faction base-card images are loaded from `resources/Base colors/`. Available individual bases are used for Bufa, Chara-din, Dornodon, Elenios, Fairlight, Leah, Raia, Rhatt, Sheran, Színtelen, and Narancs lap. Combined templates are used for Chara-din-Tharr, Sheran-Dornodon, and the available Elenios combinations (Chara-din, Dornodon, Fairlight, Leah, and Rhatt). Tharr on its own uses its built-in fallback color until an individual image is available. If a configured base image cannot be loaded, its fallback color is shown instead.
+
+Other optional resources, such as cost symbols and icons, are loaded from `resources/` when present and fall back to built-in symbols or colors when absent.
 
 ## Notes
 

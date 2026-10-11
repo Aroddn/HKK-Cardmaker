@@ -8,20 +8,58 @@ const factionInputs = [...form.querySelectorAll('input[name="faction"]')];
 let imageUrl = null;
 
 const factions = [
-  { key: 'bufa', label: 'Bufa', image: 'resources/Bufa base.png', fallback: '#8b563d', exclusive: true },
-  { key: 'chara-din', label: 'Chara-din', image: 'resources/Chara-din base.png', fallback: '#a0473f' },
-  { key: 'dornodon', label: 'Dornodon', image: 'resources/Dornodon base.png', fallback: '#a67d3e' },
-  { key: 'elenios', label: 'Elenios', image: 'resources/Elenios base.png', fallback: '#537d9a' },
-  { key: 'fairlight', label: 'Fairlight', image: 'resources/Fairlight base.png', fallback: '#cfb85e' },
-  { key: 'leah', label: 'Leah', image: 'resources/Leah base.png', fallback: '#658a57' },
-  { key: 'raia', label: 'Raia', image: 'resources/Raia base.png', fallback: '#a99a88' },
-  { key: 'rhatt', label: 'Rhatt', image: 'resources/Rhatt base.png', fallback: '#6c604c' },
-  { key: 'sheran', label: 'Sheran', image: 'resources/Sheran base.png', fallback: '#7b7192' },
-  { key: 'colorless', label: 'Színtelen', image: 'resources/Colorless base.png', fallback: '#898b88' },
-  { key: 'no-color', label: 'Nincs szín', image: 'resources/No color base.png', fallback: '#343b3c', exclusive: true }
+  { key: 'bufa', label: 'Bufa', image: 'resources/Base colors/Bufa base.jpg', fallback: '#8b563d', exclusive: true },
+  { key: 'chara-din', label: 'Chara-din', image: 'resources/Base colors/Chara-din base.jpg', fallback: '#a0473f' },
+  { key: 'dornodon', label: 'Dornodon', image: 'resources/Base colors/Dornodon base.jpg', fallback: '#a67d3e' },
+  { key: 'elenios', label: 'Elenios', image: 'resources/Base colors/Elenios base.jpg', fallback: '#537d9a' },
+  { key: 'fairlight', label: 'Fairlight', image: 'resources/Base colors/Fairlight base.jpg', fallback: '#cfb85e' },
+  { key: 'leah', label: 'Leah', image: 'resources/Base colors/Leah base.jpg', fallback: '#658a57' },
+  { key: 'raia', label: 'Raia', image: 'resources/Base colors/Raia base.jpg', fallback: '#a99a88' },
+  { key: 'rhatt', label: 'Rhatt', image: 'resources/Base colors/Rhatt base.jpg', fallback: '#6c604c' },
+  { key: 'sheran', label: 'Sheran', image: 'resources/Base colors/Sheran base.jpg', fallback: '#7b7192' },
+  { key: 'tharr', label: 'Tharr', fallback: '#554b5d' },
+  { key: 'colorless', label: 'Színtelen', image: 'resources/Base colors/Szintelen base.jpg', fallback: '#898b88' },
+  { key: 'no-color', label: 'Nincs szín', image: 'resources/Base colors/Narancs lap base.jpg', fallback: '#343b3c', exclusive: true }
 ];
 const factionByKey = new Map(factions.map((faction) => [faction.key, faction]));
 const exclusiveFactionKeys = new Set(['bufa', 'no-color']);
+const factionCombinationByKeys = new Map([
+  ['chara-din+tharr', {
+    label: 'Chara-din-Tharr',
+    image: 'resources/Base colors/Chara-din Tharr base.jpg',
+    fallback: '#554b5d'
+  }],
+  ['dornodon+sheran', {
+    label: 'Sheran-Dornodon',
+    image: 'resources/Base colors/Sheran Dornodon base.jpg',
+    fallback: '#897055'
+  }],
+  ['chara-din+elenios', {
+    label: 'Elenios-Chara-din',
+    image: 'resources/Base colors/Elenios Chara-din base.jpg',
+    fallback: '#7b7090'
+  }],
+  ['dornodon+elenios', {
+    label: 'Elenios-Dornodon',
+    image: 'resources/Base colors/Elenios Dornodon base.jpg',
+    fallback: '#897055'
+  }],
+  ['elenios+fairlight', {
+    label: 'Elenios-Fairlight',
+    image: 'resources/Base colors/Elenios Fairlight base.jpg',
+    fallback: '#9d9b79'
+  }],
+  ['elenios+leah', {
+    label: 'Elenios-Leah',
+    image: 'resources/Base colors/Elenios leah base.jpg',
+    fallback: '#6c856f'
+  }],
+  ['elenios+rhatt', {
+    label: 'Elenios-Rhatt',
+    image: 'resources/Base colors/Elenios Rhatt base.jpg',
+    fallback: '#6c7080'
+  }]
+]);
 
 const costDetails = [
   { key: 'vp', label: 'VP', symbol: 'VP', style: 'vp', image: 'resources/cost-vp.png' },
@@ -61,7 +99,7 @@ function updateFactionImageStatus() {
     .map((layer) => layer.dataset.factionLabel);
   const status = document.querySelector('#faction-image-status');
   status.textContent = missingBases.length
-    ? `Hiányzó alapszín-kép: ${missingBases.join(', ')}. Add hozzá a PNG fájlt a resources mappába.`
+    ? `Nem tölthető be az alapszín-kép: ${missingBases.join(', ')}.`
     : '';
 }
 
@@ -125,10 +163,18 @@ function updatePreview() {
   const activeCostCount = costDetails.filter(({ key }) => String(values.get(key) || '').trim() !== '').length;
   card.dataset.costCount = String(activeCostCount);
   const baseLayers = document.querySelector('#base-color-layers');
-  baseLayers.classList.toggle('multi-color', selectedFactions.length === 2);
-  baseLayers.innerHTML = selectedFactions.map((key) => {
-    const faction = factionByKey.get(key);
-    return `<div class="card-base-layer" data-faction-label="${faction.label}" style="--faction-fallback: ${faction.fallback}"><img class="resource-image" src="${faction.image}" alt=""></div>`;
+  const combination = selectedFactions.length === 2
+    ? factionCombinationByKeys.get([...selectedFactions].sort().join('+'))
+    : null;
+  const baseFactions = combination
+    ? [combination]
+    : selectedFactions.map((key) => factionByKey.get(key));
+  baseLayers.classList.toggle('multi-color', baseFactions.length === 2);
+  baseLayers.innerHTML = baseFactions.map((faction) => {
+    const image = faction.image
+      ? `<img class="resource-image" src="${faction.image}" alt="">`
+      : '';
+    return `<div class="card-base-layer" data-faction-label="${faction.label}" style="--faction-fallback: ${faction.fallback}">${image}</div>`;
   }).join('');
   updateFactionImageStatus();
   watchResourceImages(baseLayers);
