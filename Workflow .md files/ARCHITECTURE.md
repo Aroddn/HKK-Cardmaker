@@ -14,8 +14,8 @@ HKK Card Maker is a static, client-side web application. It has no server compon
 ## Runtime and data flow
 
 1. The browser parses `index.html`, loads `styles.css`, and defers `app.js` until the document is available.
-2. Input and change events cause `app.js` to read the form with `FormData` and update the preview. Text is assigned as text content; selected costs, icons, metadata, and faction layers are rendered from the form state.
-3. Faction selection is limited to two bases. Bufa and the no-color option are exclusive; supported pairs can use a combined base image.
+2. Input and change events cause `app.js` to read the form with `FormData` and update the preview. Rules text is rendered as text with optional Körönként egyszer tokens replaced by their inline icons; selected costs, icons, metadata, and faction layers are rendered from the form state.
+3. Faction selection is limited to two bases. Színtelen, Bufa, and the no-color option are exclusive; supported pairs can use a combined base image.
 4. An uploaded illustration is represented by a browser object URL for the current page session. Reset and image replacement revoke the previous URL.
 5. Download waits for available card images, draws the card onto a canvas at the base-art dimensions (or a default size), encodes a PNG blob, and triggers a browser download. Export failures are shown in the download status and logged to the console.
 
@@ -27,4 +27,4 @@ Open `index.html` directly in a modern browser or serve the repository root with
 
 ## Extension points
 
-Add or change editor fields in `index.html`, connect them to preview rendering and export in `app.js`, then style the corresponding preview elements in `styles.css`. Any new visual element that must appear in downloaded cards needs explicit canvas rendering in the PNG export path as well as an HTML preview. Keep resource paths relative and retain missing-image fallbacks.
+Add or change editor fields in `index.html`, connect them to preview rendering and export in `app.js`, then style the corresponding preview elements in `styles.css`. The main rules text supports `[Körönként egyszer]` and `[Körönként egyszer2]` tokens, which render their corresponding inline images in the HTML preview and PNG export. The card type and subtype render on separate stacked lines at the lower left below the artwork; icons are centered alongside them before the printed color name at right. Keep this layout consistent in PNG export. Any new visual element that must appear in downloaded cards needs explicit canvas rendering in the PNG export path as well as an HTML preview. Keep resource paths relative and retain missing-image fallbacks.

@@ -5,8 +5,9 @@ Unofficial HKK Card Maker is a lightweight browser-based card designer for creat
 ## Features
 
 - Build cards with a name, text, faction/base combinations, and optional illustration
+- Enter a card type and subtype, or add common values from their preset lists
 - Select custom card icons and resource-based cost symbols
-- Mix up to two base colors with built-in validation rules
+- Mix up to two base colors with built-in validation rules; Színtelen, Bufa, and Narancs lap are exclusive
 - Download the final card as an image
 - Use the included JPG base-card images for supported factions, with fallback colors for factions without an image
 

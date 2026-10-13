@@ -9,11 +9,12 @@ HKK Card Maker is an unofficial, fan-made browser tool for designing custom card
 The editor lets users set:
 
 - A card name (up to 32 characters), card rules text (up to 260 characters), and optional flavor text (up to 180 characters).
-- One or two base colors. Bufa and the no-color option must be selected alone. Supported combinations use their matching combined artwork.
+- One or two base colors. Színtelen, Bufa, and the no-color option must each be selected alone. Supported combinations use their matching combined artwork.
 - Optional illustration uploaded from the user's device. The image is used in the current browser session and is not uploaded to a server.
-- Card icons, including numeric fields for reaction surcharge, protection, and monster-component quantity.
+- Card icons, including numeric fields for reaction surcharge, protection, and monster-component quantity. Creature power and toughness accept digit and arithmetic-expression values and appear without labels in the bottom card corners.
 - Costs for VP, Zanszilánk, Nekron, SZK, Építő, and Áldozás. Each accepts a number or `X`, and any combination can be used.
-- A free-form subtype, with an optional picker for common subtype values, rarity, and creature power and toughness.
+- Free-form card type and subtype fields, each with a picker for common values, plus rarity and creature power and toughness.
+- Optional Körönként egyszer and Körönként egyszer 2 icons that can be inserted at the cursor in the main rules text.
 
 The preview includes base artwork, illustration or built-in sample artwork, costs, icons, card text, flavor text, stats, and rarity. Missing optional images fall back to built-in symbols or colors.
 

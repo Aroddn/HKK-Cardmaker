@@ -6,6 +6,13 @@ const artPlaceholder = document.querySelector('#art-placeholder');
 const fileName = document.querySelector('#file-name');
 const imageError = document.querySelector('#image-error');
 const factionInputs = [...form.querySelectorAll('input[name="faction"]')];
+const rulesTextInput = form.querySelector('#card-text');
+const rulesTextIcons = [
+  { token: '[Körönként egyszer2]', path: 'resources/Icons/Körönként egyszer2.png', alt: 'Körönként egyszer 2' },
+  { token: '[Körönként egyszer]', path: 'resources/Icons/Körönként egyszer.png', alt: 'Körönként egyszer' }
+];
+const rulesTextIconByToken = new Map(rulesTextIcons.map((icon) => [icon.token, icon]));
+const rulesTextIconPattern = /(\[Körönként egyszer2?\])/g;
 let imageUrl = null;
 
 const factions = [
@@ -19,11 +26,11 @@ const factions = [
   { key: 'rhatt', label: 'Rhatt', image: 'resources/Base colors/Rhatt base.jpg', fallback: '#6c604c' },
   { key: 'sheran', label: 'Sheran', image: 'resources/Base colors/Sheran base.jpg', fallback: '#7b7192' },
   { key: 'tharr', label: 'Tharr', fallback: '#554b5d' },
-  { key: 'colorless', label: 'Színtelen', image: 'resources/Base colors/Szintelen base.jpg', fallback: '#898b88' },
-  { key: 'no-color', label: 'Nincs szín', image: 'resources/Base colors/Narancs lap base.jpg', fallback: '#343b3c', exclusive: true }
+  { key: 'colorless', label: 'Színtelen', image: 'resources/Base colors/Szintelen base.jpg', fallback: '#898b88', exclusive: true },
+  { key: 'no-color', label: 'Narancs lap', image: 'resources/Base colors/Narancs lap base.jpg', fallback: '#343b3c', exclusive: true }
 ];
 const factionByKey = new Map(factions.map((faction) => [faction.key, faction]));
-const exclusiveFactionKeys = new Set(['bufa', 'no-color']);
+const exclusiveFactionKeys = new Set(['bufa', 'colorless', 'no-color']);
 const factionCombinationByKeys = new Map([
   ['chara-din+tharr', {
     label: 'Chara-din-Tharr',
@@ -104,7 +111,7 @@ function updateFactionImageStatus() {
     : '';
 }
 
-function updateFactionControls(message = 'Legfeljebb kettőt válassz. A Bufa és a Nincs szín külön kell legyen kiválasztva.') {
+function updateFactionControls(message = 'Legfeljebb kettőt válassz. A Színtelen, a Bufa és a Narancs lap külön kell legyen kiválasztva.') {
   const selected = factionInputs.filter((input) => input.checked);
   const hasExclusive = selected.some((input) => exclusiveFactionKeys.has(input.value));
 
@@ -116,6 +123,19 @@ function updateFactionControls(message = 'Legfeljebb kettőt válassz. A Bufa é
   document.querySelector('#faction-guidance').textContent = message;
 }
 
+function renderRulesText(element, text) {
+  element.replaceChildren();
+  text.split(rulesTextIconPattern).forEach((part) => {
+    if (rulesTextIconByToken.has(part)) {
+      const icon = document.createElement('img');
+      icon.className = 'rules-inline-icon';
+      icon.src = rulesTextIconByToken.get(part).path;
+      icon.alt = rulesTextIconByToken.get(part).alt;
+      element.append(icon);
+    } else if (part) element.append(document.createTextNode(part));
+  });
+}
+
 function handleFactionChange(event) {
   const input = event.currentTarget;
   const selected = factionInputs.filter((option) => option.checked);
@@ -125,7 +145,7 @@ function handleFactionChange(event) {
     updateFactionControls('Egy kártyán legfeljebb két alapszín lehet.');
   } else if (input.checked && selected.some((option) => option !== input && exclusiveFactionKeys.has(option.value))) {
     input.checked = false;
-    updateFactionControls(`${factionByKey.get(input.value).label} nem kombinálható a Bufával vagy a Nincs színnel.`);
+    updateFactionControls(`${factionByKey.get(input.value).label} nem kombinálható a Színtelennel, a Bufával vagy a Narancs lappal.`);
   } else if (input.checked && exclusiveFactionKeys.has(input.value) && selected.length > 1) {
     input.checked = false;
     updateFactionControls(`${factionByKey.get(input.value).label} külön kell legyen kiválasztva.`);
@@ -142,17 +162,19 @@ function updatePreview() {
   const text = values.get('text').trim();
   const flavorText = String(values.get('flavorText') || '').trim();
   const selectedFactions = values.getAll('faction');
+  const type = String(values.get('type') || '').trim();
   const subtype = String(values.get('subtype') || '').trim();
   const rarity = values.get('rarity') || 'Gyakori';
-  const power = Number(values.get('power')) || 0;
-  const toughness = Number(values.get('toughness')) || 0;
+  const power = String(values.get('power') || '').trim();
+  const toughness = String(values.get('toughness') || '').trim();
 
   document.querySelector('#preview-name').textContent = name || 'Névtelen kártya';
+  document.querySelector('#preview-card-type').textContent = type;
+  document.querySelector('#preview-card-type').hidden = !type;
   document.querySelector('#preview-subtype').textContent = subtype;
-  document.querySelector('.meta-separator').hidden = !subtype;
   document.querySelector('#preview-subtype').hidden = !subtype;
   document.querySelector('#preview-rarity').textContent = rarity;
-  document.querySelector('#preview-text').textContent = text || 'Nincs kártyaszöveg.';
+  renderRulesText(document.querySelector('#preview-text'), text || 'Nincs kártyaszöveg.');
   const previewFlavorText = document.querySelector('#preview-flavor-text');
   previewFlavorText.textContent = flavorText;
   previewFlavorText.hidden = !flavorText;
@@ -185,6 +207,7 @@ function updatePreview() {
   if (selectedIcons.includes('Reakció drágítás') && reactionSurcharge) {
     selectedIcons[selectedIcons.indexOf('Reakció drágítás')] = `Reakció drágítás: ${reactionSurcharge}`;
   }
+
   const protection = values.get('protection');
   if (selectedIcons.includes('Oltalom') && protection) {
     selectedIcons[selectedIcons.indexOf('Oltalom')] = `Oltalom: ${String(protection).trim()}`;
@@ -211,22 +234,46 @@ function updatePreview() {
   watchResourceImages(document.querySelector('#preview-costs'));
 }
 
-form.querySelector('#subtype-picker').addEventListener('change', (event) => {
-  const selectedSubtype = event.currentTarget.value;
-  const subtypeInput = form.querySelector('#card-subtype');
-  if (!selectedSubtype) {
-    subtypeInput.value = '';
-  } else {
-    const existingSubtypes = subtypeInput.value
-      .split(',')
-      .map((subtype) => subtype.trim())
-      .filter(Boolean);
-    if (!existingSubtypes.some((subtype) => subtype.toLowerCase() === selectedSubtype.toLowerCase())) {
-      existingSubtypes.push(selectedSubtype);
-      subtypeInput.value = existingSubtypes.join(', ');
+function bindPresetPicker(picker, input) {
+  picker.addEventListener('change', () => {
+    const selectedValue = picker.value;
+    if (!selectedValue) {
+      input.value = '';
+    } else {
+      const existingValues = input.value
+        .split(',')
+        .map((value) => value.trim())
+        .filter(Boolean);
+      if (!existingValues.some((value) => value.toLowerCase() === selectedValue.toLowerCase())) {
+        existingValues.push(selectedValue);
+        input.value = existingValues.join(', ');
+      }
     }
-  }
-  updatePreview();
+    updatePreview();
+  });
+}
+bindPresetPicker(form.querySelector('#subtype-picker'), form.querySelector('#card-subtype'));
+bindPresetPicker(form.querySelector('#type-picker'), form.querySelector('#card-type'));
+function insertRulesTextIcon(token) {
+  const start = rulesTextInput.selectionStart;
+  const end = rulesTextInput.selectionEnd;
+  const before = rulesTextInput.value.slice(0, start);
+  const after = rulesTextInput.value.slice(end);
+  const prefix = before && !/\s$/.test(before) ? ' ' : '';
+  const suffix = after && !/^\s/.test(after) ? ' ' : '';
+  const insertion = `${prefix}${token}${suffix}`;
+  const availableLength = rulesTextInput.maxLength - (rulesTextInput.value.length - (end - start));
+  if (availableLength < insertion.length) return;
+
+  rulesTextInput.setRangeText(insertion, start, end, 'end');
+  rulesTextInput.dispatchEvent(new Event('input', { bubbles: true }));
+  rulesTextInput.focus();
+}
+document.querySelector('#insert-once-icon').addEventListener('click', () => {
+  insertRulesTextIcon(rulesTextIcons[1].token);
+});
+document.querySelector('#insert-once-icon-2').addEventListener('click', () => {
+  insertRulesTextIcon(rulesTextIcons[0].token);
 });
 form.addEventListener('input', updatePreview);
 form.addEventListener('change', updatePreview);
@@ -376,7 +423,11 @@ function drawWrappedText(context, text, rect, font, color, lineHeight, alignment
   context.fillStyle = color;
   context.textAlign = alignment;
   context.textBaseline = 'top';
-  const textX = alignment === 'center' ? rect.x + rect.width / 2 : rect.x;
+  const textX = alignment === 'center'
+    ? rect.x + rect.width / 2
+    : alignment === 'right'
+      ? rect.x + rect.width
+      : rect.x;
   let y = rect.y;
   const paragraphs = text.split('\n');
 
@@ -397,6 +448,65 @@ function drawWrappedText(context, text, rect, font, color, lineHeight, alignment
       context.fillText(line, textX, y);
       y += lineHeight;
     }
+    if (y + lineHeight > rect.y + rect.height) break;
+  }
+  context.restore();
+}
+
+function drawWrappedRulesText(context, text, rect, font, color, lineHeight, alignment, icons) {
+  context.save();
+  context.beginPath();
+  context.rect(rect.x, rect.y, rect.width, rect.height);
+  context.clip();
+  context.font = font;
+  context.fillStyle = color;
+  context.textAlign = 'left';
+  context.textBaseline = 'top';
+  const iconSize = lineHeight * 1.25;
+  const paragraphs = text.split('\n');
+  let y = rect.y;
+
+  for (const paragraph of paragraphs) {
+    const words = paragraph.match(/\[Körönként egyszer2?\]|[^\s]+/g) || [];
+    let line = [];
+    let lineWidth = 0;
+
+    const drawLine = () => {
+      const startX = alignment === 'center'
+        ? rect.x + (rect.width - lineWidth) / 2
+        : alignment === 'right'
+          ? rect.x + rect.width - lineWidth
+          : rect.x;
+      let x = startX;
+      line.forEach((part) => {
+        if (part.type === 'icon') {
+          context.drawImage(icons.get(part.token), x, y + (lineHeight - iconSize) / 2, iconSize, iconSize);
+        } else {
+          context.fillText(part.text, x, y);
+        }
+        x += part.width;
+      });
+      y += lineHeight;
+      line = [];
+      lineWidth = 0;
+    };
+
+    for (const word of words) {
+      const parts = rulesTextIconByToken.has(word)
+        ? [{ type: 'icon', token: word, width: iconSize }]
+        : [{ type: 'text', text: word, width: context.measureText(word).width }];
+      const wordWidth = parts.reduce((width, part) => width + part.width, 0);
+      const spaceWidth = line.length ? context.measureText(' ').width : 0;
+      if (line.length && lineWidth + spaceWidth + wordWidth > rect.width) drawLine();
+      if (line.length) {
+        line.push({ type: 'text', text: ' ', width: context.measureText(' ').width });
+        lineWidth += context.measureText(' ').width;
+      }
+      line.push(...parts);
+      lineWidth += wordWidth;
+      if (y + lineHeight > rect.y + rect.height) break;
+    }
+    if (line.length && y + lineHeight <= rect.y + rect.height) drawLine();
     if (y + lineHeight > rect.y + rect.height) break;
   }
   context.restore();
@@ -455,12 +565,17 @@ async function renderCardPng() {
   const nameStyle = getComputedStyle(nameElement);
   context.fillStyle = nameStyle.color;
   context.font = `${nameStyle.fontWeight} ${parseFloat(nameStyle.fontSize) * scaleY}px ${nameStyle.fontFamily}`;
-  context.textAlign = 'center';
+  context.textAlign = nameStyle.textAlign;
   context.textBaseline = 'top';
   context.shadowColor = 'rgba(255, 249, 232, .8)';
   context.shadowBlur = 3 * scaleY;
   context.shadowOffsetY = scaleY;
-  context.fillText(nameElement.textContent, nameRect.x + nameRect.width / 2, nameRect.y, nameRect.width);
+  const nameTextX = nameStyle.textAlign === 'right'
+    ? nameRect.x + nameRect.width
+    : nameStyle.textAlign === 'center'
+      ? nameRect.x + nameRect.width / 2
+      : nameRect.x;
+  context.fillText(nameElement.textContent, nameTextX, nameRect.y, nameRect.width);
   context.shadowColor = 'transparent';
   context.shadowBlur = 0;
   context.shadowOffsetY = 0;
@@ -468,15 +583,20 @@ async function renderCardPng() {
   const metaType = document.querySelector('#preview-card-type');
   const metaSubtype = document.querySelector('#preview-subtype');
   if (metaType && metaSubtype) {
-    const metaRect = getCanvasRect(document.querySelector('.card-topline'), cardRect, scaleX, scaleY);
-    context.fillStyle = '#2f3a38';
-    context.font = `600 ${Math.max(9, parseFloat(getComputedStyle(metaType).fontSize) * scaleY)}px ${getComputedStyle(metaType).fontFamily}`;
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    const metaText = metaSubtype.textContent
-      ? `${metaType.textContent} • ${metaSubtype.textContent}`
-      : metaType.textContent;
-    context.fillText(metaText, metaRect.x + metaRect.width / 2, metaRect.y + metaRect.height / 2);
+    [metaType, metaSubtype].filter((element) => !element.hidden).forEach((element) => {
+      const metaRect = getCanvasRect(element, cardRect, scaleX, scaleY);
+      const metaStyle = getComputedStyle(element);
+      context.fillStyle = metaStyle.color;
+      context.font = `${metaStyle.fontStyle} ${metaStyle.fontWeight} ${Math.max(9, parseFloat(metaStyle.fontSize) * scaleY)}px ${metaStyle.fontFamily}`;
+      context.textAlign = metaStyle.textAlign;
+      context.textBaseline = 'middle';
+      const textX = metaStyle.textAlign === 'right'
+        ? metaRect.x + metaRect.width
+        : metaStyle.textAlign === 'center'
+          ? metaRect.x + metaRect.width / 2
+          : metaRect.x;
+      context.fillText(element.textContent, textX, metaRect.y + metaRect.height / 2, metaRect.width);
+    });
   }
 
   document.querySelectorAll('#preview-costs .card-cost').forEach((cost) => {
@@ -530,12 +650,22 @@ async function renderCardPng() {
   const rulesStyle = getComputedStyle(rules);
   const fontSize = parseFloat(rulesStyle.fontSize) * scaleY;
   const lineHeight = parseFloat(rulesStyle.lineHeight) * scaleY || fontSize * 1.42;
-  drawWrappedText(context, rules.textContent, {
+  const rulesInlineIcons = new Map();
+  for (const icon of rulesTextIcons) {
+    if (rulesTextInput.value.includes(icon.token)) {
+      const image = new Image();
+      image.src = icon.path;
+      await image.decode();
+      rulesInlineIcons.set(icon.token, image);
+    }
+  }
+  drawWrappedRulesText(context, rulesTextInput.value || 'Nincs kártyaszöveg.', {
     x: rulesRect.x,
     y: rulesRect.y,
     width: rulesRect.width,
     height: rulesRect.height
-  }, `${rulesStyle.fontStyle} ${rulesStyle.fontWeight} ${fontSize}px ${rulesStyle.fontFamily}`, rulesStyle.color, lineHeight, rulesStyle.textAlign);
+  }, `${rulesStyle.fontStyle} ${rulesStyle.fontWeight} ${fontSize}px ${rulesStyle.fontFamily}`, rulesStyle.color, lineHeight, rulesStyle.textAlign,
+  rulesInlineIcons);
 
   const flavor = document.querySelector('#preview-flavor-text');
   if (!flavor.hidden) {
@@ -559,20 +689,12 @@ async function renderCardPng() {
       context.lineWidth = Math.max(1, scaleX);
       context.strokeRect(boxRect.x, boxRect.y, boxRect.width, boxRect.height);
 
-      const label = box.querySelector('.stat-label');
       const value = box.querySelector('strong');
-      if (label) {
-        const labelRect = getCanvasRect(label, cardRect, scaleX, scaleY);
-        context.fillStyle = '#d2b15e';
-        context.font = `${getComputedStyle(label).fontWeight} ${Math.max(8, labelRect.height * .5)}px ${getComputedStyle(label).fontFamily}`;
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillText(label.textContent, labelRect.x + labelRect.width / 2, labelRect.y + labelRect.height / 2);
-      }
       if (value) {
         const valueRect = getCanvasRect(value, cardRect, scaleX, scaleY);
-        context.fillStyle = '#fff';
-        context.font = `700 ${Math.max(18, valueRect.height * 1.6)}px ${getComputedStyle(value).fontFamily}`;
+        const valueStyle = getComputedStyle(value);
+        context.fillStyle = valueStyle.color;
+        context.font = `${valueStyle.fontWeight} ${parseFloat(valueStyle.fontSize) * scaleY}px ${valueStyle.fontFamily}`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         context.fillText(value.textContent, valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);

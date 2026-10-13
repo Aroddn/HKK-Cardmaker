@@ -1,4 +1,6 @@
 Needed features in the future:
+
+
 Maximum card name lenght
 Custom icon for rarity(pálinkás pohár)
 Minden szín együttes theoratically 72?

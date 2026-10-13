@@ -15,7 +15,7 @@
         <div class="brand-mark">HKK</div>
         <div class="brand-copy">
           <p class="brand-kicker">Magyar Fantasy Kártyajáték</p>
-          <h1>NEM HIVATALOS HKK <span>KÁRTYAKÉSZÍTŐ</span></h1>
+          <h1>NEM HIVATALOS HKK KÁRTYAKÉSZÍTŐ</h1>
         </div>
       </div>
       <div class="masthead-stamp" aria-label="Kártyakészítő verzió 1.0">
@@ -69,7 +69,7 @@
               <label class="faction-option"><input type="checkbox" name="faction" value="colorless"><span>Színtelen</span></label>
               <label class="faction-option"><input type="checkbox" name="faction" value="no-color"><span>Narancs lap</span></label>
             </div>
-            <p class="field-hint faction-hint" id="faction-guidance" aria-live="polite">Kártya lehet 2 színű is kivéve ha Szintelen, Bufa vagy Narancs lap</p>
+            <p class="field-hint faction-hint" id="faction-guidance" aria-live="polite">A Színtelen, a Bufa és a Narancs lap nem kombinálható más színnel.</p>
             <p class="field-hint faction-image-status" id="faction-image-status" aria-live="polite"></p>
           </fieldset>
 
@@ -263,6 +263,44 @@
             </div>
           </div>
 
+          <div class="field-row metadata-grid subtype-row">
+            <div class="field-group">
+              <label class="field-label" for="card-type">Típus</label>
+              <textarea id="card-type" name="type" rows="2" placeholder="Írj be tetszőleges típust...">Lény</textarea>
+              <label class="field-label subtype-picker-label" for="type-picker">Típus hozzáadása a listából</label>
+              <div class="select-wrap">
+                <select id="type-picker" aria-label="Típus kiválasztása a listából">
+                  <option value="">--nincs--</option>
+                  <option value="Általános">Általános</option>
+                  <option value="Avatár">Avatár</option>
+                  <option value="Azonnali">Azonnali</option>
+                  <option value="Bűbáj">Bűbáj</option>
+                  <option value="Bűbáj bűbájra">Bűbáj bűbájra</option>
+                  <option value="Bűbáj építményre">Bűbáj építményre</option>
+                  <option value="Bűbáj Kalandozóra">Bűbáj Kalandozóra</option>
+                  <option value="Bűbáj lapra">Bűbáj lapra</option>
+                  <option value="Bűbáj lényre">Bűbáj lényre</option>
+                  <option value="Bűbáj tárgyra">Bűbáj tárgyra</option>
+                  <option value="Céh">Céh</option>
+                  <option value="Egyéb">Egyéb</option>
+                  <option value="Építmény">Építmény</option>
+                  <option value="Galetki">Galetki</option>
+                  <option value="Helyszín">Helyszín</option>
+                  <option value="Kalandozó">Kalandozó</option>
+                  <option value="Követő">Követő</option>
+                  <option value="Őslich">Őslich</option>
+                  <option value="Szabálylap">Szabálylap</option>
+                  <option value="Szakértelem">Szakértelem</option>
+                  <option value="Szintlépés">Szintlépés</option>
+                  <option value="Szörny">Szörny</option>
+                  <option value="Tárgy">Tárgy</option>
+                  <option value="Testrész">Testrész</option>
+                  <option value="Torzszülött">Torzszülött</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <div class="field-row metadata-grid rarity-row">
             <div class="field-group">
               <label class="field-label" for="card-rarity">Gyakoriság</label>
@@ -280,18 +318,31 @@
           <div class="field-row stat-grid">
             <div class="field-group">
               <label class="field-label" for="card-power">Erő</label>
-              <input id="card-power" name="power" type="number" min="0" max="99" value="3" placeholder="0">
+              <input id="card-power" name="power" type="text" maxlength="12" value="3" placeholder="0-9, X, +, -, *, /" aria-label="Erő értéke">
             </div>
             <div class="field-group">
               <label class="field-label" for="card-toughness">Védettség</label>
-              <input id="card-toughness" name="toughness" type="number" min="0" max="99" value="3" placeholder="0">
+              <input id="card-toughness" name="toughness" type="text" maxlength="12" value="3" placeholder="0-9, X, +, -, *, /" aria-label="Védettség értéke">
             </div>
           </div>
 
           <div class="field-row text-field">
             <label class="field-label" for="card-text">Kártyaszöveg</label>
             <textarea id="card-text" name="text" rows="4" maxlength="260" placeholder="Írd le a szabályszöveget...">Amikor a Sapphire Sky Drake a játékba lép, húzz egy kártyát. Minden körben egyszer átrepülhet egy ellenfél lényén.</textarea>
-            <div class="text-meta"><span>Szabály, hangulat, vagy mindkettő</span><span><b id="text-count">0</b> / 260</span></div>
+            <div class="text-meta">
+              <span class="text-insert-buttons">
+                <button id="insert-once-icon" class="text-insert-button" type="button">
+                  <img src="resources/Icons/Körönként egyszer.png" alt="">
+                  Körönként egyszer
+                </button>
+                <button id="insert-once-icon-2" class="text-insert-button" type="button">
+                  <img src="resources/Icons/Körönként egyszer2.png" alt="">
+                  Körönként egyszer 2
+                </button>
+              </span>
+              <span><b id="text-count">0</b> / 260</span>
+            </div>
+            <span class="field-hint">A kijelölt helyre szúrja be a választott ikont.</span>
           </div>
 
           <div class="field-row text-field">
@@ -320,11 +371,6 @@
                 <div class="card-title-content">
                   <div class="card-costs" id="preview-costs" aria-label="Kártyaköltségek"></div>
                   <div class="card-name-stack">
-                    <div class="card-topline">
-                      <span id="preview-card-type">Lény</span>
-                      <span class="meta-separator">•</span>
-                      <span id="preview-subtype">Sárkány</span>
-                    </div>
                     <h3 id="preview-name">Sapphire Sky Drake</h3>
                   </div>
                 </div>
@@ -340,6 +386,10 @@
                 </div>
                 <img id="preview-image" class="preview-image" alt="Feltöltött kártyaművészet" hidden>
               </div>
+              <div class="card-topline">
+                <span id="preview-card-type">Lény</span>
+                <span id="preview-subtype">Sárkány</span>
+              </div>
               <div class="card-icons" id="preview-icons" aria-label="Kártya ikonok"></div>
               <div class="card-rules">
                 <p id="preview-text"></p>
@@ -347,8 +397,8 @@
                 <span class="rules-flourish" aria-hidden="true">&#10022; &nbsp; &#10022; &nbsp; &#10022;</span>
               </div>
               <div class="card-stats" id="preview-stats" aria-live="polite">
-                <span class="stat-box stat-power"><span class="stat-label">ERŐ</span><strong id="preview-power">3</strong></span>
-                <span class="stat-box stat-toughness"><span class="stat-label">VÉDELEM</span><strong id="preview-toughness">3</strong></span>
+                <span class="stat-box stat-power" aria-label="Erő"><strong id="preview-power">3</strong></span>
+                <span class="stat-box stat-toughness" aria-label="Védettség"><strong id="preview-toughness">3</strong></span>
               </div>
               <footer class="card-footer">
                 <span class="card-set">HKK • 001</span>
