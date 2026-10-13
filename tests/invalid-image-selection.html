@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Invalid custom image selection tests</title>
+  <style>
+    body { max-width: 48rem; margin: 2rem auto; padding: 0 1rem; font: 16px/1.5 sans-serif; }
+    #results li[data-result="fail"] { color: #a00; }
+    #results li[data-result="pass"] { color: #075b20; }
+    iframe { position: absolute; left: -10000px; width: 800px; height: 1000px; }
+  </style>
+</head>
+<body>
+  <h1>Invalid custom image selection tests</h1>
+  <p>Serve the repository root with a local web server, then open <code>/tests/invalid-image-selection.html</code>.</p>
+  <p id="summary" role="status" aria-live="polite">Waiting for the editor to load.</p>
+  <ol id="results"></ol>
+  <iframe title="HKK Card Maker under test" src="../index.html"></iframe>
+  <script>
+    const frame = document.querySelector('iframe');
+    const results = document.querySelector('#results');
+    const summary = document.querySelector('#summary');
+
+    function assert(condition, message) {
+      if (!condition) throw new Error(message);
+    }
+
+    function waitFor(condition, message, timeout = 2000) {
+      return new Promise((resolve, reject) => {
+        const started = Date.now();
+        const poll = () => {
+          if (condition()) return resolve();
+          if (Date.now() - started >= timeout) {
+            return reject(new Error(`Timed out waiting for ${message}.`));
+          }
+          setTimeout(poll, 20);
+        };
+        poll();
+      });
+    }
+
+    function selectFile(input, file, window) {
+      const transfer = new window.DataTransfer();
+      transfer.items.add(file);
+      input.files = transfer.files;
+      input.dispatchEvent(new window.Event('change', { bubbles: true }));
+    }
+
+    function getEditorElements(document) {
+      return {
+        input: document.querySelector('#card-image'),
+        preview: document.querySelector('#preview-image'),
+        placeholder: document.querySelector('#art-placeholder'),
+        fileName: document.querySelector('#file-name'),
+        error: document.querySelector('#image-error'),
+        resetButton: document.querySelector('#reset-button')
+      };
+    }
+
+    function assertRejected(elements, expectedError) {
+      assert(elements.input.files.length === 0, 'The invalid file input should be cleared.');
+      assert(elements.preview.hidden, 'The invalid image should not appear in the preview.');
+      assert(!elements.placeholder.hidden, 'The built-in artwork placeholder should remain visible.');
+      assert(elements.fileName.textContent === 'Nincs kép kiválasztva', 'The file name should return to its empty state.');
+      assert(!elements.error.hidden, 'The validation error should be visible.');
+      assert(elements.error.getAttribute('role') === 'alert', 'The validation error should be announced accessibly.');
+      assert(elements.error.textContent === expectedError, 'The validation error should explain why the file was rejected.');
+    }
+
+    async function runTest(testCase, elements, window) {
+      elements.resetButton.click();
+      assert(elements.input.files.length === 0, `${testCase.name}: reset should clear the file input.`);
+      assert(elements.error.hidden, `${testCase.name}: reset should clear the previous error.`);
+
+      selectFile(elements.input, new window.File(testCase.contents, testCase.fileName, {
+        type: testCase.type
+      }), window);
+      await waitFor(
+        () => elements.input.files.length === 0 && !elements.error.hidden,
+        `${testCase.name} to be rejected`
+      );
+      assertRejected(elements, testCase.expectedError);
+    }
+
+    function addResult(name, error) {
+      const item = document.createElement('li');
+      item.dataset.result = error ? 'fail' : 'pass';
+      item.textContent = error ? `FAIL: ${name} - ${error.message}` : `PASS: ${name}`;
+      results.append(item);
+    }
+
+    async function runTests() {
+      const window = frame.contentWindow;
+      const editorDocument = frame.contentDocument;
+      const elements = getEditorElements(editorDocument);
+      const tests = [
+        {
+          name: 'rejects a non-image file',
+          contents: ['not an image'],
+          fileName: 'notes.txt',
+          type: 'text/plain',
+          expectedError: 'Válassz egy érvényes képfájlt.'
+        },
+        {
+          name: 'rejects an image file that cannot be decoded',
+          contents: ['not a PNG'],
+          fileName: 'broken.png',
+          type: 'image/png',
+          expectedError: 'A kiválasztott fájl nem tölthető be képként.'
+        }
+      ];
+
+      const missingElements = Object.entries(elements)
+        .filter(([, element]) => !element)
+        .map(([name]) => name);
+      if (missingElements.length || !window.DataTransfer) {
+        const missing = missingElements.length ? `Missing editor elements: ${missingElements.join(', ')}.` : '';
+        const transfer = window.DataTransfer ? '' : 'DataTransfer is not supported.';
+        addResult('browser test setup', new Error([missing, transfer].filter(Boolean).join(' ')));
+      } else {
+        for (const testCase of tests) {
+          try {
+            await runTest(testCase, elements, window);
+            addResult(testCase.name);
+          } catch (error) {
+            addResult(testCase.name, error);
+          }
+        }
+      }
+
+      const passed = results.querySelectorAll('[data-result="pass"]').length;
+      const failed = results.querySelectorAll('[data-result="fail"]').length;
+      summary.textContent = `${passed} passed, ${failed} failed.`;
+      summary.dataset.result = failed ? 'fail' : 'pass';
+    }
+
+    frame.addEventListener('error', () => {
+      addResult('load the card editor', new Error('The editor iframe failed to load.'));
+      summary.textContent = '0 passed, 1 failed.';
+      summary.dataset.result = 'fail';
+    }, { once: true });
+
+    if (frame.contentDocument.querySelector('#card-image')) runTests();
+    else frame.addEventListener('load', runTests, { once: true });
+  </script>
+</body>
+</html>

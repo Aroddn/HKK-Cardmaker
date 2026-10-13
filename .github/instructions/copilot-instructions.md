@@ -2,7 +2,7 @@
 
 ## Project context
 
-This repository is a vanilla HTML/CSS/JavaScript web app. There is no framework, build system, or package manager setup. Keep changes small(unless required), direct, and compatible with browser-only execution.
+This repository is a vanilla HTML/CSS/JavaScript web app. There is no framework, build system, or package manager setup. Keep changes small, direct, and compatible with browser-only execution unless explicitly required.
 
 ## Coding conventions
 
@@ -17,7 +17,7 @@ This repository is a vanilla HTML/CSS/JavaScript web app. There is no framework,
 - Maintain the current card designer workflow: form inputs update the live preview immediately.
 - Preserve fallback behavior for optional resource images. If a PNG is missing, the app should still show the built-in symbol or fallback color.
 - Keep the editor accessible: use labels, semantic inputs, and text alternatives where appropriate.
-- The overall visual design should remain similar to an early 2000s fantasy web app, with a focus on functionality and clarity rather than modern UI trends.
+- The overall visual design must remain non modernist and faithful to the original HKK card style.
 - Keep visible UI text in Hungarian unless a task explicitly requires another language.
 
 ## Validation
@@ -26,9 +26,15 @@ This repository is a vanilla HTML/CSS/JavaScript web app. There is no framework,
 - Check that resource image loading still behaves correctly when files are present or missing.
 - Ensure the download/export flow continues to work after edits to card generation logic.
 
+## Agent task log
+
+- Keep a concise history of completed repository tasks in `agent-log.md`.
+- Append one dated entry per task with a short summary of what was requested and what was done, including validation results when relevant.
+- Summarize rather than copying full prompts, and never include secrets or other sensitive information.
+
 ## Relevant files
 
 - `index.html` — app structure and form controls
 - `app.js` — preview logic and interaction behavior
 - `styles.css` — card layout and visual styling
-- `resources/README.md` — supported optional asset names and usage
+- `resources` — icons folder

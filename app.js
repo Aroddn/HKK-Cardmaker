@@ -4,6 +4,7 @@ const imageInput = document.querySelector('#card-image');
 const previewImage = document.querySelector('#preview-image');
 const artPlaceholder = document.querySelector('#art-placeholder');
 const fileName = document.querySelector('#file-name');
+const imageError = document.querySelector('#image-error');
 const factionInputs = [...form.querySelectorAll('input[name="faction"]')];
 let imageUrl = null;
 
@@ -240,14 +241,40 @@ form.querySelectorAll('.icon-choice-numeric').forEach((choice) => {
 });
 factionInputs.forEach((input) => input.addEventListener('change', handleFactionChange));
 
-imageInput.addEventListener('change', () => {
+imageInput.addEventListener('change', async () => {
   const file = imageInput.files[0];
   if (imageUrl) URL.revokeObjectURL(imageUrl);
-  imageUrl = file ? URL.createObjectURL(file) : null;
-  previewImage.hidden = !imageUrl;
-  artPlaceholder.hidden = Boolean(imageUrl);
-  if (imageUrl) previewImage.src = imageUrl;
-  fileName.textContent = file ? file.name : 'Nincs kép kiválasztva';
+  imageUrl = null;
+  previewImage.removeAttribute('src');
+  previewImage.hidden = true;
+  artPlaceholder.hidden = false;
+  fileName.textContent = 'Nincs kép kiválasztva';
+  imageError.hidden = true;
+  imageError.textContent = '';
+
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    imageInput.value = '';
+    imageError.textContent = 'Válassz egy érvényes képfájlt.';
+    imageError.hidden = false;
+    return;
+  }
+
+  const candidateUrl = URL.createObjectURL(file);
+  previewImage.src = candidateUrl;
+  try {
+    await previewImage.decode();
+    imageUrl = candidateUrl;
+    previewImage.hidden = false;
+    artPlaceholder.hidden = true;
+    fileName.textContent = file.name;
+  } catch {
+    URL.revokeObjectURL(candidateUrl);
+    previewImage.removeAttribute('src');
+    imageInput.value = '';
+    imageError.textContent = 'A kiválasztott fájl nem tölthető be képként.';
+    imageError.hidden = false;
+  }
 });
 
 document.querySelector('#reset-button').addEventListener('click', () => {
@@ -258,6 +285,8 @@ document.querySelector('#reset-button').addEventListener('click', () => {
   previewImage.hidden = true;
   artPlaceholder.hidden = false;
   fileName.textContent = 'Nincs kép kiválasztva';
+  imageError.hidden = true;
+  imageError.textContent = '';
   form.querySelectorAll('.icon-choice-numeric').forEach((choice) => {
     const toggle = choice.querySelector('input[name="icon"]');
     const valueInput = choice.querySelector('.icon-value, .icon-quantity');
