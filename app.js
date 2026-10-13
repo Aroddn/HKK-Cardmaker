@@ -32,25 +32,55 @@ const factions = [
 const factionByKey = new Map(factions.map((faction) => [faction.key, faction]));
 const exclusiveFactionKeys = new Set(['bufa', 'colorless', 'no-color']);
 const factionCombinationByKeys = new Map([
-  ['chara-din+tharr', {
-    label: 'Chara-din-Tharr',
-    image: 'resources/Base colors/Chara-din Tharr base.jpg',
-    fallback: '#554b5d'
-  }],
-  ['dornodon+sheran', {
-    label: 'Sheran-Dornodon',
-    image: 'resources/Base colors/Sheran Dornodon base.jpg',
-    fallback: '#897055'
+  ['chara-din+dornodon', {
+    label: 'Dornodon-Chara-din',
+    image: 'resources/Base colors/Dornodon Chara-din base.jpg',
+    fallback: '#9b7a52'
   }],
   ['chara-din+elenios', {
     label: 'Elenios-Chara-din',
     image: 'resources/Base colors/Elenios Chara-din base.jpg',
     fallback: '#7b7090'
   }],
+  ['chara-din+tharr', {
+    label: 'Chara-din-Tharr',
+    image: 'resources/Base colors/Chara-din Tharr base.jpg',
+    fallback: '#554b5d'
+  }],
   ['dornodon+elenios', {
     label: 'Elenios-Dornodon',
     image: 'resources/Base colors/Elenios Dornodon base.jpg',
     fallback: '#897055'
+  }],
+  ['dornodon+fairlight', {
+    label: 'Dornodon-Fairlight',
+    image: 'resources/Base colors/Dornodon Fairlight base.jpg',
+    fallback: '#bca554'
+  }],
+  ['dornodon+leah', {
+    label: 'Dornodon-Leah',
+    image: 'resources/Base colors/Dornodon Leah base.jpg',
+    fallback: '#687a60'
+  }],
+  ['dornodon+raia', {
+    label: 'Dornodon-Raia',
+    image: 'resources/Base colors/Dornodon Raia base.jpg',
+    fallback: '#a1896a'
+  }],
+  ['dornodon+rhatt', {
+    label: 'Dornodon-Rhatt',
+    image: 'resources/Base colors/Dornodon Rhatt base.jpg',
+    fallback: '#7b6c56'
+  }],
+  ['dornodon+sheran', {
+    label: 'Sheran-Dornodon',
+    image: 'resources/Base colors/Sheran Dornodon base.jpg',
+    fallback: '#897055'
+  }],
+  ['dornodon+tharr', {
+    label: 'Dornodon-Tharr',
+    image: 'resources/Base colors/Dornodon Tharr base.jpg',
+    fallback: '#6a5a61'
   }],
   ['elenios+fairlight', {
     label: 'Elenios-Fairlight',
@@ -62,10 +92,25 @@ const factionCombinationByKeys = new Map([
     image: 'resources/Base colors/Elenios leah base.jpg',
     fallback: '#6c856f'
   }],
+  ['elenios+raia', {
+    label: 'Elenios-Raia',
+    image: 'resources/Base colors/Elenios Raia base.jpg',
+    fallback: '#8c6d5a'
+  }],
   ['elenios+rhatt', {
     label: 'Elenios-Rhatt',
     image: 'resources/Base colors/Elenios Rhatt base.jpg',
     fallback: '#6c7080'
+  }],
+  ['elenios+sheran', {
+    label: 'Elenios-Sheran',
+    image: 'resources/Base colors/Elenios Sheran base.jpg',
+    fallback: '#6d7393'
+  }],
+  ['elenios+tharr', {
+    label: 'Elenios-Tharr',
+    image: 'resources/Base colors/Elenios Tharr base.jpg',
+    fallback: '#5e5d72'
   }]
 ]);
 

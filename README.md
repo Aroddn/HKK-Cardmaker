@@ -42,7 +42,7 @@ http://localhost:8000/
 
 ## Base-card images and optional overrides
 
-Faction base-card images are loaded from `resources/Base colors/`. Available individual bases are used for Bufa, Chara-din, Dornodon, Elenios, Fairlight, Leah, Raia, Rhatt, Sheran, Színtelen, and Narancs lap. Combined templates are used for Chara-din-Tharr, Sheran-Dornodon, and the available Elenios combinations (Chara-din, Dornodon, Fairlight, Leah, and Rhatt). Tharr on its own uses its built-in fallback color until an individual image is available. If a configured base image cannot be loaded, its fallback color is shown instead.
+Faction base-card images are loaded from `resources/Base colors/`. Available individual bases are used for Bufa, Chara-din, Dornodon, Elenios, Fairlight, Leah, Raia, Rhatt, Sheran, Színtelen, and Narancs lap. The app also supports the newly added pair templates for Chara-din, Dornodon, and Elenios combinations, including Dornodon-Chara-din, Dornodon-Fairlight, Dornodon-Leah, Dornodon-Raia, Dornodon-Rhatt, Dornodon-Tharr, Elenios-Raia, Elenios-Sheran, Elenios-Tharr, and the existing Chara-din-Tharr, Sheran-Dornodon, and Elenios pairings. Tharr on its own uses its built-in fallback color until an individual image is available. If a configured base image cannot be loaded, its fallback color is shown instead.
 
 Other optional resources, such as cost symbols and icons, are loaded from `resources/` when present and fall back to built-in symbols or colors when absent.
 

@@ -1,1 +1,19 @@
-Tharr
+            Dornodon    Fairlight   Leah    Raia    Rhatt   Sheran  Tharr   Elenios     Chara-din 
+
+Dornodon        x          ✅       ✅      ✅      ✅      ✅     ✅      ✅           ✅                       
+
+Fairlight      ✅          x                                                  ✅
+
+Leah           ✅                     x                                       ✅
+
+Raia           ✅                              x                              ✅
+
+Rhatt          ✅                                      x                      ✅
+
+Sheran         ✅                                              x              ✅
+
+Tharr          ✅                                                     x       ✅
+
+Elenios        ✅          ✅       ✅     ✅      ✅      ✅      ✅       x           ✅
+
+Chara-din      ✅                                                                           x
