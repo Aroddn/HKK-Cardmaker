@@ -17,15 +17,15 @@ let imageUrl = null;
 
 const factions = [
   { key: 'bufa', label: 'Bufa', image: 'resources/Base colors/Bufa base.jpg', fallback: '#8b563d', exclusive: true },
-  { key: 'chara-din', label: 'Chara-din', image: 'resources/Base colors/Chara-din base.jpg', fallback: '#a0473f' },
-  { key: 'dornodon', label: 'Dornodon', image: 'resources/Base colors/Dornodon base.jpg', fallback: '#a67d3e' },
-  { key: 'elenios', label: 'Elenios', image: 'resources/Base colors/Elenios base.jpg', fallback: '#537d9a' },
-  { key: 'fairlight', label: 'Fairlight', image: 'resources/Base colors/Fairlight base.jpg', fallback: '#cfb85e' },
-  { key: 'leah', label: 'Leah', image: 'resources/Base colors/Leah base.jpg', fallback: '#658a57' },
-  { key: 'raia', label: 'Raia', image: 'resources/Base colors/Raia base.jpg', fallback: '#a99a88' },
-  { key: 'rhatt', label: 'Rhatt', image: 'resources/Base colors/Rhatt base.jpg', fallback: '#6c604c' },
-  { key: 'sheran', label: 'Sheran', image: 'resources/Base colors/Sheran base.jpg', fallback: '#7b7192' },
-  { key: 'tharr', label: 'Tharr', fallback: '#554b5d' },
+  { key: 'chara-din', label: 'Chara-din', image: 'resources/Base colors/Chara-din/Chara-din base.jpg', fallback: '#a0473f' },
+  { key: 'dornodon', label: 'Dornodon', image: 'resources/Base colors/Dornodon/Dornodon base.jpg', fallback: '#a67d3e' },
+  { key: 'elenios', label: 'Elenios', image: 'resources/Base colors/Elenios/Elenios base.jpg', fallback: '#537d9a' },
+  { key: 'fairlight', label: 'Fairlight', image: 'resources/Base colors/Fairlight/Fairlight base.jpg', fallback: '#cfb85e' },
+  { key: 'leah', label: 'Leah', image: 'resources/Base colors/Leah/Leah base.jpg', fallback: '#658a57' },
+  { key: 'raia', label: 'Raia', image: 'resources/Base colors/Raia/Raia base.jpg', fallback: '#a99a88' },
+  { key: 'rhatt', label: 'Rhatt', image: 'resources/Base colors/Rhatt/Rhatt base.jpg', fallback: '#6c604c' },
+  { key: 'sheran', label: 'Sheran', image: 'resources/Base colors/Sheran/Sheran base.jpg', fallback: '#7b7192' },
+  { key: 'tharr', label: 'Tharr', image: 'resources/Base colors/Tharr/Tharr base.jpg', fallback: '#554b5d' },
   { key: 'colorless', label: 'Színtelen', image: 'resources/Base colors/Szintelen base.jpg', fallback: '#898b88', exclusive: true },
   { key: 'no-color', label: 'Narancs lap', image: 'resources/Base colors/Narancs lap base.jpg', fallback: '#343b3c', exclusive: true }
 ];
@@ -34,82 +34,82 @@ const exclusiveFactionKeys = new Set(['bufa', 'colorless', 'no-color']);
 const factionCombinationByKeys = new Map([
   ['chara-din+dornodon', {
     label: 'Dornodon-Chara-din',
-    image: 'resources/Base colors/Dornodon Chara-din base.jpg',
+    image: 'resources/Base colors/Dornodon/Dornodon Chara-din base.jpg',
     fallback: '#9b7a52'
   }],
   ['chara-din+elenios', {
     label: 'Elenios-Chara-din',
-    image: 'resources/Base colors/Elenios Chara-din base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Chara-din base.jpg',
     fallback: '#7b7090'
   }],
   ['chara-din+tharr', {
     label: 'Chara-din-Tharr',
-    image: 'resources/Base colors/Chara-din Tharr base.jpg',
+    image: 'resources/Base colors/Chara-din/Chara-din Tharr base.jpg',
     fallback: '#554b5d'
   }],
   ['dornodon+elenios', {
     label: 'Elenios-Dornodon',
-    image: 'resources/Base colors/Elenios Dornodon base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Dornodon base.jpg',
     fallback: '#897055'
   }],
   ['dornodon+fairlight', {
     label: 'Dornodon-Fairlight',
-    image: 'resources/Base colors/Dornodon Fairlight base.jpg',
+    image: 'resources/Base colors/Dornodon/Dornodon Fairlight base.jpg',
     fallback: '#bca554'
   }],
   ['dornodon+leah', {
     label: 'Dornodon-Leah',
-    image: 'resources/Base colors/Dornodon Leah base.jpg',
+    image: 'resources/Base colors/Dornodon/Dornodon Leah base.jpg',
     fallback: '#687a60'
   }],
   ['dornodon+raia', {
     label: 'Dornodon-Raia',
-    image: 'resources/Base colors/Dornodon Raia base.jpg',
+    image: 'resources/Base colors/Dornodon/Dornodon Raia base.jpg',
     fallback: '#a1896a'
   }],
   ['dornodon+rhatt', {
     label: 'Dornodon-Rhatt',
-    image: 'resources/Base colors/Dornodon Rhatt base.jpg',
+    image: 'resources/Base colors/Dornodon/Dornodon Rhatt base.jpg',
     fallback: '#7b6c56'
   }],
   ['dornodon+sheran', {
     label: 'Sheran-Dornodon',
-    image: 'resources/Base colors/Sheran Dornodon base.jpg',
+    image: 'resources/Base colors/Sheran/Sheran Dornodon base.jpg',
     fallback: '#897055'
   }],
   ['dornodon+tharr', {
     label: 'Dornodon-Tharr',
-    image: 'resources/Base colors/Dornodon Tharr base.jpg',
+    image: 'resources/Base colors/Dornodon/Dornodon Tharr base.jpg',
     fallback: '#6a5a61'
   }],
   ['elenios+fairlight', {
     label: 'Elenios-Fairlight',
-    image: 'resources/Base colors/Elenios Fairlight base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Fairlight base.jpg',
     fallback: '#9d9b79'
   }],
   ['elenios+leah', {
     label: 'Elenios-Leah',
-    image: 'resources/Base colors/Elenios leah base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios leah base.jpg',
     fallback: '#6c856f'
   }],
   ['elenios+raia', {
     label: 'Elenios-Raia',
-    image: 'resources/Base colors/Elenios Raia base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Raia base.jpg',
     fallback: '#8c6d5a'
   }],
   ['elenios+rhatt', {
     label: 'Elenios-Rhatt',
-    image: 'resources/Base colors/Elenios Rhatt base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Rhatt base.jpg',
     fallback: '#6c7080'
   }],
   ['elenios+sheran', {
     label: 'Elenios-Sheran',
-    image: 'resources/Base colors/Elenios Sheran base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Sheran base.jpg',
     fallback: '#6d7393'
   }],
   ['elenios+tharr', {
     label: 'Elenios-Tharr',
-    image: 'resources/Base colors/Elenios Tharr base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Tharr base.jpg',
     fallback: '#5e5d72'
   }]
 ]);
