@@ -32,6 +32,31 @@ const factions = [
 const factionByKey = new Map(factions.map((faction) => [faction.key, faction]));
 const exclusiveFactionKeys = new Set(['bufa', 'colorless', 'no-color']);
 const factionCombinationByKeys = new Map([
+  ['chara-din+fairlight', {
+    label: 'Chara-din-Fairlight',
+    image: 'resources/Base colors/Chara-din/Chara-din Fairlight base.jpg',
+    fallback: '#b38c4e'
+  }],
+  ['chara-din+leah', {
+    label: 'Chara-din-Leah',
+    image: 'resources/Base colors/Chara-din/Chara-din Leah base.jpg',
+    fallback: '#82694b'
+  }],
+  ['chara-din+raia', {
+    label: 'Chara-din-Raia',
+    image: 'resources/Base colors/Chara-din/Chara-din Raia base.jpg',
+    fallback: '#a07064'
+  }],
+  ['chara-din+rhatt', {
+    label: 'Chara-din-Rhatt',
+    image: 'resources/Base colors/Chara-din/Chara-din Rhatt base.jpg',
+    fallback: '#865448'
+  }],
+  ['chara-din+sheran', {
+    label: 'Chara-din-Sheran',
+    image: 'resources/Base colors/Chara-din/Chara-din Sheran base.jpg',
+    fallback: '#8d5c69'
+  }],
   ['chara-din+dornodon', {
     label: 'Dornodon-Chara-din',
     image: 'resources/Base colors/Dornodon/Dornodon Chara-din base.jpg',
@@ -111,6 +136,81 @@ const factionCombinationByKeys = new Map([
     label: 'Elenios-Tharr',
     image: 'resources/Base colors/Elenios/Elenios Tharr base.jpg',
     fallback: '#5e5d72'
+  }],
+  ['fairlight+leah', {
+    label: 'Fairlight-Leah',
+    image: 'resources/Base colors/Fairlight/Fairlight Leah base.jpg',
+    fallback: '#9a9a5a'
+  }],
+  ['fairlight+raia', {
+    label: 'Fairlight-Raia',
+    image: 'resources/Base colors/Fairlight/Fairlight Raia base.jpg',
+    fallback: '#b4a373'
+  }],
+  ['fairlight+rhatt', {
+    label: 'Fairlight-Rhatt',
+    image: 'resources/Base colors/Fairlight/Fairlight Rhatt base.jpg',
+    fallback: '#9e8c55'
+  }],
+  ['fairlight+sheran', {
+    label: 'Fairlight-Sheran',
+    image: 'resources/Base colors/Fairlight/Fairlight Sheran base.jpg',
+    fallback: '#a59978'
+  }],
+  ['fairlight+tharr', {
+    label: 'Fairlight-Tharr',
+    image: 'resources/Base colors/Fairlight/Fairlight Tharr base.jpg',
+    fallback: '#92816d'
+  }],
+  ['leah+raia', {
+    label: 'Leah-Raia',
+    image: 'resources/Base colors/Leah/Leah Raia base.jpg',
+    fallback: '#879273'
+  }],
+  ['leah+rhatt', {
+    label: 'Leah-Rhatt',
+    image: 'resources/Base colors/Leah/Leah Rhatt base.jpg',
+    fallback: '#687352'
+  }],
+  ['leah+sheran', {
+    label: 'Leah-Sheran',
+    image: 'resources/Base colors/Leah/Leah Sheran base.jpg',
+    fallback: '#708078'
+  }],
+  ['leah+tharr', {
+    label: 'Leah-Tharr',
+    image: 'resources/Base colors/Leah/Leah Tharr base.jpg',
+    fallback: '#5d6a5a'
+  }],
+  ['raia+rhatt', {
+    label: 'Raia-Rhatt',
+    image: 'resources/Base colors/Raia/Raia Rhatt base.jpg',
+    fallback: '#8a7d6a'
+  }],
+  ['raia+sheran', {
+    label: 'Raia-Sheran',
+    image: 'resources/Base colors/Raia/Raia Sheran base.jpg',
+    fallback: '#92859d'
+  }],
+  ['rhatt+sheran', {
+    label: 'Sheran-Rhatt',
+    image: 'resources/Base colors/Sheran/Sheran Rhatt base.jpg',
+    fallback: '#736978'
+  }],
+  ['raia+tharr', {
+    label: 'Tharr-Raia',
+    image: 'resources/Base colors/Tharr/Tharr Raia base.jpg',
+    fallback: '#7f726d'
+  }],
+  ['rhatt+tharr', {
+    label: 'Tharr-Rhatt',
+    image: 'resources/Base colors/Tharr/Tharr Rhatt base.jpg',
+    fallback: '#605667'
+  }],
+  ['sheran+tharr', {
+    label: 'Tharr-Sheran',
+    image: 'resources/Base colors/Tharr/Tharr Sheran base.jpg',
+    fallback: '#685f78'
   }]
 ]);
 

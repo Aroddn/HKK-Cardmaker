@@ -6,13 +6,13 @@ Fairlight      ✅          x        ✅      ✅      ✅      ✅     ✅     
 
 Leah           ✅          ✅       x       ✅      ✅      ✅     ✅      ✅          ✅
 
-Raia           ✅          ✅       ✅      x       ✅      ✅             ✅          ✅
+Raia           ✅          ✅       ✅      x       ✅      ✅     ✅      ✅          ✅
 
-Rhatt          ✅          ✅       ✅               x                      ✅          ✅
+Rhatt          ✅          ✅       ✅               x              ✅      ✅          ✅
 
-Sheran         ✅          ✅       ✅                       x              ✅          ✅
+Sheran         ✅          ✅       ✅                       x      ✅      ✅          ✅
 
-Tharr          ✅          ✅       ✅                              x       ✅          ✅
+Tharr          ✅          ✅       ✅     ✅      ✅      ✅      x       ✅          ✅
 
 Elenios        ✅          ✅       ✅     ✅      ✅      ✅     ✅       x          ✅
 
