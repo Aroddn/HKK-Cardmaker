@@ -2,22 +2,90 @@ const form = document.querySelector('#card-form');
 const card = document.querySelector('#hkk-card');
 const imageInput = document.querySelector('#card-image');
 const previewImage = document.querySelector('#preview-image');
-const artPlaceholder = document.querySelector('#art-placeholder');
+const backgroundCardImage = document.querySelector('#background-card-image');
+const backgroundImagePositionControls = document.querySelector('#background-image-position-controls');
 const fileName = document.querySelector('#file-name');
 const imageError = document.querySelector('#image-error');
 const factionInputs = [...form.querySelectorAll('input[name="faction"]')];
 const rulesTextInput = form.querySelector('#card-text');
+const typeTextColorToggle = document.querySelector('#toggle-type-text-color');
+const cardBandIconAssets = new Map([
+  ['védekezés', 'Védekezés'],
+  ['életkioltó', 'Életkioltó'],
+  ['ereklye', 'Ereklye'],
+  ['erőd', 'Erőd'],
+  ['fa', 'Fa'],
+  ['fém', 'Fém'],
+  ['háló', 'Háló'],
+  ['hegymélyi', 'Hegymélyi'],
+  ['hideg', null],
+  ['horgony', 'Horgony'],
+  ['idézés', null],
+  ['kegy', 'Kegy'],
+  ['KF', 'KF'],
+  ['kincs', null],
+  ['köd', null],
+  ['legendás', 'Legendás'],
+  ['mentális', null],
+  ['ősmágia', 'Ősmágia'],
+  ['Reakció drágítás', null],
+  ['rezisztencia', 'Rezisztencia'],
+  ['sav', 'Sav'],
+  ['tűz', 'Tűz'],
+  ['villám', 'Villám'],
+  ['Oltalom', null],
+  ['Szörnykomponens', 'Szörnykomponens']
+].map(([value, name]) => [value, name && `resources/Icons/${name}.png`]));
 const rulesTextIcons = [
-  { token: '[Körönként egyszer2]', path: 'resources/Icons/Körönként egyszer2.png', alt: 'Körönként egyszer 2' },
-  { token: '[Körönként egyszer]', path: 'resources/Icons/Körönként egyszer.png', alt: 'Körönként egyszer' }
+  ...[
+    'Csont',
+    'Ell körében egyszer',
+    'Ereklye',
+    'Erőd',
+    'Fa',
+    'Fém',
+    'Hegymélyi',
+    'Horgony',
+    'Háló',
+    'Játékonként egyszer',
+    'KF',
+    'Kegy',
+    'Körönként egyszer',
+    'Legendás',
+    'Lehelet',
+    'Passzivizálás',
+    'Pszionikus',
+    'Rezisztencia',
+    'Sav',
+    'Szörnykomponens',
+    'Tűz',
+    'VP',
+    'Villám',
+    'Védekezés',
+    'Védelem',
+    'Áldozás',
+    'Életkioltó',
+    'Élőholt',
+    'Építő',
+    'Ősmágia'
+  ].map((name) => ({
+    token: `[${name}]`,
+    path: `resources/Icons/${name}.png`,
+    alt: name
+  }))
 ];
 const rulesTextIconByToken = new Map(rulesTextIcons.map((icon) => [icon.token, icon]));
-const rulesTextIconPattern = /(\[Körönként egyszer2?\])/g;
+const rulesTextIconTokenPattern = rulesTextIcons
+  .map(({ token }) => token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+  .sort((a, b) => b.length - a.length)
+  .join('|');
+const rulesTextIconPattern = new RegExp(`(${rulesTextIconTokenPattern})`, 'g');
+const rulesTextIconWordPattern = new RegExp(`${rulesTextIconTokenPattern}|[^\\s]+`, 'g');
 let imageUrl = null;
 
 const factions = [
-  { key: 'bufa', label: 'Bufa', image: 'resources/Base colors/Bufa base.jpg', fallback: '#8b563d', exclusive: true },
-  { key: 'chara-din', label: 'Chara-din', image: 'resources/Base colors/Chara-din/Chara-din base.jpg', fallback: '#a0473f' },
+  { key: 'bufa', label: 'Bufa', image: 'resources/Base colors/Bufa base_transparent.png', fallback: '#8b563d', exclusive: true },
+  { key: 'chara-din', label: 'Chara-din', image: 'resources/Base colors/Chara-din/Chara-din base_transparent.png', fallback: '#a0473f' },
   { key: 'dornodon', label: 'Dornodon', image: 'resources/Base colors/Dornodon/Dornodon base.jpg', fallback: '#a67d3e' },
   { key: 'elenios', label: 'Elenios', image: 'resources/Base colors/Elenios/Elenios base.jpg', fallback: '#537d9a' },
   { key: 'fairlight', label: 'Fairlight', image: 'resources/Base colors/Fairlight/Fairlight base.jpg', fallback: '#cfb85e' },
@@ -26,30 +94,30 @@ const factions = [
   { key: 'rhatt', label: 'Rhatt', image: 'resources/Base colors/Rhatt/Rhatt base.jpg', fallback: '#6c604c' },
   { key: 'sheran', label: 'Sheran', image: 'resources/Base colors/Sheran/Sheran base.jpg', fallback: '#7b7192' },
   { key: 'tharr', label: 'Tharr', image: 'resources/Base colors/Tharr/Tharr base.jpg', fallback: '#554b5d' },
-  { key: 'colorless', label: 'Színtelen', image: 'resources/Base colors/Szintelen base.jpg', fallback: '#898b88', exclusive: true },
-  { key: 'no-color', label: 'Narancs lap', image: 'resources/Base colors/Narancs lap base.jpg', fallback: '#343b3c', exclusive: true }
+  { key: 'colorless', label: 'Színtelen', image: 'resources/Base colors/Szintelen base_transparent.png', fallback: '#898b88', exclusive: true },
+  { key: 'no-color', label: 'Narancs lap', image: 'resources/Base colors/Narancs lap base_transparent.png', fallback: '#343b3c', exclusive: true }
 ];
 const factionByKey = new Map(factions.map((faction) => [faction.key, faction]));
 const exclusiveFactionKeys = new Set(['bufa', 'colorless', 'no-color']);
 const factionCombinationByKeys = new Map([
   ['chara-din+fairlight', {
     label: 'Chara-din-Fairlight',
-    image: 'resources/Base colors/Chara-din/Chara-din Fairlight base.jpg',
+    image: 'resources/Base colors/Chara-din/Chara-din Fairlight base_transparent.png',
     fallback: '#b38c4e'
   }],
   ['chara-din+leah', {
     label: 'Chara-din-Leah',
-    image: 'resources/Base colors/Chara-din/Chara-din Leah base.jpg',
+    image: 'resources/Base colors/Chara-din/Chara-din Leah base_transparent.png',
     fallback: '#82694b'
   }],
   ['chara-din+raia', {
     label: 'Chara-din-Raia',
-    image: 'resources/Base colors/Chara-din/Chara-din Raia base.jpg',
+    image: 'resources/Base colors/Chara-din/Chara-din Raia base_transparent.png',
     fallback: '#a07064'
   }],
   ['chara-din+rhatt', {
     label: 'Chara-din-Rhatt',
-    image: 'resources/Base colors/Chara-din/Chara-din Rhatt base.jpg',
+    image: 'resources/Base colors/Chara-din/Chara-din Rhatt base_transparent.png',
     fallback: '#865448'
   }],
   ['chara-din+sheran', {
@@ -69,7 +137,7 @@ const factionCombinationByKeys = new Map([
   }],
   ['chara-din+tharr', {
     label: 'Chara-din-Tharr',
-    image: 'resources/Base colors/Chara-din/Chara-din Tharr base.jpg',
+    image: 'resources/Base colors/Chara-din/Chara-din Tharr base_transparent.png',
     fallback: '#554b5d'
   }],
   ['dornodon+elenios', {
@@ -309,17 +377,17 @@ function updatePreview() {
   const selectedFactions = values.getAll('faction');
   const type = String(values.get('type') || '').trim();
   const subtype = String(values.get('subtype') || '').trim();
-  const rarity = values.get('rarity') || 'Gyakori';
   const power = String(values.get('power') || '').trim();
   const toughness = String(values.get('toughness') || '').trim();
+  const secondaryStatType = values.get('secondaryStatType') || 'toughness';
+  const secondaryStatLabel = secondaryStatType === 'structural' ? 'Strukturális pont' : 'Védettség';
 
   document.querySelector('#preview-name').textContent = name || 'Névtelen kártya';
   document.querySelector('#preview-card-type').textContent = type;
   document.querySelector('#preview-card-type').hidden = !type;
   document.querySelector('#preview-subtype').textContent = subtype;
   document.querySelector('#preview-subtype').hidden = !subtype;
-  document.querySelector('#preview-rarity').textContent = rarity;
-  renderRulesText(document.querySelector('#preview-text'), text || 'Nincs kártyaszöveg.');
+  renderRulesText(document.querySelector('#preview-text'), text);
   const previewFlavorText = document.querySelector('#preview-flavor-text');
   previewFlavorText.textContent = flavorText;
   previewFlavorText.hidden = !flavorText;
@@ -327,6 +395,15 @@ function updatePreview() {
 
   document.querySelector('#preview-power').textContent = power;
   document.querySelector('#preview-toughness').textContent = toughness;
+  const powerStat = document.querySelector('.stat-power');
+  const secondaryStat = document.querySelector('#preview-secondary-stat');
+  const toughnessIcon = document.querySelector('#preview-toughness-icon');
+  powerStat.hidden = !power;
+  secondaryStat.hidden = !toughness;
+  secondaryStat.setAttribute('aria-label', `${secondaryStatLabel}: ${toughness}`);
+  toughnessIcon.hidden = secondaryStatType !== 'toughness' || !toughness;
+  document.querySelector('#card-toughness').setAttribute('aria-label', `${secondaryStatLabel} értéke`);
+  document.querySelector('#preview-stats').hidden = !power && !toughness;
 
   const activeCostCount = costDetails.filter(({ key }) => String(values.get(key) || '').trim() !== '').length;
   card.dataset.costCount = String(activeCostCount);
@@ -337,6 +414,20 @@ function updatePreview() {
   const baseFactions = combination
     ? [combination]
     : selectedFactions.map((key) => factionByKey.get(key));
+  const hasTransparentBase = baseFactions.some(({ image }) => image?.endsWith('_transparent.png'));
+  const useBackgroundCardImage = hasTransparentBase && Boolean(imageUrl);
+  card.dataset.backgroundImageMode = String(useBackgroundCardImage);
+  backgroundCardImage.hidden = !useBackgroundCardImage;
+  if (useBackgroundCardImage) {
+    if (backgroundCardImage.getAttribute('src') !== imageUrl) {
+      backgroundCardImage.src = imageUrl;
+    }
+  } else {
+    backgroundCardImage.removeAttribute('src');
+  }
+  previewImage.hidden = !imageUrl || useBackgroundCardImage;
+  backgroundImagePositionControls.hidden = !useBackgroundCardImage;
+  updateBackgroundImagePosition();
   baseLayers.classList.toggle('multi-color', baseFactions.length === 2);
   baseLayers.innerHTML = baseFactions.map((faction) => {
     const image = faction.image
@@ -348,6 +439,41 @@ function updatePreview() {
   watchResourceImages(baseLayers);
 
   const selectedIcons = values.getAll('icon');
+  const selectedBandIcons = selectedIcons
+    .filter((icon) => cardBandIconAssets.has(icon))
+    .flatMap((icon) => icon === 'Szörnykomponens'
+      ? Array(Math.max(1, Number(values.get('monsterComponent')) || 1)).fill(icon)
+      : [icon]);
+  const bandIconValueLabels = [];
+  if (selectedIcons.includes('Reakció drágítás')) {
+    const surcharge = String(values.get('reactionSurcharge') || '').trim();
+    if (surcharge) bandIconValueLabels.push(`Reakció drágítás: ${surcharge}`);
+  }
+  if (selectedIcons.includes('Oltalom')) {
+    const protection = String(values.get('protection') || '').trim();
+    if (protection) bandIconValueLabels.push(`Oltalom: ${protection}`);
+  }
+  const bandIconContainer = document.querySelector('#preview-band-icons');
+  bandIconContainer.replaceChildren(...selectedBandIcons.map((iconName) => {
+    const icon = document.createElement('span');
+    icon.className = 'card-band-icon';
+    icon.title = iconName;
+    icon.setAttribute('aria-label', iconName);
+    const asset = cardBandIconAssets.get(iconName);
+    if (asset) {
+      const image = document.createElement('img');
+      image.src = asset;
+      image.alt = '';
+      icon.append(image);
+    } else {
+      icon.classList.add('card-band-icon-placeholder');
+      icon.textContent = '?';
+    }
+    return icon;
+  }));
+  bandIconContainer.style.setProperty('--band-icon-count', String(selectedBandIcons.length));
+  bandIconContainer.hidden = selectedBandIcons.length === 0;
+  selectedIcons.splice(0, selectedIcons.length, ...selectedIcons.filter((icon) => !cardBandIconAssets.has(icon)), ...bandIconValueLabels);
   const reactionSurcharge = String(values.get('reactionSurcharge') || '').trim();
   if (selectedIcons.includes('Reakció drágítás') && reactionSurcharge) {
     selectedIcons[selectedIcons.indexOf('Reakció drágítás')] = `Reakció drágítás: ${reactionSurcharge}`;
@@ -379,6 +505,30 @@ function updatePreview() {
   watchResourceImages(document.querySelector('#preview-costs'));
 }
 
+typeTextColorToggle.addEventListener('click', () => {
+  const useWhite = typeTextColorToggle.getAttribute('aria-pressed') !== 'true';
+  typeTextColorToggle.setAttribute('aria-pressed', String(useWhite));
+  typeTextColorToggle.textContent = `Típus és altípus színe: ${useWhite ? 'fehér' : 'fekete'}`;
+  card.dataset.typeTextColor = useWhite ? 'white' : 'black';
+});
+
+function updateBackgroundImagePosition() {
+  const horizontal = document.querySelector('#background-image-horizontal').value;
+  const vertical = document.querySelector('#background-image-vertical').value;
+  const scale = document.querySelector('#background-image-scale').value;
+  backgroundCardImage.style.left = `calc(50% + ${horizontal}%)`;
+  backgroundCardImage.style.top = `calc(50% + ${vertical}%)`;
+  backgroundCardImage.style.width = `${scale}%`;
+  backgroundCardImage.style.height = `${scale}%`;
+  document.querySelector('#background-image-horizontal-value').textContent = `${horizontal}%`;
+  document.querySelector('#background-image-vertical-value').textContent = `${vertical}%`;
+  document.querySelector('#background-image-scale-value').textContent = `${scale}%`;
+}
+
+document.querySelectorAll('#background-image-position-controls input').forEach((input) => {
+  input.addEventListener('input', updateBackgroundImagePosition);
+});
+
 function bindPresetPicker(picker, input) {
   picker.addEventListener('change', () => {
     const selectedValue = picker.value;
@@ -394,11 +544,51 @@ function bindPresetPicker(picker, input) {
         input.value = existingValues.join(', ');
       }
     }
+    lowercaseInitialLetters(input);
     updatePreview();
   });
 }
 bindPresetPicker(form.querySelector('#subtype-picker'), form.querySelector('#card-subtype'));
 bindPresetPicker(form.querySelector('#type-picker'), form.querySelector('#card-type'));
+function lowercaseInitialLetters(input) {
+  const value = input.value;
+  const changes = [];
+  for (const match of value.matchAll(/(^|[,;\n]\s*)(\p{L})/gu)) {
+    const original = match[2];
+    const lowercase = original.toLocaleLowerCase('hu-HU');
+    if (original !== lowercase) {
+      changes.push({
+        start: match.index + match[1].length,
+        original,
+        lowercase
+      });
+    }
+  }
+  if (!changes.length) return;
+
+  const selectionStart = input.selectionStart;
+  const selectionEnd = input.selectionEnd;
+  const selectionDirection = input.selectionDirection;
+  const mapPosition = (position) => {
+    let offset = 0;
+    for (const change of changes) {
+      if (position <= change.start) break;
+      if (position <= change.start + change.original.length) {
+        return change.start + offset + change.lowercase.length;
+      }
+      offset += change.lowercase.length - change.original.length;
+    }
+    return position + offset;
+  };
+  input.value = value.replace(/(^|[,;\n]\s*)(\p{L})/gu,
+    (match, separator, letter) => separator + letter.toLocaleLowerCase('hu-HU'));
+  input.setSelectionRange(mapPosition(selectionStart), mapPosition(selectionEnd), selectionDirection);
+}
+const typeTextInputs = [form.querySelector('#card-type'), form.querySelector('#card-subtype')];
+typeTextInputs.forEach((input) => {
+  lowercaseInitialLetters(input);
+  input.addEventListener('input', () => lowercaseInitialLetters(input));
+});
 function insertRulesTextIcon(token) {
   const start = rulesTextInput.selectionStart;
   const end = rulesTextInput.selectionEnd;
@@ -414,11 +604,19 @@ function insertRulesTextIcon(token) {
   rulesTextInput.dispatchEvent(new Event('input', { bubbles: true }));
   rulesTextInput.focus();
 }
-document.querySelector('#insert-once-icon').addEventListener('click', () => {
-  insertRulesTextIcon(rulesTextIcons[1].token);
-});
-document.querySelector('#insert-once-icon-2').addEventListener('click', () => {
-  insertRulesTextIcon(rulesTextIcons[0].token);
+const rulesTextIconButtons = document.querySelector('#rules-text-icon-buttons');
+rulesTextIcons.forEach((icon) => {
+  const button = document.createElement('button');
+  button.className = 'text-insert-button';
+  button.type = 'button';
+  button.title = icon.token;
+
+  const image = document.createElement('img');
+  image.src = icon.path;
+  image.alt = '';
+  button.append(image, document.createTextNode(icon.alt));
+  button.addEventListener('click', () => insertRulesTextIcon(icon.token));
+  rulesTextIconButtons.append(button);
 });
 form.addEventListener('input', updatePreview);
 form.addEventListener('change', updatePreview);
@@ -439,16 +637,21 @@ imageInput.addEventListener('change', async () => {
   imageUrl = null;
   previewImage.removeAttribute('src');
   previewImage.hidden = true;
-  artPlaceholder.hidden = false;
+  backgroundCardImage.hidden = true;
+  backgroundCardImage.removeAttribute('src');
   fileName.textContent = 'Nincs kép kiválasztva';
   imageError.hidden = true;
   imageError.textContent = '';
 
-  if (!file) return;
+  if (!file) {
+    updatePreview();
+    return;
+  }
   if (!file.type.startsWith('image/')) {
     imageInput.value = '';
     imageError.textContent = 'Válassz egy érvényes képfájlt.';
     imageError.hidden = false;
+    updatePreview();
     return;
   }
 
@@ -458,14 +661,15 @@ imageInput.addEventListener('change', async () => {
     await previewImage.decode();
     imageUrl = candidateUrl;
     previewImage.hidden = false;
-    artPlaceholder.hidden = true;
     fileName.textContent = file.name;
+    updatePreview();
   } catch {
     URL.revokeObjectURL(candidateUrl);
     previewImage.removeAttribute('src');
     imageInput.value = '';
     imageError.textContent = 'A kiválasztott fájl nem tölthető be képként.';
     imageError.hidden = false;
+    updatePreview();
   }
 });
 
@@ -475,7 +679,8 @@ document.querySelector('#reset-button').addEventListener('click', () => {
   imageUrl = null;
   previewImage.removeAttribute('src');
   previewImage.hidden = true;
-  artPlaceholder.hidden = false;
+  backgroundCardImage.removeAttribute('src');
+  backgroundCardImage.hidden = true;
   fileName.textContent = 'Nincs kép kiválasztva';
   imageError.hidden = true;
   imageError.textContent = '';
@@ -534,31 +739,6 @@ function drawCover(context, image, rect) {
   context.restore();
 }
 
-function drawFallbackArtwork(context, rect) {
-  const sky = context.createLinearGradient(rect.x, rect.y, rect.x, rect.y + rect.height);
-  sky.addColorStop(0, '#141c32');
-  sky.addColorStop(.62, '#252d3c');
-  sky.addColorStop(1, '#191d1d');
-  context.fillStyle = sky;
-  context.fillRect(rect.x, rect.y, rect.width, rect.height);
-  context.fillStyle = '#d2cba8';
-  context.beginPath();
-  context.arc(rect.x + rect.width * .78, rect.y + rect.height * .2, rect.width * .07, 0, Math.PI * 2);
-  context.fill();
-  context.fillStyle = '#1a202b';
-  context.beginPath();
-  context.moveTo(rect.x, rect.y + rect.height * .83);
-  context.lineTo(rect.x + rect.width * .24, rect.y + rect.height * .43);
-  context.lineTo(rect.x + rect.width * .39, rect.y + rect.height * .72);
-  context.lineTo(rect.x + rect.width * .59, rect.y + rect.height * .36);
-  context.lineTo(rect.x + rect.width * .82, rect.y + rect.height * .74);
-  context.lineTo(rect.x + rect.width, rect.y + rect.height * .48);
-  context.lineTo(rect.x + rect.width, rect.y + rect.height);
-  context.lineTo(rect.x, rect.y + rect.height);
-  context.closePath();
-  context.fill();
-}
-
 function drawWrappedText(context, text, rect, font, color, lineHeight, alignment) {
   context.save();
   context.beginPath();
@@ -612,7 +792,7 @@ function drawWrappedRulesText(context, text, rect, font, color, lineHeight, alig
   let y = rect.y;
 
   for (const paragraph of paragraphs) {
-    const words = paragraph.match(/\[Körönként egyszer2?\]|[^\s]+/g) || [];
+    const words = paragraph.match(rulesTextIconWordPattern) || [];
     let line = [];
     let lineWidth = 0;
 
@@ -672,6 +852,9 @@ async function renderCardPng() {
   context.imageSmoothingQuality = 'high';
 
   const baseLayers = [...document.querySelectorAll('#base-color-layers .card-base-layer')];
+  if (card.dataset.backgroundImageMode === 'true' && backgroundCardImage.naturalWidth) {
+    drawCover(context, backgroundCardImage, getCanvasRect(backgroundCardImage, cardRect, scaleX, scaleY));
+  }
   if (!baseLayers.length) {
     context.fillStyle = '#111719';
     context.fillRect(0, 0, exportWidth, exportHeight);
@@ -701,15 +884,16 @@ async function renderCardPng() {
     context.restore();
   });
 
-  const artRect = getCanvasRect(document.querySelector('.art-frame'), cardRect, scaleX, scaleY);
-  if (!previewImage.hidden && previewImage.naturalWidth) drawCover(context, previewImage, artRect);
-  else drawFallbackArtwork(context, artRect);
+  if (card.dataset.backgroundImageMode !== 'true' && !previewImage.hidden && previewImage.naturalWidth) {
+    drawCover(context, previewImage, getCanvasRect(document.querySelector('.art-frame'), cardRect, scaleX, scaleY));
+  }
 
   const nameElement = document.querySelector('#preview-name');
   const nameRect = getCanvasRect(nameElement, cardRect, scaleX, scaleY);
   const nameStyle = getComputedStyle(nameElement);
   context.fillStyle = nameStyle.color;
   context.font = `${nameStyle.fontWeight} ${parseFloat(nameStyle.fontSize) * scaleY}px ${nameStyle.fontFamily}`;
+  context.letterSpacing = `${parseFloat(nameStyle.letterSpacing) * scaleX}px`;
   context.textAlign = nameStyle.textAlign;
   context.textBaseline = 'top';
   context.shadowColor = 'rgba(255, 249, 232, .8)';
@@ -733,6 +917,7 @@ async function renderCardPng() {
       const metaStyle = getComputedStyle(element);
       context.fillStyle = metaStyle.color;
       context.font = `${metaStyle.fontStyle} ${metaStyle.fontWeight} ${Math.max(9, parseFloat(metaStyle.fontSize) * scaleY)}px ${metaStyle.fontFamily}`;
+      context.letterSpacing = `${parseFloat(metaStyle.letterSpacing) * scaleX}px`;
       context.textAlign = metaStyle.textAlign;
       context.textBaseline = 'middle';
       const textX = metaStyle.textAlign === 'right'
@@ -790,6 +975,27 @@ async function renderCardPng() {
     context.fillText(icon.textContent, rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width - 4 * scaleX);
   });
 
+  document.querySelectorAll('#preview-band-icons .card-band-icon').forEach((icon) => {
+    const rect = getCanvasRect(icon, cardRect, scaleX, scaleY);
+    const image = icon.querySelector('img');
+    if (image?.naturalWidth) {
+      context.drawImage(image, rect.x, rect.y, rect.width, rect.height);
+    } else {
+      context.fillStyle = '#fffdf7';
+      context.strokeStyle = '#514b3b';
+      context.lineWidth = Math.max(1, scaleX);
+      context.beginPath();
+      context.arc(rect.x + rect.width / 2, rect.y + rect.height / 2, Math.min(rect.width, rect.height) / 2, 0, Math.PI * 2);
+      context.fill();
+      context.stroke();
+      context.fillStyle = '#292c2b';
+      context.font = `700 ${rect.height * .72}px Georgia, 'Times New Roman', serif`;
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.fillText('?', rect.x + rect.width / 2, rect.y + rect.height / 2);
+    }
+  });
+
   const rules = document.querySelector('#preview-text');
   const rulesRect = getCanvasRect(rules, cardRect, scaleX, scaleY);
   const rulesStyle = getComputedStyle(rules);
@@ -804,7 +1010,7 @@ async function renderCardPng() {
       rulesInlineIcons.set(icon.token, image);
     }
   }
-  drawWrappedRulesText(context, rulesTextInput.value || 'Nincs kártyaszöveg.', {
+  drawWrappedRulesText(context, rulesTextInput.value.trim(), {
     x: rulesRect.x,
     y: rulesRect.y,
     width: rulesRect.width,
@@ -825,7 +1031,7 @@ async function renderCardPng() {
 
   const statsPanel = document.querySelector('#preview-stats');
   if (!statsPanel.hidden) {
-    const statBoxes = statsPanel.querySelectorAll('.stat-box');
+    const statBoxes = [...statsPanel.querySelectorAll('.stat-box')].filter((box) => !box.hidden);
     statBoxes.forEach((box) => {
       const boxRect = getCanvasRect(box, cardRect, scaleX, scaleY);
       context.fillStyle = '#101a20';
@@ -833,6 +1039,12 @@ async function renderCardPng() {
       context.strokeStyle = '#d2b15e';
       context.lineWidth = Math.max(1, scaleX);
       context.strokeRect(boxRect.x, boxRect.y, boxRect.width, boxRect.height);
+
+      const icon = box.querySelector('.stat-icon');
+      if (icon && !icon.hidden && icon.naturalWidth) {
+        const iconRect = getCanvasRect(icon, cardRect, scaleX, scaleY);
+        context.drawImage(icon, iconRect.x, iconRect.y, iconRect.width, iconRect.height);
+      }
 
       const value = box.querySelector('strong');
       if (value) {
@@ -845,26 +1057,6 @@ async function renderCardPng() {
         context.fillText(value.textContent, valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
       }
     });
-  }
-
-  const setMark = document.querySelector('.card-set');
-  const setRect = getCanvasRect(setMark, cardRect, scaleX, scaleY);
-  const setStyle = getComputedStyle(setMark);
-  context.fillStyle = setStyle.color;
-  context.font = `${setStyle.fontWeight} ${parseFloat(setStyle.fontSize) * scaleY}px ${setStyle.fontFamily}`;
-  context.textAlign = 'left';
-  context.textBaseline = 'top';
-  context.fillText(setMark.textContent, setRect.x, setRect.y);
-
-  const rarityMark = document.querySelector('.card-rarity');
-  if (rarityMark) {
-    const rarityRect = getCanvasRect(rarityMark, cardRect, scaleX, scaleY);
-    const rarityStyle = getComputedStyle(rarityMark);
-    context.fillStyle = rarityStyle.color;
-    context.font = `${rarityStyle.fontWeight} ${parseFloat(rarityStyle.fontSize) * scaleY}px ${rarityStyle.fontFamily}`;
-    context.textAlign = 'right';
-    context.textBaseline = 'top';
-    context.fillText(rarityMark.textContent, rarityRect.x + rarityRect.width, rarityRect.y);
   }
 
   return new Promise((resolve, reject) => {

@@ -8,12 +8,12 @@ Leah           ✅          ✅       x       ✅      ✅      ✅     ✅     
 
 Raia           ✅          ✅       ✅      x       ✅      ✅     ✅      ✅          ✅
 
-Rhatt          ✅          ✅       ✅               x              ✅      ✅          ✅
+Rhatt          ✅          ✅       ✅     ✅       x       ✅     ✅      ✅          ✅
 
-Sheran         ✅          ✅       ✅                       x      ✅      ✅          ✅
+Sheran         ✅          ✅       ✅     ✅      ✅       x      ✅      ✅          ✅
 
 Tharr          ✅          ✅       ✅     ✅      ✅      ✅      x       ✅          ✅
 
-Elenios        ✅          ✅       ✅     ✅      ✅      ✅     ✅       x          ✅
+Elenios        ✅          ✅       ✅     ✅      ✅      ✅     ✅       x           ✅
 
-Chara-din      ✅          ✅       ✅     ✅      ✅      ✅     ✅      ✅          x
+Chara-din      ✅          ✅       ✅     ✅      ✅      ✅     ✅      ✅           x
