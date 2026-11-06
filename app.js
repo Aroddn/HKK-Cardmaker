@@ -86,14 +86,14 @@ let imageUrl = null;
 const factions = [
   { key: 'bufa', label: 'Bufa', image: 'resources/Base colors/Bufa base_transparent.png', fallback: '#8b563d', exclusive: true },
   { key: 'chara-din', label: 'Chara-din', image: 'resources/Base colors/Chara-din/Chara-din base_transparent.png', fallback: '#a0473f' },
-  { key: 'dornodon', label: 'Dornodon', image: 'resources/Base colors/Dornodon/Dornodon base.jpg', fallback: '#a67d3e' },
-  { key: 'elenios', label: 'Elenios', image: 'resources/Base colors/Elenios/Elenios base.jpg', fallback: '#537d9a' },
-  { key: 'fairlight', label: 'Fairlight', image: 'resources/Base colors/Fairlight/Fairlight base.jpg', fallback: '#cfb85e' },
-  { key: 'leah', label: 'Leah', image: 'resources/Base colors/Leah/Leah base.jpg', fallback: '#658a57' },
-  { key: 'raia', label: 'Raia', image: 'resources/Base colors/Raia/Raia base.jpg', fallback: '#a99a88' },
-  { key: 'rhatt', label: 'Rhatt', image: 'resources/Base colors/Rhatt/Rhatt base.jpg', fallback: '#6c604c' },
-  { key: 'sheran', label: 'Sheran', image: 'resources/Base colors/Sheran/Sheran base.jpg', fallback: '#7b7192' },
-  { key: 'tharr', label: 'Tharr', image: 'resources/Base colors/Tharr/Tharr base.jpg', fallback: '#554b5d' },
+  { key: 'dornodon', label: 'Dornodon', image: 'resources/Base colors/Dornodon/Dornodon base_transparent.png', fallback: '#a67d3e' },
+  { key: 'elenios', label: 'Elenios', image: 'resources/Base colors/Elenios/Elenios base_transparent.png', fallback: '#537d9a' },
+  { key: 'fairlight', label: 'Fairlight', image: 'resources/Base colors/Fairlight/Fairlight base_transparent.png', fallback: '#cfb85e' },
+  { key: 'leah', label: 'Leah', image: 'resources/Base colors/Leah/Leah base_transparent.png', fallback: '#658a57' },
+  { key: 'raia', label: 'Raia', image: 'resources/Base colors/Raia/Raia base_transparent.png', fallback: '#a99a88' },
+  { key: 'rhatt', label: 'Rhatt', image: 'resources/Base colors/Rhatt/Rhatt base_transparent.png', fallback: '#6c604c' },
+  { key: 'sheran', label: 'Sheran', image: 'resources/Base colors/Sheran/Sheran base_tranparent.png', fallback: '#7b7192' },
+  { key: 'tharr', label: 'Tharr', image: 'resources/Base colors/Tharr/Tharr base_tranparent.png', fallback: '#554b5d' },
   { key: 'colorless', label: 'Színtelen', image: 'resources/Base colors/Szintelen base_transparent.png', fallback: '#898b88', exclusive: true },
   { key: 'no-color', label: 'Narancs lap', image: 'resources/Base colors/Narancs lap base_transparent.png', fallback: '#343b3c', exclusive: true }
 ];
@@ -122,17 +122,17 @@ const factionCombinationByKeys = new Map([
   }],
   ['chara-din+sheran', {
     label: 'Chara-din-Sheran',
-    image: 'resources/Base colors/Chara-din/Chara-din Sheran base.jpg',
+    image: 'resources/Base colors/Chara-din/Chara-din Sheran base_transparent.png',
     fallback: '#8d5c69'
   }],
   ['chara-din+dornodon', {
     label: 'Dornodon-Chara-din',
-    image: 'resources/Base colors/Dornodon/Dornodon Chara-din base.jpg',
+    image: 'resources/Base colors/Dornodon/Dornodon Chara-din base_transparent.png',
     fallback: '#9b7a52'
   }],
   ['chara-din+elenios', {
     label: 'Elenios-Chara-din',
-    image: 'resources/Base colors/Elenios/Elenios Chara-din base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Chara-din base_transparent.png',
     fallback: '#7b7090'
   }],
   ['chara-din+tharr', {
@@ -142,142 +142,142 @@ const factionCombinationByKeys = new Map([
   }],
   ['dornodon+elenios', {
     label: 'Elenios-Dornodon',
-    image: 'resources/Base colors/Elenios/Elenios Dornodon base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Dornodon base_transparent.png',
     fallback: '#897055'
   }],
   ['dornodon+fairlight', {
     label: 'Dornodon-Fairlight',
-    image: 'resources/Base colors/Dornodon/Dornodon Fairlight base.jpg',
+    image: 'resources/Base colors/Dornodon/Dornodon Fairlight base_transparent.png',
     fallback: '#bca554'
   }],
   ['dornodon+leah', {
     label: 'Dornodon-Leah',
-    image: 'resources/Base colors/Dornodon/Dornodon Leah base.jpg',
+    image: 'resources/Base colors/Dornodon/Dornodon Leah base_transparent.png',
     fallback: '#687a60'
   }],
   ['dornodon+raia', {
     label: 'Dornodon-Raia',
-    image: 'resources/Base colors/Dornodon/Dornodon Raia base.jpg',
+    image: 'resources/Base colors/Dornodon/Dornodon Raia base_transparent.png',
     fallback: '#a1896a'
   }],
   ['dornodon+rhatt', {
     label: 'Dornodon-Rhatt',
-    image: 'resources/Base colors/Dornodon/Dornodon Rhatt base.jpg',
+    image: 'resources/Base colors/Dornodon/Dornodon Rhatt base_transparent.png',
     fallback: '#7b6c56'
   }],
   ['dornodon+sheran', {
     label: 'Sheran-Dornodon',
-    image: 'resources/Base colors/Sheran/Sheran Dornodon base.jpg',
+    image: 'resources/Base colors/Sheran/Sheran Dornodon base_transparent.png',
     fallback: '#897055'
   }],
   ['dornodon+tharr', {
     label: 'Dornodon-Tharr',
-    image: 'resources/Base colors/Dornodon/Dornodon Tharr base.jpg',
+    image: 'resources/Base colors/Dornodon/Dornodon Tharr base_transparent.png',
     fallback: '#6a5a61'
   }],
   ['elenios+fairlight', {
     label: 'Elenios-Fairlight',
-    image: 'resources/Base colors/Elenios/Elenios Fairlight base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Fairlight base_transparent.png',
     fallback: '#9d9b79'
   }],
   ['elenios+leah', {
     label: 'Elenios-Leah',
-    image: 'resources/Base colors/Elenios/Elenios leah base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Leah base_transparent.png',
     fallback: '#6c856f'
   }],
   ['elenios+raia', {
     label: 'Elenios-Raia',
-    image: 'resources/Base colors/Elenios/Elenios Raia base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Raia base_transparent.png',
     fallback: '#8c6d5a'
   }],
   ['elenios+rhatt', {
     label: 'Elenios-Rhatt',
-    image: 'resources/Base colors/Elenios/Elenios Rhatt base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Rhatt base_transparent.png',
     fallback: '#6c7080'
   }],
   ['elenios+sheran', {
     label: 'Elenios-Sheran',
-    image: 'resources/Base colors/Elenios/Elenios Sheran base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Sheran base_transparent.png',
     fallback: '#6d7393'
   }],
   ['elenios+tharr', {
     label: 'Elenios-Tharr',
-    image: 'resources/Base colors/Elenios/Elenios Tharr base.jpg',
+    image: 'resources/Base colors/Elenios/Elenios Tharr base_transparent.png',
     fallback: '#5e5d72'
   }],
   ['fairlight+leah', {
     label: 'Fairlight-Leah',
-    image: 'resources/Base colors/Fairlight/Fairlight Leah base.jpg',
+    image: 'resources/Base colors/Fairlight/Fairlight Leah base_transparent.png',
     fallback: '#9a9a5a'
   }],
   ['fairlight+raia', {
     label: 'Fairlight-Raia',
-    image: 'resources/Base colors/Fairlight/Fairlight Raia base.jpg',
+    image: 'resources/Base colors/Fairlight/Fairlight Raia base_transparent.png',
     fallback: '#b4a373'
   }],
   ['fairlight+rhatt', {
     label: 'Fairlight-Rhatt',
-    image: 'resources/Base colors/Fairlight/Fairlight Rhatt base.jpg',
+    image: 'resources/Base colors/Fairlight/Fairlight Rhatt base_transparent.png',
     fallback: '#9e8c55'
   }],
   ['fairlight+sheran', {
     label: 'Fairlight-Sheran',
-    image: 'resources/Base colors/Fairlight/Fairlight Sheran base.jpg',
+    image: 'resources/Base colors/Fairlight/Fairlight Sheran base_transparent.png',
     fallback: '#a59978'
   }],
   ['fairlight+tharr', {
     label: 'Fairlight-Tharr',
-    image: 'resources/Base colors/Fairlight/Fairlight Tharr base.jpg',
+    image: 'resources/Base colors/Fairlight/Fairlight Tharr base_transparent.png',
     fallback: '#92816d'
   }],
   ['leah+raia', {
     label: 'Leah-Raia',
-    image: 'resources/Base colors/Leah/Leah Raia base.jpg',
+    image: 'resources/Base colors/Leah/Leah Raia base_transparent.png',
     fallback: '#879273'
   }],
   ['leah+rhatt', {
     label: 'Leah-Rhatt',
-    image: 'resources/Base colors/Leah/Leah Rhatt base.jpg',
+    image: 'resources/Base colors/Leah/Leah Rhatt base_transparent.png',
     fallback: '#687352'
   }],
   ['leah+sheran', {
     label: 'Leah-Sheran',
-    image: 'resources/Base colors/Leah/Leah Sheran base.jpg',
+    image: 'resources/Base colors/Leah/Leah Sheran base_transparent.png',
     fallback: '#708078'
   }],
   ['leah+tharr', {
     label: 'Leah-Tharr',
-    image: 'resources/Base colors/Leah/Leah Tharr base.jpg',
+    image: 'resources/Base colors/Leah/Leah Tharr base_transparent.png',
     fallback: '#5d6a5a'
   }],
   ['raia+rhatt', {
     label: 'Raia-Rhatt',
-    image: 'resources/Base colors/Raia/Raia Rhatt base.jpg',
+    image: 'resources/Base colors/Raia/Raia Rhatt base_transparent.png',
     fallback: '#8a7d6a'
   }],
   ['raia+sheran', {
     label: 'Raia-Sheran',
-    image: 'resources/Base colors/Raia/Raia Sheran base.jpg',
+    image: 'resources/Base colors/Sheran/Sheran Raia base_transparent.png',
     fallback: '#92859d'
   }],
   ['rhatt+sheran', {
     label: 'Sheran-Rhatt',
-    image: 'resources/Base colors/Sheran/Sheran Rhatt base.jpg',
+    image: 'resources/Base colors/Sheran/Sheran Rhatt base_transparent.png',
     fallback: '#736978'
   }],
   ['raia+tharr', {
     label: 'Tharr-Raia',
-    image: 'resources/Base colors/Tharr/Tharr Raia base.jpg',
+    image: 'resources/Base colors/Tharr/Raia base_transparent.png',
     fallback: '#7f726d'
   }],
   ['rhatt+tharr', {
     label: 'Tharr-Rhatt',
-    image: 'resources/Base colors/Tharr/Tharr Rhatt base.jpg',
+    image: 'resources/Base colors/Tharr/Tharr Rhatt base_transparent.png',
     fallback: '#605667'
   }],
   ['sheran+tharr', {
     label: 'Tharr-Sheran',
-    image: 'resources/Base colors/Tharr/Tharr Sheran base.jpg',
+    image: 'resources/Base colors/Tharr/Tharr Sheran base_transparent.png',
     fallback: '#685f78'
   }]
 ]);
@@ -338,15 +338,38 @@ function updateFactionControls(message = 'Legfeljebb kettőt válassz. A Színte
 
 function renderRulesText(element, text) {
   element.replaceChildren();
-  text.split(rulesTextIconPattern).forEach((part) => {
-    if (rulesTextIconByToken.has(part)) {
-      const icon = document.createElement('img');
-      icon.className = 'rules-inline-icon';
-      icon.src = rulesTextIconByToken.get(part).path;
-      icon.alt = rulesTextIconByToken.get(part).alt;
-      element.append(icon);
-    } else if (part) element.append(document.createTextNode(part));
-  });
+  const segments = new RegExp(`\\*\\*([\\s\\S]+?)\\*\\*|(${rulesTextIconTokenPattern})`, 'g');
+  let position = 0;
+  for (const match of text.matchAll(segments)) {
+    if (match.index > position) element.append(document.createTextNode(text.slice(position, match.index)));
+    if (match[1]) {
+      const bold = document.createElement('strong');
+      renderRulesText(bold, match[1]);
+      element.append(bold);
+    } else {
+      const icon = rulesTextIconByToken.get(match[2]);
+      const image = document.createElement('img');
+      image.className = 'rules-inline-icon';
+      image.src = icon.path;
+      image.alt = icon.alt;
+      element.append(image);
+    }
+    position = match.index + match[0].length;
+  }
+  if (position < text.length) element.append(document.createTextNode(text.slice(position)));
+}
+
+function fitRulesText(element, textLength, maxLength) {
+  element.style.removeProperty('font-size');
+  const baseSize = parseFloat(getComputedStyle(element).fontSize);
+  const minimumSize = Math.max(8, baseSize * 0.65);
+  const lengthScale = Math.min(1, textLength / maxLength);
+  let size = Math.max(minimumSize, baseSize * (1 - 0.3 * lengthScale));
+  if (size < baseSize) element.style.fontSize = `${size}px`;
+  while (element.scrollHeight > element.clientHeight + 1 && size > minimumSize) {
+    size = Math.max(minimumSize, size - 0.25);
+    element.style.fontSize = `${size}px`;
+  }
 }
 
 function handleFactionChange(event) {
@@ -382,15 +405,18 @@ function updatePreview() {
   const secondaryStatType = values.get('secondaryStatType') || 'toughness';
   const secondaryStatLabel = secondaryStatType === 'structural' ? 'Strukturális pont' : 'Védettség';
 
-  document.querySelector('#preview-name').textContent = name || 'Névtelen kártya';
+  document.querySelector('#preview-name').textContent = name;
   document.querySelector('#preview-card-type').textContent = type;
   document.querySelector('#preview-card-type').hidden = !type;
   document.querySelector('#preview-subtype').textContent = subtype;
   document.querySelector('#preview-subtype').hidden = !subtype;
-  renderRulesText(document.querySelector('#preview-text'), text);
+  const previewRulesText = document.querySelector('#preview-text');
+  renderRulesText(previewRulesText, text);
   const previewFlavorText = document.querySelector('#preview-flavor-text');
   previewFlavorText.textContent = flavorText;
   previewFlavorText.hidden = !flavorText;
+  fitRulesText(previewRulesText, text.length, rulesTextInput.maxLength);
+  fitRulesText(previewFlavorText, flavorText.length, document.querySelector('#card-flavor-text').maxLength);
   document.querySelector('#text-count').textContent = values.get('text').length;
 
   document.querySelector('#preview-power').textContent = power;
@@ -414,7 +440,9 @@ function updatePreview() {
   const baseFactions = combination
     ? [combination]
     : selectedFactions.map((key) => factionByKey.get(key));
-  const hasTransparentBase = baseFactions.some(({ image }) => image?.endsWith('_transparent.png'));
+  const hasTransparentBase = baseFactions.some(({ image }) => (
+    image?.endsWith('_transparent.png') || image?.endsWith('_tranparent.png')
+  ));
   const useBackgroundCardImage = hasTransparentBase && Boolean(imageUrl);
   card.dataset.backgroundImageMode = String(useBackgroundCardImage);
   backgroundCardImage.hidden = !useBackgroundCardImage;
@@ -604,6 +632,17 @@ function insertRulesTextIcon(token) {
   rulesTextInput.dispatchEvent(new Event('input', { bubbles: true }));
   rulesTextInput.focus();
 }
+document.querySelector('#bold-rules-text').addEventListener('click', () => {
+  const start = rulesTextInput.selectionStart;
+  const end = rulesTextInput.selectionEnd;
+  if (start === end || rulesTextInput.value.length + 4 > rulesTextInput.maxLength) return;
+
+  const selection = rulesTextInput.value.slice(start, end);
+  rulesTextInput.setRangeText(`**${selection}**`, start, end, 'select');
+  rulesTextInput.dispatchEvent(new Event('input', { bubbles: true }));
+  rulesTextInput.focus();
+  rulesTextInput.setSelectionRange(start + 2, end + 2);
+});
 const rulesTextIconButtons = document.querySelector('#rules-text-icon-buttons');
 rulesTextIcons.forEach((icon) => {
   const button = document.createElement('button');
@@ -778,7 +817,7 @@ function drawWrappedText(context, text, rect, font, color, lineHeight, alignment
   context.restore();
 }
 
-function drawWrappedRulesText(context, text, rect, font, color, lineHeight, alignment, icons) {
+function drawWrappedRulesText(context, text, rect, font, boldFont, color, lineHeight, alignment, icons) {
   context.save();
   context.beginPath();
   context.rect(rect.x, rect.y, rect.width, rect.height);
@@ -790,9 +829,10 @@ function drawWrappedRulesText(context, text, rect, font, color, lineHeight, alig
   const iconSize = lineHeight * 1.25;
   const paragraphs = text.split('\n');
   let y = rect.y;
+  let bold = false;
 
   for (const paragraph of paragraphs) {
-    const words = paragraph.match(rulesTextIconWordPattern) || [];
+    const words = paragraph.match(new RegExp(`\\*\\*|${rulesTextIconTokenPattern}|\\S+`, 'g')) || [];
     let line = [];
     let lineWidth = 0;
 
@@ -807,6 +847,7 @@ function drawWrappedRulesText(context, text, rect, font, color, lineHeight, alig
         if (part.type === 'icon') {
           context.drawImage(icons.get(part.token), x, y + (lineHeight - iconSize) / 2, iconSize, iconSize);
         } else {
+          context.font = part.bold ? boldFont : font;
           context.fillText(part.text, x, y);
         }
         x += part.width;
@@ -817,10 +858,19 @@ function drawWrappedRulesText(context, text, rect, font, color, lineHeight, alig
     };
 
     for (const word of words) {
-      const parts = rulesTextIconByToken.has(word)
-        ? [{ type: 'icon', token: word, width: iconSize }]
-        : [{ type: 'text', text: word, width: context.measureText(word).width }];
-      const wordWidth = parts.reduce((width, part) => width + part.width, 0);
+      if (word === '**') {
+        bold = !bold;
+        continue;
+      }
+      let parts;
+      if (rulesTextIconByToken.has(word)) {
+        parts = [{ type: 'icon', token: word, width: iconSize }];
+      } else {
+        context.font = bold ? boldFont : font;
+        parts = [{ type: 'text', text: word, bold, width: context.measureText(word).width }];
+      }
+      const wordWidth = parts[0].width;
+      context.font = font;
       const spaceWidth = line.length ? context.measureText(' ').width : 0;
       if (line.length && lineWidth + spaceWidth + wordWidth > rect.width) drawLine();
       if (line.length) {
@@ -1015,7 +1065,8 @@ async function renderCardPng() {
     y: rulesRect.y,
     width: rulesRect.width,
     height: rulesRect.height
-  }, `${rulesStyle.fontStyle} ${rulesStyle.fontWeight} ${fontSize}px ${rulesStyle.fontFamily}`, rulesStyle.color, lineHeight, rulesStyle.textAlign,
+  }, `${rulesStyle.fontStyle} ${rulesStyle.fontWeight} ${fontSize}px ${rulesStyle.fontFamily}`,
+  `${rulesStyle.fontStyle} 700 ${fontSize}px ${rulesStyle.fontFamily}`, rulesStyle.color, lineHeight, rulesStyle.textAlign,
   rulesInlineIcons);
 
   const flavor = document.querySelector('#preview-flavor-text');
@@ -1024,7 +1075,7 @@ async function renderCardPng() {
     const flavorStyle = getComputedStyle(flavor);
     const flavorFontSize = parseFloat(flavorStyle.fontSize) * scaleY;
     const flavorLineHeight = parseFloat(flavorStyle.lineHeight) * scaleY || flavorFontSize * 1.2;
-    drawWrappedText(context, flavor.textContent, flavorRect,
+    drawWrappedText(context, `„${flavor.textContent}”`, flavorRect,
       `${flavorStyle.fontStyle} ${flavorStyle.fontWeight} ${flavorFontSize}px ${flavorStyle.fontFamily}`,
       flavorStyle.color, flavorLineHeight, flavorStyle.textAlign);
   }

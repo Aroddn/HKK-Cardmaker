@@ -50,7 +50,8 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 
 .desktop-shell {
   position: relative;
-  width: min(1100px, calc(100% - 48px));
+  width: min(1100px, calc((100vw - 60px) / 1.25));
+  zoom: 1.25;
   margin: 30px auto;
   border: 5px solid #a67a35;
   background:
@@ -289,7 +290,7 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .type-text-style-control .field-hint { margin: 0; }
 #card-power, #card-toughness { text-align: center; }
 #card-text, #card-flavor-text { display: block; min-height: 70px; padding: 9px 10px; resize: none; font-size: 12px; line-height: 1.45; }
-#card-text { min-height: 87px; }
+#card-text { min-height: 87px; font-family: Georgia, 'Times New Roman', serif; }
 .text-meta { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-top: 4px; color: #929b9b; font-family: 'DM Mono', Consolas, monospace; font-size: 8px; }
 .text-meta b { color: #64787e; font-weight: 400; }
 .text-meta > span:last-child { flex: 0 0 auto; white-space: nowrap; }
@@ -337,6 +338,8 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .hkk-card {
   position: relative;
   container-type: inline-size;
+  font-variant-numeric: lining-nums;
+  font-feature-settings: "lnum" 1, "onum" 0;
   width: min(100%, 420px, max(180px, calc((100vh - 120px) * 1061 / 1483)));
   aspect-ratio: 1061 / 1483;
   overflow: hidden;
@@ -385,9 +388,9 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .card-titlebar, .card-title-content { display: contents; }
 /* Adjust top to move the card name vertically; the name inherits its typography from this rule. */
 .card-name-stack { position: absolute; z-index: 3; top: 6.7%; left: 28%; right: 13.4%;
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: Cambria, 'Times New Roman', Georgia, serif;
   font-size: 14px;
-  font-weight: 1000;
+  font-weight: 900;
   letter-spacing: 0.7px;
   display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .card-topline {
@@ -404,19 +407,19 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
   width: 27%;
   height: 2.8%;
   overflow: hidden;
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: Cambria, 'Times New Roman', Georgia, serif;
   font-size: clamp(6px, 2.6cqw, 9px);
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
 }
-#preview-card-type { top: 56%; left: 13%; font-family: Georgia, 'Times New Roman', serif;
+#preview-card-type { top: 56%; left: 13%; font-family: Cambria, 'Times New Roman', Georgia, serif;
 font-size: 14px;
-font-weight: 1000;
+font-weight: 900;
 letter-spacing: 0.7px;}
-#preview-subtype { top: 59.7%; left: 13%; font-size: 10px; font-weight: 400;font-family: Georgia, 'Times New Roman', serif;
+#preview-subtype { top: 59.7%; left: 13%; font-size: 10px; font-weight: 400;font-family: Cambria, 'Times New Roman', Georgia, serif;
 font-size: 14px;
-font-weight: 1000;
+font-weight: 900;
 font-style: italic;
 letter-spacing: 0.7px; }
 #preview-card-type[hidden], #preview-subtype[hidden] { display: none; }
@@ -438,9 +441,12 @@ letter-spacing: 0.7px; }
 .card-icon { display: inline-block; max-width: 100%; min-height: 10px; overflow: hidden; padding: 1px 2px; color: #e4e0d4; background: #292d2ccc; border: 1px solid #777970; border-radius: 1px; box-shadow: inset 0 1px #ffffff22; font-size: 5px; line-height: 1; font-weight: 700; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
 .card-rules { position: absolute; top: 61.5%; left: 8%; width: 84%; height: 32%; display: flex; flex-direction: column; overflow: hidden; padding: 4% 5% 2%; color: #292c2b; background: transparent; border: 0; box-shadow: none; }
 .card-rules::before { content: none; }
-.card-rules p { position: relative; z-index: 1; margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 12px; line-height: 1.28; text-align: center; white-space: pre-wrap; overflow-wrap: anywhere; }
+.card-rules p { position: relative; z-index: 1; margin: 0; font-family: Cambria, 'Times New Roman', Georgia, serif; font-size: clamp(9px, 3.4cqw, 15px); line-height: 1.2; text-align: center; white-space: pre-wrap; overflow-wrap: anywhere; }
+#preview-text strong { font-weight: 700; }
 #preview-text { flex: 1; overflow: hidden; }
-.card-rules .card-flavor { flex: none; padding-top: 2%; font-size: 9px; font-style: italic; line-height: 1.2; text-align: right; }
+.card-rules .card-flavor { flex: none; max-height: 28%; overflow: hidden; padding-top: 2%; font-size: clamp(8px, 2.8cqw, 12px); font-style: italic; line-height: 1.2; text-align: center; }
+.card-rules .card-flavor::before { content: "„"; }
+.card-rules .card-flavor::after { content: "”"; }
 .card-rules .card-flavor[hidden] { display: none; }
 .rules-flourish { display: none; }
 .card-stats {
@@ -473,7 +479,7 @@ letter-spacing: 0.7px; }
 .stat-box strong {
   max-width: 100%;
   overflow-wrap: anywhere;
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: Cambria, 'Times New Roman', Georgia, serif;
   font-size: clamp(10px, 5.2cqw, 18px);
   line-height: 1;
   text-align: center;
@@ -493,7 +499,7 @@ letter-spacing: 0.7px; }
 @keyframes card-in { from { opacity: 0; transform: translateY(9px) rotate(.6deg); } to { opacity: 1; transform: translateY(0) rotate(0); } }
 
 @media (max-width: 760px) {
-  .desktop-shell { width: min(570px, calc(100% - 24px)); margin: 12px auto; }
+  .desktop-shell { width: min(570px, calc(100% - 24px)); zoom: 1; margin: 12px auto; }
   .masthead { min-height: 86px; padding: 13px 16px; }
   .brand-mark { width: 57px; height: 52px; font-size: 16px; }
   .brand-copy h1 { font-size: 22px; }

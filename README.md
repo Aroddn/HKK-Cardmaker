@@ -9,7 +9,8 @@ Unofficial HKK Card Maker is a lightweight browser-based card designer for creat
 - Select custom card icons and resource-based cost symbols
 - Mix up to two base colors with built-in validation rules; Színtelen, Bufa, and Narancs lap are exclusive
 - Download the final card as an image
-- Use the included JPG base-card images for supported factions, with fallback colors for factions without an image
+- Use transparent PNG base-card images where available, with JPG and fallback-color alternatives
+- Emphasize selected ability text in bold, automatically shrink long text to fit, and display centered italic flavor text
 
 ## Project structure
 
@@ -42,9 +43,11 @@ http://localhost:8000/
 
 ## Base-card images and optional overrides
 
-Faction base-card images are loaded from `resources/Base colors/`. Individual and combination templates are organized into folders named for their leading faction; Bufa, Színtelen, and Narancs lap templates remain directly in the base folder. All available individual faction bases and faction-pair combinations are supported. When multiple templates exist for one pair, the app uses the Raia-led template for Raia/Rhatt and Raia/Sheran. If a configured base image cannot be loaded, its fallback color is shown instead.
+Faction base-card images are loaded from `resources/Base colors/`. Individual and combination templates are organized into folders named for their leading faction; Bufa, Színtelen, and Narancs lap templates remain directly in the base folder. Transparent PNG templates are used wherever available, enabling uploaded artwork to appear behind the card frame; other templates continue to use JPGs. All available individual faction bases and faction-pair combinations are supported. When multiple templates exist for one pair, the app uses the Raia-led template for Raia/Rhatt and the Sheran-led template for Raia/Sheran. If a configured base image cannot be loaded, its fallback color is shown instead.
 
 Other optional resources, such as cost symbols and icons, are loaded from `resources/` when present and fall back to built-in symbols or colors when absent.
+
+In the card-text field, select text and use the **Félkövér** button to mark it bold. The preview and PNG export both preserve the formatting, and longer ability or flavor text shrinks to fit. Flavor text is shown centered, italicized, and in Hungarian quotation marks.
 
 ## Notes
 
