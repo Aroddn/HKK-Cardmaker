@@ -87,7 +87,7 @@ const factions = [
   { key: 'bufa', label: 'Bufa', image: 'resources/Base colors/Bufa base_transparent.png', fallback: '#8b563d', exclusive: true },
   { key: 'chara-din', label: 'Chara-din', image: 'resources/Base colors/Chara-din/Chara-din base_transparent.png', fallback: '#a0473f' },
   { key: 'dornodon', label: 'Dornodon', image: 'resources/Base colors/Dornodon/Dornodon base_transparent.png', fallback: '#a67d3e' },
-  { key: 'elenios', label: 'Elenios', image: 'resources/Base colors/Elenios/Elenios base_transparent.png', fallback: '#537d9a' },
+  { key: 'elenios', label: 'Elenios', image: 'resources/Base colors/Elenios/Elenios base_transparent_new.png', fallback: '#537d9a' },
   { key: 'fairlight', label: 'Fairlight', image: 'resources/Base colors/Fairlight/Fairlight base_transparent.png', fallback: '#cfb85e' },
   { key: 'leah', label: 'Leah', image: 'resources/Base colors/Leah/Leah base_transparent.png', fallback: '#658a57' },
   { key: 'raia', label: 'Raia', image: 'resources/Base colors/Raia/Raia base_transparent.png', fallback: '#a99a88' },
@@ -95,7 +95,7 @@ const factions = [
   { key: 'sheran', label: 'Sheran', image: 'resources/Base colors/Sheran/Sheran base_tranparent.png', fallback: '#7b7192' },
   { key: 'tharr', label: 'Tharr', image: 'resources/Base colors/Tharr/Tharr base_tranparent.png', fallback: '#554b5d' },
   { key: 'colorless', label: 'Színtelen', image: 'resources/Base colors/Szintelen base_transparent.png', fallback: '#898b88', exclusive: true },
-  { key: 'no-color', label: 'Narancs lap', image: 'resources/Base colors/Narancs lap base_transparent.png', fallback: '#343b3c', exclusive: true }
+  { key: 'no-color', label: 'Narancs lap', image: 'resources/Base colors/Narancs lap base_transparent_new.png', fallback: '#343b3c', exclusive: true }
 ];
 const factionByKey = new Map(factions.map((faction) => [faction.key, faction]));
 const exclusiveFactionKeys = new Set(['bufa', 'colorless', 'no-color']);
@@ -202,7 +202,7 @@ const factionCombinationByKeys = new Map([
   }],
   ['elenios+tharr', {
     label: 'Elenios-Tharr',
-    image: 'resources/Base colors/Elenios/Elenios Tharr base_transparent.png',
+    image: 'resources/Base colors/Elenios/Elenios Tharr base_transparent_new.png',
     fallback: '#5e5d72'
   }],
   ['fairlight+leah', {
@@ -267,7 +267,7 @@ const factionCombinationByKeys = new Map([
   }],
   ['raia+tharr', {
     label: 'Tharr-Raia',
-    image: 'resources/Base colors/Tharr/Raia base_transparent.png',
+    image: 'resources/Base colors/Tharr/Tharr Raia base_transparent.png',
     fallback: '#7f726d'
   }],
   ['rhatt+tharr', {
@@ -362,14 +362,21 @@ function renderRulesText(element, text) {
 function fitRulesText(element, textLength, maxLength) {
   element.style.removeProperty('font-size');
   const baseSize = parseFloat(getComputedStyle(element).fontSize);
-  const minimumSize = Math.max(8, baseSize * 0.65);
+  const minimumSize = baseSize * 0.65;
   const lengthScale = Math.min(1, textLength / maxLength);
   let size = Math.max(minimumSize, baseSize * (1 - 0.3 * lengthScale));
   if (size < baseSize) element.style.fontSize = `${size}px`;
   while (element.scrollHeight > element.clientHeight + 1 && size > minimumSize) {
-    size = Math.max(minimumSize, size - 0.25);
+    size = Math.max(minimumSize, size - baseSize * 0.015);
     element.style.fontSize = `${size}px`;
   }
+}
+
+function fitPreviewText() {
+  const rulesText = rulesTextInput.value.trim();
+  const flavorInput = document.querySelector('#card-flavor-text');
+  fitRulesText(document.querySelector('#preview-text'), rulesText.length, rulesTextInput.maxLength);
+  fitRulesText(document.querySelector('#preview-flavor-text'), flavorInput.value.trim().length, flavorInput.maxLength);
 }
 
 function handleFactionChange(event) {
@@ -415,8 +422,7 @@ function updatePreview() {
   const previewFlavorText = document.querySelector('#preview-flavor-text');
   previewFlavorText.textContent = flavorText;
   previewFlavorText.hidden = !flavorText;
-  fitRulesText(previewRulesText, text.length, rulesTextInput.maxLength);
-  fitRulesText(previewFlavorText, flavorText.length, document.querySelector('#card-flavor-text').maxLength);
+  fitPreviewText();
   document.querySelector('#text-count').textContent = values.get('text').length;
 
   document.querySelector('#preview-power').textContent = power;
@@ -441,7 +447,7 @@ function updatePreview() {
     ? [combination]
     : selectedFactions.map((key) => factionByKey.get(key));
   const hasTransparentBase = baseFactions.some(({ image }) => (
-    image?.endsWith('_transparent.png') || image?.endsWith('_tranparent.png')
+    image?.includes('_transparent') || image?.includes('_tranparent')
   ));
   const useBackgroundCardImage = hasTransparentBase && Boolean(imageUrl);
   card.dataset.backgroundImageMode = String(useBackgroundCardImage);
@@ -536,7 +542,7 @@ function updatePreview() {
 typeTextColorToggle.addEventListener('click', () => {
   const useWhite = typeTextColorToggle.getAttribute('aria-pressed') !== 'true';
   typeTextColorToggle.setAttribute('aria-pressed', String(useWhite));
-  typeTextColorToggle.textContent = `Típus és altípus színe: ${useWhite ? 'fehér' : 'fekete'}`;
+  typeTextColorToggle.textContent = `Kártyanév, típus és altípus színe: ${useWhite ? 'fehér' : 'fekete'}`;
   card.dataset.typeTextColor = useWhite ? 'white' : 'black';
 });
 
@@ -743,6 +749,25 @@ function getCanvasRect(element, cardRect, scaleX, scaleY) {
   };
 }
 
+function getEffectiveCssZoom(element) {
+  let zoom = 1;
+  for (let ancestor = element; ancestor; ancestor = ancestor.parentElement) {
+    const ancestorZoom = Number.parseFloat(getComputedStyle(ancestor).zoom);
+    if (Number.isFinite(ancestorZoom)) zoom *= ancestorZoom;
+  }
+  return zoom;
+}
+
+function truncateCanvasText(context, text, maxWidth) {
+  const ellipsis = '…';
+  if (context.measureText(text).width <= maxWidth) return text;
+  const characters = [...text];
+  while (characters.length && context.measureText(`${characters.join('')}${ellipsis}`).width > maxWidth) {
+    characters.pop();
+  }
+  return context.measureText(ellipsis).width <= maxWidth ? `${characters.join('')}${ellipsis}` : '';
+}
+
 function traceCostShape(context, style, x, y, width, height) {
   context.beginPath();
   if (style === 'vp') {
@@ -894,6 +919,7 @@ async function renderCardPng() {
   const exportHeight = baseImage?.naturalHeight || 1483;
   const scaleX = exportWidth / cardRect.width;
   const scaleY = exportHeight / cardRect.height;
+  const cssZoom = getEffectiveCssZoom(card);
   const canvas = document.createElement('canvas');
   canvas.width = exportWidth;
   canvas.height = exportHeight;
@@ -942,19 +968,19 @@ async function renderCardPng() {
   const nameRect = getCanvasRect(nameElement, cardRect, scaleX, scaleY);
   const nameStyle = getComputedStyle(nameElement);
   context.fillStyle = nameStyle.color;
-  context.font = `${nameStyle.fontWeight} ${parseFloat(nameStyle.fontSize) * scaleY}px ${nameStyle.fontFamily}`;
-  context.letterSpacing = `${parseFloat(nameStyle.letterSpacing) * scaleX}px`;
+  context.font = `${nameStyle.fontWeight} ${parseFloat(nameStyle.fontSize) * cssZoom * scaleX}px ${nameStyle.fontFamily}`;
+  context.letterSpacing = `${parseFloat(nameStyle.letterSpacing) * cssZoom * scaleX}px`;
   context.textAlign = nameStyle.textAlign;
   context.textBaseline = 'top';
   context.shadowColor = 'rgba(255, 249, 232, .8)';
-  context.shadowBlur = 3 * scaleY;
-  context.shadowOffsetY = scaleY;
+  context.shadowBlur = 3 * cssZoom * scaleY;
+  context.shadowOffsetY = cssZoom * scaleY;
   const nameTextX = nameStyle.textAlign === 'right'
     ? nameRect.x + nameRect.width
     : nameStyle.textAlign === 'center'
       ? nameRect.x + nameRect.width / 2
       : nameRect.x;
-  context.fillText(nameElement.textContent, nameTextX, nameRect.y, nameRect.width);
+  context.fillText(truncateCanvasText(context, nameElement.textContent, nameRect.width), nameTextX, nameRect.y);
   context.shadowColor = 'transparent';
   context.shadowBlur = 0;
   context.shadowOffsetY = 0;
@@ -965,9 +991,13 @@ async function renderCardPng() {
     [metaType, metaSubtype].filter((element) => !element.hidden).forEach((element) => {
       const metaRect = getCanvasRect(element, cardRect, scaleX, scaleY);
       const metaStyle = getComputedStyle(element);
+      context.save();
+      context.beginPath();
+      context.rect(metaRect.x, metaRect.y, metaRect.width, metaRect.height);
+      context.clip();
       context.fillStyle = metaStyle.color;
-      context.font = `${metaStyle.fontStyle} ${metaStyle.fontWeight} ${Math.max(9, parseFloat(metaStyle.fontSize) * scaleY)}px ${metaStyle.fontFamily}`;
-      context.letterSpacing = `${parseFloat(metaStyle.letterSpacing) * scaleX}px`;
+      context.font = `${metaStyle.fontStyle} ${metaStyle.fontWeight} ${parseFloat(metaStyle.fontSize) * cssZoom * scaleX}px ${metaStyle.fontFamily}`;
+      context.letterSpacing = `${parseFloat(metaStyle.letterSpacing) * cssZoom * scaleX}px`;
       context.textAlign = metaStyle.textAlign;
       context.textBaseline = 'middle';
       const textX = metaStyle.textAlign === 'right'
@@ -975,7 +1005,8 @@ async function renderCardPng() {
         : metaStyle.textAlign === 'center'
           ? metaRect.x + metaRect.width / 2
           : metaRect.x;
-      context.fillText(element.textContent, textX, metaRect.y + metaRect.height / 2, metaRect.width);
+      context.fillText(element.textContent, textX, metaRect.y + metaRect.height / 2);
+      context.restore();
     });
   }
 
@@ -994,20 +1025,26 @@ async function renderCardPng() {
     const glyph = badge.querySelector('.cost-glyph');
     if (glyph && getComputedStyle(glyph).display !== 'none') {
       const glyphRect = getCanvasRect(glyph, cardRect, scaleX, scaleY);
+      const glyphStyle = getComputedStyle(glyph);
+      context.save();
       context.fillStyle = '#fff';
-      context.font = `700 ${Math.max(12, glyphRect.height * .8)}px Georgia, serif`;
+      context.font = `${glyphStyle.fontWeight} ${parseFloat(glyphStyle.fontSize) * cssZoom * scaleX}px ${glyphStyle.fontFamily}`;
       context.textAlign = 'center';
       context.textBaseline = 'top';
       context.fillText(glyph.textContent, rect.x + rect.width / 2, glyphRect.y);
+      context.restore();
     }
     const amount = badge.querySelector('.cost-amount');
     const amountRect = getCanvasRect(amount, cardRect, scaleX, scaleY);
+    const amountStyle = getComputedStyle(amount);
+    context.save();
     context.fillStyle = '#fff';
-    const amountFontSize = Math.max(8, Math.min(16, amountRect.height * 1.4 / amount.textContent.length));
-    context.font = `600 ${amountFontSize}px monospace`;
+    context.font = `${amountStyle.fontWeight} ${parseFloat(amountStyle.fontSize) * cssZoom * scaleX}px ${amountStyle.fontFamily}`;
+    context.letterSpacing = `${parseFloat(amountStyle.letterSpacing) * cssZoom * scaleX}px`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(amount.textContent, rect.x + rect.width / 2, amountRect.y + amountRect.height / 2, rect.width * .9);
+    context.restore();
   });
 
   document.querySelectorAll('#preview-icons .card-icon').forEach((icon) => {
@@ -1019,7 +1056,7 @@ async function renderCardPng() {
     context.strokeRect(rect.x, rect.y, rect.width, rect.height);
     const iconStyle = getComputedStyle(icon);
     context.fillStyle = iconStyle.color;
-    context.font = `700 ${parseFloat(iconStyle.fontSize) * scaleY}px ${iconStyle.fontFamily}`;
+    context.font = `700 ${parseFloat(iconStyle.fontSize) * cssZoom * scaleX}px ${iconStyle.fontFamily}`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(icon.textContent, rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width - 4 * scaleX);
@@ -1049,8 +1086,8 @@ async function renderCardPng() {
   const rules = document.querySelector('#preview-text');
   const rulesRect = getCanvasRect(rules, cardRect, scaleX, scaleY);
   const rulesStyle = getComputedStyle(rules);
-  const fontSize = parseFloat(rulesStyle.fontSize) * scaleY;
-  const lineHeight = parseFloat(rulesStyle.lineHeight) * scaleY || fontSize * 1.42;
+  const fontSize = parseFloat(rulesStyle.fontSize) * cssZoom * scaleX;
+  const lineHeight = parseFloat(rulesStyle.lineHeight) * cssZoom * scaleX || fontSize * 1.42;
   const rulesInlineIcons = new Map();
   for (const icon of rulesTextIcons) {
     if (rulesTextInput.value.includes(icon.token)) {
@@ -1073,8 +1110,8 @@ async function renderCardPng() {
   if (!flavor.hidden) {
     const flavorRect = getCanvasRect(flavor, cardRect, scaleX, scaleY);
     const flavorStyle = getComputedStyle(flavor);
-    const flavorFontSize = parseFloat(flavorStyle.fontSize) * scaleY;
-    const flavorLineHeight = parseFloat(flavorStyle.lineHeight) * scaleY || flavorFontSize * 1.2;
+    const flavorFontSize = parseFloat(flavorStyle.fontSize) * cssZoom * scaleX;
+    const flavorLineHeight = parseFloat(flavorStyle.lineHeight) * cssZoom * scaleX || flavorFontSize * 1.2;
     drawWrappedText(context, `„${flavor.textContent}”`, flavorRect,
       `${flavorStyle.fontStyle} ${flavorStyle.fontWeight} ${flavorFontSize}px ${flavorStyle.fontFamily}`,
       flavorStyle.color, flavorLineHeight, flavorStyle.textAlign);
@@ -1102,7 +1139,7 @@ async function renderCardPng() {
         const valueRect = getCanvasRect(value, cardRect, scaleX, scaleY);
         const valueStyle = getComputedStyle(value);
         context.fillStyle = valueStyle.color;
-        context.font = `${valueStyle.fontWeight} ${parseFloat(valueStyle.fontSize) * scaleY}px ${valueStyle.fontFamily}`;
+        context.font = `${valueStyle.fontWeight} ${parseFloat(valueStyle.fontSize) * cssZoom * scaleX}px ${valueStyle.fontFamily}`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         context.fillText(value.textContent, valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
@@ -1119,27 +1156,70 @@ const downloadButton = document.querySelector('#download-button');
 downloadButton.addEventListener('click', async () => {
   const status = document.querySelector('#download-status');
   status.textContent = '';
+  status.classList.remove('is-visible');
+  status.removeAttribute('data-state');
   downloadButton.disabled = true;
   try {
+    const suggestedName = `${document.querySelector('#preview-name').textContent.trim().replace(/[<>:"/\\|?*\u0000-\u001f]/g, '-').replace(/[. ]+$/g, '') || 'hkk-card'}.png`;
+    const saveFilePromise = typeof window.showSaveFilePicker === 'function'
+      ? window.showSaveFilePicker({
+        suggestedName,
+        types: [{ description: 'PNG kép', accept: { 'image/png': ['.png'] } }]
+      }).then(
+        (handle) => ({ handle }),
+        (error) => ({ error })
+      )
+      : null;
     const loadedImages = [...card.querySelectorAll('img')].filter((image) => image.complete && image.naturalWidth > 0);
     await Promise.all(loadedImages.map((image) => image.decode().catch(() => null)));
+    await document.fonts.ready;
     const blob = await renderCardPng();
-    const downloadUrl = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    const safeName = document.querySelector('#preview-name').textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'hkk-card';
-    link.href = downloadUrl;
-    link.download = `${safeName}.png`;
-    link.click();
-    status.textContent = `Created ${link.download}`;
-    setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+    if (saveFilePromise) {
+      const saveResult = await saveFilePromise;
+      if ('error' in saveResult) throw saveResult.error;
+      const writable = await saveResult.handle.createWritable();
+      try {
+        await writable.write(blob);
+        await writable.close();
+      } catch (error) {
+        try {
+          await writable.abort();
+        } catch (abortError) {
+          console.error(abortError);
+        }
+        throw error;
+      }
+      status.textContent = `Saved ${saveResult.handle.name}`;
+    } else {
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = suggestedName;
+      link.click();
+      status.textContent = `A letöltés elkészült: ${link.download}. A böngésző az alapértelmezett letöltési mappába menthette.`;
+      setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+    }
+    status.dataset.state = 'success';
+    status.classList.add('is-visible');
   } catch (error) {
-    status.textContent = 'Nem sikerült elkészíteni a PNG fájlt. Ellenőrizd, hogy a kártyaképek érvényes PNG, JPG vagy GIF fájlok legyenek.';
-    console.error(error);
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      status.textContent = 'A mentés megszakítva.';
+      status.dataset.state = 'info';
+    } else {
+      status.textContent = location.protocol === 'file:' && error instanceof DOMException && error.name === 'SecurityError'
+        ? 'A Chrome biztonsági okból nem engedi a PNG-exportot közvetlenül megnyitott fájlból. Futtasd a mappában: node serve.js, majd nyisd meg a http://localhost:8000 címet a mentési hely kiválasztásához.'
+        : 'Nem sikerült elmenteni a PNG-fájlt. Ellenőrizd, hogy a kártyaképek érvényes PNG, JPG vagy GIF fájlok legyenek.';
+      status.dataset.state = 'error';
+      console.error(error);
+    }
+    status.classList.add('is-visible');
   } finally {
     downloadButton.disabled = false;
   }
 });
 
+const cardResizeObserver = new ResizeObserver(fitPreviewText);
+cardResizeObserver.observe(card);
 watchResourceImages();
 updateFactionControls();
 updatePreview();

@@ -21,21 +21,21 @@ Unofficial HKK Card Maker is a lightweight browser-based card designer for creat
 
 ## Running locally
 
-Because this project is a static web app, you can open it directly in a browser or serve it locally.
+Because this project is a static web app, you can open it directly in a browser or serve it locally. In Chrome, opening `index.html` directly from a `file://` URL allows editing and previewing, but browser security blocks PNG export because the card uses local image files. Use a local web server for downloads.
 
-### Option 1: open directly
+### Option 1: open directly (preview only)
 
-Open `index.html` in any modern browser.
+Open `index.html` in any modern browser to edit and preview cards. Use the local web server option below to download PNGs.
 
 ### Option 2: serve from a local web server
 
-From the repository root, run:
+For PNG downloads and a native Save As dialog in Chrome, open a terminal in the repository root and run the included Node.js server:
 
-```bash
-python -m http.server 8000
+```text
+node serve.js
 ```
 
-Then visit:
+Then visit `http://localhost:8000/`. The save dialog lets you choose the destination and file name. If Python is installed, `python -m http.server 8000` can be used instead.
 
 ```text
 http://localhost:8000/

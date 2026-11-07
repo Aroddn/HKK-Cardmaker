@@ -30,8 +30,8 @@
         <button class="toolbar-button" id="reset-button" type="button" title="Minden kártyaadat törlése">
           <span aria-hidden="true">&#8634;</span> Visszaállítás
         </button>
-        <button class="toolbar-button download-button" id="download-button" type="button" aria-label="Kártya letöltése" title="Kártya letöltése">
-          <span aria-hidden="true">&#8681;</span> Kép letöltése
+        <button class="toolbar-button download-button" id="download-button" type="button" aria-label="Kártya képének mentése" title="Kártya képének mentése">
+          <span aria-hidden="true">&#8681;</span> Kép mentése
         </button>
         <span id="download-status" class="download-status" role="status" aria-live="polite"></span>
       </div>
@@ -50,7 +50,7 @@
         <form id="card-form">
           <div class="field-row">
             <label class="field-label" for="card-name">Kártyanév</label>
-            <input id="card-name" name="name" type="text" maxlength="32" placeholder="Add meg a kártya nevét">
+            <input id="card-name" name="name" type="text" maxlength="32" value="Valami HKK lap" placeholder="Add meg a kártya nevét">
           </div>
 
           <fieldset class="field-row faction-fieldset">
@@ -67,7 +67,7 @@
               <label class="faction-option"><input type="checkbox" name="faction" value="sheran"><span>Sheran</span></label>
               <label class="faction-option"><input type="checkbox" name="faction" value="bufa"><span>Bufa</span></label>
               <label class="faction-option"><input type="checkbox" name="faction" value="colorless"><span>Színtelen</span></label>
-              <label class="faction-option"><input type="checkbox" name="faction" value="no-color"><span>Narancs lap</span></label>
+              <label class="faction-option"><input type="checkbox" name="faction" value="no-color" checked><span>Narancs lap</span></label>
             </div>
             <p class="field-hint faction-hint" id="faction-guidance" aria-live="polite">A Színtelen, a Bufa és a Narancs lap nem kombinálható más színnel.</p>
             <p class="field-hint faction-image-status" id="faction-image-status" aria-live="polite"></p>
@@ -149,7 +149,7 @@
           <div class="field-row metadata-grid subtype-row">
             <div class="field-group">
               <label class="field-label" for="card-type">Típus</label>
-              <textarea id="card-type" name="type" rows="2" placeholder="Írj be tetszőleges típust..."></textarea>
+              <textarea id="card-type" name="type" rows="2" placeholder="Írj be tetszőleges típust...">valami</textarea>
               <label class="field-label subtype-picker-label" for="type-picker">Típus hozzáadása a listából</label>
               <div class="select-wrap">
                 <select id="type-picker" aria-label="Típus kiválasztása a listából">
@@ -187,7 +187,7 @@
           <div class="field-row metadata-grid subtype-row">
             <div class="field-group">
               <label class="field-label" for="card-subtype">Altípus</label>
-              <textarea id="card-subtype" name="subtype" rows="2" placeholder="Írj be tetszőleges altípust..."></textarea>
+              <textarea id="card-subtype" name="subtype" rows="2" placeholder="Írj be tetszőleges altípust...">mégvalami</textarea>
               <label class="field-label subtype-picker-label" for="subtype-picker">Altípus hozzáadása a listából</label>
               <div class="select-wrap">
                 <select id="subtype-picker" aria-label="Altípus kiválasztása a listából">
@@ -311,7 +311,7 @@
           </div>
 
           <div class="field-row type-text-style-control">
-            <button id="toggle-type-text-color" class="text-insert-button" type="button" aria-pressed="false">Típus és altípus színe: fekete</button>
+            <button id="toggle-type-text-color" class="text-insert-button" type="button" aria-pressed="false">Kártyanév, típus és altípus színe: fekete</button>
             <span class="field-hint">A kártyán és a letöltött képen is érvényes.</span>
           </div>
 
