@@ -53,8 +53,28 @@
             <input id="card-name" name="name" type="text" maxlength="32" value="Valami HKK lap" placeholder="Add meg a kártya nevét">
           </div>
 
+          <div class="field-row card-rule-field">
+            <label class="field-label" for="card-rule">Kártyakészítési szabály</label>
+            <div class="select-wrap">
+              <select id="card-rule" name="cardRule">
+                <option value="spell-item">Varázslat / Tárgy</option>
+                <option value="creature">Lény</option>
+                <option value="building">Építmény</option>
+                <option value="follower">Követő / Szabálylap</option>
+                <option value="lich">Őslich</option>
+                <option value="guild" disabled>Céh (még nem elérhető)</option>
+                <option value="other" selected>Egyéb (szabad szabályok)</option>
+              </select>
+            </div>
+            <span class="field-hint" id="card-rule-guidance" role="status" aria-live="polite"></span>
+          </div>
+
           <fieldset class="field-row faction-fieldset">
-            <legend class="field-label">Alap színek <span id="faction-count" class="optional-label">0 / 2 kiválasztva</span></legend>
+            <legend class="field-label">
+              <span>Alap színek <span id="faction-count" class="optional-label">0 / 2 kiválasztva</span></span>
+              <button class="icon-test-button" id="faction-test-toggle" type="button" aria-pressed="false">Teszt: ki</button>
+            </legend>
+            <p class="field-hint icon-test-status" id="faction-test-status" role="status" aria-live="polite">Utolsó tesztszín: Narancs lap.</p>
             <div class="faction-grid">
               <label class="faction-option"><input type="checkbox" name="faction" value="dornodon"><span>Dornodon</span></label>
               <label class="faction-option"><input type="checkbox" name="faction" value="chara-din"><span>Chara-din</span></label>
@@ -94,40 +114,60 @@
           </div>
 
           <fieldset class="field-row icon-fieldset">
-            <legend class="field-label">Ikonok <span class="optional-label">A KÉP ALATT</span></legend>
-            <div class="icon-choices">
-              <label class="icon-choice"><input type="checkbox" name="icon" value="életkioltó">életkioltó</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="élőholt">élőholt</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="ereklye">ereklye</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="erőd">erőd</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="etnikum">etnikum</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="fa">fa</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="fém">fém</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="háló">háló</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="hegymélyi">hegymélyi</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="hideg">hideg</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="horgony">horgony</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="idézés">idézés</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="isteni">isteni</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="kegy">kegy</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="KF">KF</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="kincs">kincs</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="köd">köd</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="legendás">legendás</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="mentális">mentális</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="őrző">őrző</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="ősmágia">ősmágia</label>
-              <label class="icon-choice icon-choice-numeric"><input type="checkbox" name="icon" value="Reakció drágítás">Reakció drágítás<input class="icon-value" name="reactionSurcharge" type="text" placeholder="Érték" aria-label="Reakció drágítás értéke" hidden disabled></label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="repül">repül</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="rezisztencia">rezisztencia</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="sav">sav</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="tűz">tűz</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="védekezés">védekezés</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="villám">villám</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="mágikus védelem">mágikus védelem</label>
-              <label class="icon-choice"><input type="checkbox" name="icon" value="mágikus támadás">mágikus támadás</label>
-              <label class="icon-choice icon-choice-numeric"><input type="checkbox" name="icon" value="Oltalom">Oltalom<input class="icon-value" name="protection" type="text" placeholder="Érték" aria-label="Oltalom értéke" hidden disabled></label>
-              <label class="icon-choice icon-choice-numeric"><input type="checkbox" name="icon" value="Szörnykomponens">Szörnykomponens<input class="icon-quantity" name="monsterComponent" type="number" min="1" max="99" step="1" aria-label="Szörnykomponens mennyisége" hidden disabled></label>
+            <legend class="field-label">
+              <span>Ikonok <span class="optional-label">A KÉP ALATT</span></span>
+              <button class="icon-test-button" id="icon-test-toggle" type="button" aria-pressed="false">Teszt: ki</button>
+            </legend>
+            <p class="field-hint icon-test-status" id="icon-test-status" role="status" aria-live="polite">Utolsó tesztikon: nincs kiválasztva.</p>
+            <div class="icon-groups">
+              <fieldset class="icon-option-group">
+                <legend>Középső sor</legend>
+                <div class="icon-choices">
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="életkioltó">életkioltó</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="ereklye">ereklye</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="fa">fa</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="fém">fém</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="háló">háló</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="hegymélyi">hegymélyi</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="hideg">hideg</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="idézés">idézés</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="KF">KF</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="kincs">kincs</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="köd">köd</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="legendás">legendás</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="mentális">mentális</label>
+                  <label class="icon-choice icon-choice-numeric"><input type="checkbox" name="icon" value="Oltalom">Oltalom<input class="icon-value" name="protection" type="text" placeholder="Érték" aria-label="Oltalom értéke" hidden disabled></label>
+                  <label class="icon-choice icon-choice-numeric"><input type="checkbox" name="icon" value="Szörnykomponens">Szörnykomponens<input class="icon-quantity" name="monsterComponent" type="number" min="1" max="99" step="1" aria-label="Szörnykomponens mennyisége" hidden disabled></label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="ősmágia">ősmágia</label>
+                  <label class="icon-choice icon-choice-numeric"><input type="checkbox" name="icon" value="Reakció drágítás">Reakció drágítás<input class="icon-value" name="reactionSurcharge" type="text" placeholder="Érték" aria-label="Reakció drágítás értéke" hidden disabled></label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="rezisztencia">rezisztencia</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="sav">sav</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="tűz">tűz</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="védekezés">védekezés</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="villám">villám</label>
+                </div>
+              </fieldset>
+
+              <fieldset class="icon-option-group">
+                <legend>Bal oldal (egyszerre egy)</legend>
+                <div class="icon-choices">
+                  <label class="icon-choice"><input type="radio" name="sideIcon" value="">Nincs</label>
+                  <label class="icon-choice"><input type="radio" name="sideIcon" value="élőholt">élőholt</label>
+                  <label class="icon-choice"><input type="radio" name="sideIcon" value="erőd">erőd</label>
+                  <label class="icon-choice"><input type="radio" name="sideIcon" value="horgony">horgony</label>
+                  <label class="icon-choice"><input type="radio" name="sideIcon" value="kegy">kegy</label>
+                  <label class="icon-choice"><input type="radio" name="sideIcon" value="őrző">őrző</label>
+                </div>
+              </fieldset>
+
+              <fieldset class="icon-option-group">
+                <legend>Külön elhelyezett ikonok</legend>
+                <div class="icon-choices">
+                  <label class="icon-choice"><input type="checkbox" name="separateIcon" value="isteni">isteni</label>
+                  <label class="icon-choice"><input type="checkbox" name="separateIcon" value="repül">repül</label>
+                </div>
+              </fieldset>
+
             </div>
           </fieldset>
 
@@ -137,13 +177,14 @@
               <span class="field-hint">Bármilyen kombináció • szám vagy X</span>
             </div>
             <div class="cost-grid">
-              <label class="cost-input cost-vp"><span class="cost-symbol"><img class="resource-image" src="resources/cost-vp.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">VP</span><input class="cost-value" name="vp" type="text" aria-label="VP költség"></span><span class="cost-name">VP</span></label>
-              <label class="cost-input cost-zanszilank"><span class="cost-symbol"><img class="resource-image" src="resources/cost-zanszilank.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">Z</span><input class="cost-value" name="zanszilank" type="text" aria-label="Zanszilánk költség"></span><span class="cost-name">Zanszilánk</span></label>
-              <label class="cost-input cost-nekron"><span class="cost-symbol"><img class="resource-image" src="resources/cost-nekron.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">N</span><input class="cost-value" name="nekron" type="text" aria-label="Nekron költség"></span><span class="cost-name">Nekron</span></label>
-              <label class="cost-input cost-szk"><span class="cost-symbol"><img class="resource-image" src="resources/cost-szk.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">SZK</span><input class="cost-value" name="szk" type="text" aria-label="SZK költség"></span><span class="cost-name">SZK</span></label>
-              <label class="cost-input cost-builder"><span class="cost-symbol"><img class="resource-image" src="resources/cost-builder.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">É</span><input class="cost-value" name="epito" type="text" aria-label="Építő költség"></span><span class="cost-name">Építő</span></label>
-              <label class="cost-input cost-sacrifice"><span class="cost-symbol"><img class="resource-image" src="resources/cost-sacrifice.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">Á</span><input class="cost-value" name="aldozas" type="text" aria-label="Áldozás költség"></span><span class="cost-name">Áldozás</span></label>
+              <label class="cost-input cost-vp"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/VP_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">VP</span><input class="cost-value" name="vp" type="text" value="1" aria-label="VP költség"></span><span class="cost-name">VP</span></label>
+              <label class="cost-input cost-szk"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/Csont_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">SZK</span><input class="cost-value" name="szk" type="text" value="1" aria-label="SZK költség"></span><span class="cost-name">SZK</span></label>
+              <label class="cost-input cost-builder"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/Építő_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">É</span><input class="cost-value" name="epito" type="text" value="1" aria-label="Építő költség"></span><span class="cost-name">Építő</span></label>
+              <label class="cost-input cost-zanszilank"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/ZSZ_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">Z</span><input class="cost-value" name="zanszilank" type="text" value="1" aria-label="Zanszilánk költség"></span><span class="cost-name">Zanszilánk</span></label>
+              <label class="cost-input cost-nekron"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/Nekron_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">N</span><input class="cost-value" name="nekron" type="text" value="1" aria-label="Nekron költség"></span><span class="cost-name">Nekron</span></label>
+              <label class="cost-input cost-sacrifice"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/Áldozás_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">Á</span><input class="cost-value" name="aldozas" type="text" value="1" aria-label="Áldozás költség"></span><span class="cost-name">Áldozás</span></label>
             </div>
+            <p class="cost-warning" id="cost-warning" role="status" aria-live="polite" hidden>3-nál több különböző költség megadása esetén az ikonok összeérhetnek vagy átfedhetik a kártyanevet.</p>
           </div>
 
           <div class="field-row metadata-grid subtype-row">
@@ -164,7 +205,7 @@
                   <option value="bűbáj lapra">bűbáj lapra</option>
                   <option value="bűbáj lényre">bűbáj lényre</option>
                   <option value="bűbáj tárgyra">bűbáj tárgyra</option>
-                  <option value="céh">céh</option>
+                  <option value="céh" disabled>céh (még nem elérhető)</option>
                   <option value="egyéb">egyéb</option>
                   <option value="építmény">építmény</option>
                   <option value="galetki">galetki</option>
@@ -333,6 +374,7 @@
             <div class="field-group">
               <label class="field-label" for="card-power">Erő</label>
               <input id="card-power" name="power" type="text" maxlength="12" placeholder="0-9, X, +, -, *, /" aria-label="Erő értéke">
+              <label class="stat-icon-toggle"><input type="checkbox" name="powerIcon">Mágikus támadás (Erő ikon)</label>
             </div>
             <div class="field-group">
               <label class="field-label" for="card-secondary-stat-type">Második érték típusa</label>
@@ -344,6 +386,7 @@
                 </select>
               </div>
               <input id="card-toughness" name="toughness" type="text" maxlength="12" placeholder="0-9, X, +, -, *, /" aria-label="Védettség értéke">
+              <label class="stat-icon-toggle"><input type="checkbox" name="secondaryStatIcon">Védekezés (Védettség / Strukturális pont ikon)</label>
             </div>
           </div>
 
@@ -381,6 +424,7 @@
           <article class="hkk-card theme-blue" id="hkk-card" aria-label="Kártya előnézet">
             <img id="background-card-image" class="background-card-image" alt="" aria-hidden="true" hidden>
             <div class="base-color-layers" id="base-color-layers" aria-hidden="true"></div>
+            <div class="faction-test-layer" id="faction-test-layer" aria-hidden="true" hidden></div>
             <div class="card-inner">
               <header class="card-titlebar">
                 <div class="card-title-content">
@@ -398,14 +442,22 @@
                 <span id="preview-subtype" hidden></span>
               </div>
               <div class="card-icons" id="preview-icons" aria-label="Kártya ikonok"></div>
-              <div id="preview-band-icons" class="card-band-icons" aria-hidden="true" hidden></div>
+              <div id="preview-band-icons" class="card-band-icons" aria-hidden="true" hidden>
+                <div class="card-band-icons-center"></div>
+                <div class="card-band-icons-positioned"></div>
+              </div>
               <div class="card-rules">
                 <p id="preview-text"></p>
                 <p id="preview-flavor-text" class="card-flavor" hidden></p>
                 <span class="rules-flourish" aria-hidden="true">&#10022; &nbsp; &#10022; &nbsp; &#10022;</span>
               </div>
               <div class="card-stats" id="preview-stats" aria-live="polite" hidden>
-                <span class="stat-box stat-power" aria-label="Erő"><strong id="preview-power"></strong></span>
+                <span class="stat-box stat-power" aria-label="Erő">
+                  <span class="stat-content">
+                    <span class="stat-icon stat-power-icon" id="preview-power-icon" aria-hidden="true">E</span>
+                    <strong id="preview-power"></strong>
+                  </span>
+                </span>
                 <span class="stat-box stat-toughness" id="preview-secondary-stat">
                   <span class="stat-content">
                     <img class="stat-icon resource-image" id="preview-toughness-icon" src="resources/Icons/Védelem.png" alt="" aria-hidden="true">

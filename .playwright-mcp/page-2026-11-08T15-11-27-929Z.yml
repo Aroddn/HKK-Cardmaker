@@ -1,0 +1,491 @@
+- generic [ref=f11e2]:
+  - banner [ref=f11e3]:
+    - generic "HKK Kártyakészítő" [ref=f11e4]:
+      - generic [ref=f11e5]: HKK
+      - generic [ref=f11e6]:
+        - paragraph [ref=f11e7]: Magyar Fantasy Kártyajáték
+        - heading "NEM HIVATALOS HKK KÁRTYAKÉSZÍTŐ" [level=1] [ref=f11e8]
+    - generic "Kártyakészítő verzió 1.0" [ref=f11e9]:
+      - generic [ref=f11e10]: ✦
+      - generic [ref=f11e11]: TERVEZŐKIADÁS 1.0
+  - navigation "Kártyaműveletek" [ref=f11e12]:
+    - generic [ref=f11e13]: KÁRTYA SZERKESZTŐ
+    - generic [ref=f11e15]:
+      - button "Visszaállítás" [ref=f11e16] [cursor=pointer]: ↺ Visszaállítás
+      - button "Kártya képének mentése" [ref=f11e17] [cursor=pointer]: ⇩ Kép mentése
+      - status [ref=f11e18]
+  - main [ref=f11e19]:
+    - region [ref=f11e20]:
+      - generic [ref=f11e21]:
+        - generic [ref=f11e22]:
+          - paragraph [ref=f11e23]: KÖVETKEZŐ LEGENDA
+          - heading "Kártya adatai" [level=2] [ref=f11e24]
+        - generic [ref=f11e25]: 01 / ÉPÍTÉS
+      - generic [ref=f11e26]:
+        - generic [ref=f11e27]:
+          - generic [ref=f11e28]: Kártyanév
+          - textbox "Kártyanév" [ref=f11e29]:
+            - /placeholder: Add meg a kártya nevét
+            - text: Valami HKK lap
+        - generic [ref=f11e30]:
+          - generic [ref=f11e31]: Kártyakészítési szabály
+          - generic [ref=f11e32]:
+            - combobox "Kártyakészítési szabály" [ref=f11e33] [cursor=pointer]:
+              - option "Varázslat / Tárgy"
+              - option "Lény"
+              - option "Építmény"
+              - option "Követő / Szabálylap"
+              - option "Őslich"
+              - option "Céh (még nem elérhető)" [disabled]
+              - option "Egyéb (szabad szabályok)" [selected]
+            - text: ▾
+          - status [ref=f11e34]: Minden szín, költség és stat szabadon választható.
+        - 'group "Alap színek 1 / 2 kiválasztva Teszt: ki" [ref=f11e35]':
+          - generic [ref=f11e36]:
+            - generic [ref=f11e37]: Alap színek 1 / 2 kiválasztva
+            - 'button "Teszt: ki" [ref=f11e38] [cursor=pointer]'
+          - status [ref=f11e39]: "Utolsó tesztszín: Narancs lap."
+          - generic [ref=f11e40]:
+            - generic [ref=f11e41]:
+              - checkbox "Dornodon" [disabled] [ref=f11e42] [cursor=pointer]
+              - generic [ref=f11e43]: Dornodon
+            - generic [ref=f11e44]:
+              - checkbox "Chara-din" [disabled] [ref=f11e45] [cursor=pointer]
+              - generic [ref=f11e46]: Chara-din
+            - generic [ref=f11e47]:
+              - checkbox "Leah" [disabled] [ref=f11e48] [cursor=pointer]
+              - generic [ref=f11e49]: Leah
+            - generic [ref=f11e50]:
+              - checkbox "Raia" [disabled] [ref=f11e51] [cursor=pointer]
+              - generic [ref=f11e52]: Raia
+            - generic [ref=f11e53]:
+              - checkbox "Elenios" [disabled] [ref=f11e54] [cursor=pointer]
+              - generic [ref=f11e55]: Elenios
+            - generic [ref=f11e56]:
+              - checkbox "Rhatt" [disabled] [ref=f11e57] [cursor=pointer]
+              - generic [ref=f11e58]: Rhatt
+            - generic [ref=f11e59]:
+              - checkbox "Tharr" [disabled] [ref=f11e60] [cursor=pointer]
+              - generic [ref=f11e61]: Tharr
+            - generic [ref=f11e62]:
+              - checkbox "Fairlight" [disabled] [ref=f11e63] [cursor=pointer]
+              - generic [ref=f11e64]: Fairlight
+            - generic [ref=f11e65]:
+              - checkbox "Sheran" [disabled] [ref=f11e66] [cursor=pointer]
+              - generic [ref=f11e67]: Sheran
+            - generic [ref=f11e68]:
+              - checkbox "Bufa" [disabled] [ref=f11e69] [cursor=pointer]
+              - generic [ref=f11e70]: Bufa
+            - generic [ref=f11e71]:
+              - checkbox "Színtelen" [disabled] [ref=f11e72] [cursor=pointer]
+              - generic [ref=f11e73]: Színtelen
+            - generic [ref=f11e74] [cursor=pointer]:
+              - checkbox "Narancs lap" [checked] [ref=f11e75]
+              - generic [ref=f11e76]: Narancs lap
+          - paragraph [ref=f11e77]: Legfeljebb kettőt válassz. A Színtelen, a Bufa és a Narancs lap nem kombinálható más színnel.
+          - paragraph
+        - generic [ref=f11e78]:
+          - generic [ref=f11e79]:
+            - text: Kártyakép
+            - generic [ref=f11e80]: OPCIONÁLIS
+          - generic [ref=f11e81]:
+            - button "Kártyakép OPCIONÁLIS Kép kiválasztása" [ref=f11e82]
+            - generic [ref=f11e83] [cursor=pointer]: ⇪ Kép kiválasztása
+            - generic [ref=f11e84]: Nincs kép kiválasztva
+          - alert
+          - generic [ref=f11e85]: JPG, PNG vagy GIF. A készüléken marad.
+        - 'group "Ikonok A KÉP ALATT Teszt: be" [ref=f11e86]':
+          - generic [ref=f11e87]:
+            - generic [ref=f11e88]: Ikonok A KÉP ALATT
+            - 'button "Teszt: be" [pressed] [ref=f11e89] [cursor=pointer]'
+          - status [ref=f11e90]: "Utolsó tesztikon: villám. Csak az előnézetben jelenik meg, a letöltött kártyán nem."
+          - generic [ref=f11e91]:
+            - group "Középső sor" [ref=f11e92]:
+              - generic [ref=f11e94]:
+                - generic [ref=f11e95] [cursor=pointer]:
+                  - checkbox "életkioltó" [ref=f11e96]
+                  - text: életkioltó
+                - generic [ref=f11e97] [cursor=pointer]:
+                  - checkbox "ereklye" [ref=f11e98]
+                  - text: ereklye
+                - generic [ref=f11e99] [cursor=pointer]:
+                  - checkbox "fa" [ref=f11e100]
+                  - text: fa
+                - generic [ref=f11e101] [cursor=pointer]:
+                  - checkbox "fém" [ref=f11e102]
+                  - text: fém
+                - generic [ref=f11e103] [cursor=pointer]:
+                  - checkbox "háló" [ref=f11e104]
+                  - text: háló
+                - generic [ref=f11e105] [cursor=pointer]:
+                  - checkbox "hegymélyi" [ref=f11e106]
+                  - text: hegymélyi
+                - generic [ref=f11e107] [cursor=pointer]:
+                  - checkbox "hideg" [ref=f11e108]
+                  - text: hideg
+                - generic [ref=f11e109] [cursor=pointer]:
+                  - checkbox "idézés" [ref=f11e110]
+                  - text: idézés
+                - generic [ref=f11e111] [cursor=pointer]:
+                  - checkbox "KF" [ref=f11e112]
+                  - text: KF
+                - generic [ref=f11e113] [cursor=pointer]:
+                  - checkbox "kincs" [ref=f11e114]
+                  - text: kincs
+                - generic [ref=f11e115] [cursor=pointer]:
+                  - checkbox "köd" [ref=f11e116]
+                  - text: köd
+                - generic [ref=f11e117] [cursor=pointer]:
+                  - checkbox "legendás" [ref=f11e118]
+                  - text: legendás
+                - generic [ref=f11e119] [cursor=pointer]:
+                  - checkbox "mentális" [ref=f11e120]
+                  - text: mentális
+                - generic [ref=f11e121] [cursor=pointer]:
+                  - checkbox "Oltalom" [ref=f11e122]
+                  - text: Oltalom
+                - generic [ref=f11e123] [cursor=pointer]:
+                  - checkbox "Szörnykomponens" [ref=f11e124]
+                  - text: Szörnykomponens
+                - generic [ref=f11e125] [cursor=pointer]:
+                  - checkbox "ősmágia" [ref=f11e126]
+                  - text: ősmágia
+                - generic [ref=f11e127] [cursor=pointer]:
+                  - checkbox "Reakció drágítás" [ref=f11e128]
+                  - text: Reakció drágítás
+                - generic [ref=f11e129] [cursor=pointer]:
+                  - checkbox "rezisztencia" [ref=f11e130]
+                  - text: rezisztencia
+                - generic [ref=f11e131] [cursor=pointer]:
+                  - checkbox "sav" [ref=f11e132]
+                  - text: sav
+                - generic [ref=f11e133] [cursor=pointer]:
+                  - checkbox "tűz" [ref=f11e134]
+                  - text: tűz
+                - generic [ref=f11e135] [cursor=pointer]:
+                  - checkbox "védekezés" [ref=f11e136]
+                  - text: védekezés
+                - generic [ref=f11e137] [cursor=pointer]:
+                  - checkbox "villám" [ref=f11e138]
+                  - text: villám
+            - group "Bal oldal (egyszerre egy)" [ref=f11e139]:
+              - generic [ref=f11e141]:
+                - generic [ref=f11e142] [cursor=pointer]:
+                  - radio "Nincs" [ref=f11e143]
+                  - text: Nincs
+                - generic [ref=f11e144] [cursor=pointer]:
+                  - radio "élőholt" [ref=f11e145]
+                  - text: élőholt
+                - generic [ref=f11e146] [cursor=pointer]:
+                  - radio "erőd" [ref=f11e147]
+                  - text: erőd
+                - generic [ref=f11e148] [cursor=pointer]:
+                  - radio "horgony" [ref=f11e149]
+                  - text: horgony
+                - generic [ref=f11e150] [cursor=pointer]:
+                  - radio "kegy" [ref=f11e151]
+                  - text: kegy
+                - generic [ref=f11e152] [cursor=pointer]:
+                  - radio "őrző" [ref=f11e153]
+                  - text: őrző
+            - group "Külön elhelyezett ikonok" [ref=f11e154]:
+              - generic [ref=f11e156]:
+                - generic [ref=f11e157] [cursor=pointer]:
+                  - checkbox "isteni" [ref=f11e158]
+                  - text: isteni
+                - generic [ref=f11e159] [cursor=pointer]:
+                  - checkbox "repül" [ref=f11e160]
+                  - text: repül
+        - generic [ref=f11e161]:
+          - generic [ref=f11e162]:
+            - generic [ref=f11e163]: Költség
+            - generic [ref=f11e164]: Bármilyen kombináció • szám vagy X
+          - generic [ref=f11e165]:
+            - generic [ref=f11e166]:
+              - textbox "VP költség" [ref=f11e169]: "1"
+              - generic [ref=f11e170]: VP
+            - generic [ref=f11e171]:
+              - textbox "SZK költség" [ref=f11e174]: "1"
+              - generic [ref=f11e175]: SZK
+            - generic [ref=f11e176]:
+              - textbox "Építő költség" [ref=f11e179]: "1"
+              - generic [ref=f11e180]: Építő
+            - generic [ref=f11e181]:
+              - textbox "Zanszilánk költség" [ref=f11e184]: "1"
+              - generic [ref=f11e185]: Zanszilánk
+            - generic [ref=f11e186]:
+              - textbox "Nekron költség" [ref=f11e189]: "1"
+              - generic [ref=f11e190]: Nekron
+            - generic [ref=f11e191]:
+              - textbox "Áldozás költség" [ref=f11e194]: "1"
+              - generic [ref=f11e195]: Áldozás
+          - status [ref=f11e196]: 3-nál több különböző költség megadása esetén az ikonok összeérhetnek vagy átfedhetik a kártyanevet.
+        - generic [ref=f11e198]:
+          - generic [ref=f11e199]: Típus
+          - textbox "Típus" [ref=f11e200]:
+            - /placeholder: Írj be tetszőleges típust...
+            - text: valami
+          - generic [ref=f11e201]: Típus hozzáadása a listából
+          - generic [ref=f11e202]:
+            - combobox "Típus kiválasztása a listából" [ref=f11e203] [cursor=pointer]:
+              - option "--nincs--" [selected]
+              - option "általános"
+              - option "avatár"
+              - option "azonnali"
+              - option "bűbáj"
+              - option "bűbáj bűbájra"
+              - option "bűbáj építményre"
+              - option "bűbáj kalandozóra"
+              - option "bűbáj lapra"
+              - option "bűbáj lényre"
+              - option "bűbáj tárgyra"
+              - option "céh (még nem elérhető)" [disabled]
+              - option "egyéb"
+              - option "építmény"
+              - option "galetki"
+              - option "helyszín"
+              - option "kalandozó"
+              - option "követő"
+              - option "őslich"
+              - option "szabálylap"
+              - option "szakértelem"
+              - option "szintlépés"
+              - option "szörny"
+              - option "tárgy"
+              - option "testrész"
+              - option "torzszülött"
+            - text: ▾
+        - generic [ref=f11e205]:
+          - generic [ref=f11e206]: Altípus
+          - textbox "Altípus" [ref=f11e207]:
+            - /placeholder: Írj be tetszőleges altípust...
+            - text: mégvalami
+          - generic [ref=f11e208]: Altípus hozzáadása a listából
+          - generic [ref=f11e209]:
+            - combobox "Altípus kiválasztása a listából" [ref=f11e210] [cursor=pointer]:
+              - option "--nincs--" [selected]
+              - option "?"
+              - option "alakváltó"
+              - option "angyal"
+              - option "árnymanó"
+              - option "bánya"
+              - option "bazaltelementál"
+              - option "betegség"
+              - option "burástya"
+              - option "cápa"
+              - option "chara-din fattya"
+              - option "csapda"
+              - option "csontváz"
+              - option "dinó"
+              - option "druida"
+              - option "dzsinn"
+              - option "ében íjász"
+              - option "éjfatty"
+              - option "ékszer"
+              - option "elektromos"
+              - option "elementál"
+              - option "elf"
+              - option "ember"
+              - option "epikus"
+              - option "falu"
+              - option "fegyver"
+              - option "féreg"
+              - option "fókuszkristály"
+              - option "főnix"
+              - option "ganüid"
+              - option "gnóm"
+              - option "goblin"
+              - option "gólem"
+              - option "griff"
+              - option "grok képződmény"
+              - option "hadvezér"
+              - option "hajó"
+              - option "hangszer"
+              - option "hátas"
+              - option "helyszín"
+              - option "hideg"
+              - option "hordaparancsnok"
+              - option "íjász"
+              - option "jég"
+              - option "kalóz"
+              - option "káoszszellem"
+              - option "kígyó"
+              - option "kísértet"
+              - option "kobudera"
+              - option "Közös Tudat"
+              - option "krabber"
+              - option "légelementál"
+              - option "lovas"
+              - option "manó"
+              - option "minotaurusz"
+              - option "moa"
+              - option "morf"
+              - option "motyogó"
+              - option "mutáns"
+              - option "nekromanta"
+              - option "nerub"
+              - option "oltár"
+              - option "orgling"
+              - option "óriás"
+              - option "ork"
+              - option "őshangya"
+              - option "pajzs"
+              - option "páncél"
+              - option "pegazus"
+              - option "pók"
+              - option "polip"
+              - option "politika"
+              - option "praglonc"
+              - option "próféta"
+              - option "pulzáló"
+              - option "quwarg"
+              - option "quwarg boly"
+              - option "rák"
+              - option "reakció"
+              - option "sárkány"
+              - option "sav"
+              - option "sisak"
+              - option "skorpió"
+              - option "szentély"
+              - option "szilmill"
+              - option "szinguláris"
+              - option "szingularitás"
+              - option "szintlépés"
+              - option "sziránusz"
+              - option "szirén"
+              - option "szkritter"
+              - option "teknős"
+              - option "templom"
+              - option "termik"
+              - option "thargodan"
+              - option "tojás"
+              - option "torony"
+              - option "törpe"
+              - option "triklem drakolder"
+              - option "troglodita"
+              - option "troll"
+              - option "tűzelementál"
+              - option "vámpír"
+              - option "varkaudar"
+              - option "végzetúr"
+              - option "vérfarkas"
+              - option "villám"
+              - option "víz"
+              - option "vízelementál"
+              - option "vízió"
+              - option "womath"
+              - option "xenó"
+              - option "yeti"
+              - option "zan indukátor"
+            - text: ▾
+        - generic [ref=f11e211]:
+          - 'button "Kártyanév, típus és altípus színe: fekete" [ref=f11e212] [cursor=pointer]'
+          - generic [ref=f11e213]: A kártyán és a letöltött képen is érvényes.
+        - generic [ref=f11e215]:
+          - generic [ref=f11e216]: Gyakoriság
+          - generic [ref=f11e217]:
+            - combobox "Gyakoriság" [ref=f11e218] [cursor=pointer]:
+              - option "--nincs--" [selected]
+              - option "Gyakori"
+              - option "Ritka"
+              - option "Ultra ritka"
+            - text: ▾
+        - generic [ref=f11e219]:
+          - generic [ref=f11e220]:
+            - generic [ref=f11e221]: Erő
+            - textbox "Erő értéke" [ref=f11e222]:
+              - /placeholder: 0-9, X, +, -, *, /
+            - generic [ref=f11e223] [cursor=pointer]:
+              - checkbox "Mágikus támadás (Erő ikon)" [ref=f11e224]
+              - text: Mágikus támadás (Erő ikon)
+          - generic [ref=f11e225]:
+            - generic [ref=f11e226]: Második érték típusa
+            - generic [ref=f11e227]:
+              - combobox "Második érték típusa" [ref=f11e228] [cursor=pointer]:
+                - option "--nincs--" [selected]
+                - option "Védettség"
+                - option "Strukturális pont"
+              - text: ▾
+            - textbox "Védettség értéke" [ref=f11e229]:
+              - /placeholder: 0-9, X, +, -, *, /
+            - generic [ref=f11e230] [cursor=pointer]:
+              - checkbox "Védekezés (Védettség / Strukturális pont ikon)" [ref=f11e231]
+              - text: Védekezés (Védettség / Strukturális pont ikon)
+        - generic [ref=f11e232]:
+          - generic [ref=f11e233]: Kártyaszöveg
+          - textbox "Kártyaszöveg" [ref=f11e234]:
+            - /placeholder: Írd le a szabályszöveget...
+          - generic [ref=f11e235]:
+            - generic [ref=f11e236]:
+              - button "Kijelölt szöveg félkövérré formázása" [ref=f11e237] [cursor=pointer]:
+                - strong [ref=f11e238]: B
+                - text: Félkövér
+              - button "Csont" [ref=f11e239] [cursor=pointer]
+              - button "Ell körében egyszer" [ref=f11e240] [cursor=pointer]
+              - button "Ereklye" [ref=f11e241] [cursor=pointer]
+              - button "Erőd" [ref=f11e242] [cursor=pointer]
+              - button "Fa" [ref=f11e243] [cursor=pointer]
+              - button "Fém" [ref=f11e244] [cursor=pointer]
+              - button "Hegymélyi" [ref=f11e245] [cursor=pointer]
+              - button "Horgony" [ref=f11e246] [cursor=pointer]
+              - button "Háló" [ref=f11e247] [cursor=pointer]
+              - button "Játékonként egyszer" [ref=f11e248] [cursor=pointer]
+              - button "KF" [ref=f11e249] [cursor=pointer]
+              - button "Kegy" [ref=f11e250] [cursor=pointer]
+              - button "Körönként egyszer" [ref=f11e251] [cursor=pointer]
+              - button "Legendás" [ref=f11e252] [cursor=pointer]
+              - button "Lehelet" [ref=f11e253] [cursor=pointer]
+              - button "Passzivizálás" [ref=f11e254] [cursor=pointer]
+              - button "Pszionikus" [ref=f11e255] [cursor=pointer]
+              - button "Rezisztencia" [ref=f11e256] [cursor=pointer]
+              - button "Sav" [ref=f11e257] [cursor=pointer]
+              - button "Szörnykomponens" [ref=f11e258] [cursor=pointer]
+              - button "Tűz" [ref=f11e259] [cursor=pointer]
+              - button "VP" [ref=f11e260] [cursor=pointer]
+              - button "Villám" [ref=f11e261] [cursor=pointer]
+              - button "Védekezés" [ref=f11e262] [cursor=pointer]
+              - button "Védelem" [ref=f11e263] [cursor=pointer]
+              - button "Áldozás" [ref=f11e264] [cursor=pointer]
+              - button "Életkioltó" [ref=f11e265] [cursor=pointer]
+              - button "Élőholt" [ref=f11e266] [cursor=pointer]
+              - button "Építő" [ref=f11e267] [cursor=pointer]
+              - button "Ősmágia" [ref=f11e268] [cursor=pointer]
+            - generic [ref=f11e269]: 0 / 260
+          - generic [ref=f11e270]: Jelöld ki a szöveget a félkövér gombhoz. A hosszú szöveg automatikusan kisebb lesz. Az ikon a kijelölt helyre kerül.
+        - generic [ref=f11e271]:
+          - generic [ref=f11e272]:
+            - text: Ízszöveg
+            - generic [ref=f11e273]: OPCIONÁLIS
+          - textbox "Ízszöveg OPCIONÁLIS" [ref=f11e274]:
+            - /placeholder: Írd le a kártya hangulati szövegét...
+      - generic [ref=f11e275]:
+        - generic [ref=f11e276]: ◆
+        - text: A módosítások azonnal látszanak a kártyán.
+    - region [ref=f11e277]:
+      - generic [ref=f11e278]:
+        - generic [ref=f11e279]:
+          - paragraph [ref=f11e280]: ÉLŐ ELŐNÉZET
+          - heading "A kártyád" [level=2] [ref=f11e281]
+        - generic [ref=f11e282]: KÉSZ
+      - article "Kártya előnézet" [ref=f11e285]:
+        - generic [ref=f11e288]:
+          - generic [ref=f11e290]:
+            - generic "Kártyaköltségek" [ref=f11e291]:
+              - 'generic "VP: 1" [ref=f11e292]': "1"
+              - 'generic "SZK: 1" [ref=f11e295]': "1"
+              - 'generic "Építő: 1" [ref=f11e298]': "1"
+              - 'generic "Zanszilánk: 1" [ref=f11e301]': "1"
+              - 'generic "Nekron: 1" [ref=f11e304]': "1"
+              - 'generic "Áldozás: 1" [ref=f11e307]': "1"
+            - heading "Valami HKK lap" [level=3] [ref=f11e311]
+          - generic:
+            - generic: valami
+            - generic: mégvalami
+          - generic "Kártya ikonok" [ref=f11e313]
+          - generic [ref=f11e314]:
+            - paragraph [ref=f11e315]
+            - text: „”
+  - contentinfo [ref=f11e316]:
+    - generic [ref=f11e317]: HKK KÁRTYAKÉSZÍTŐ
+    - generic [ref=f11e318]: NEM HIVATALOS, FAN-MADE KÁRTYATERVEZŐ
+    - generic [ref=f11e319]: KÉSZ. 2000 ✦

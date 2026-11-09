@@ -47,6 +47,18 @@ Faction base-card images are loaded from `resources/Base colors/`. Individual an
 
 Other optional resources, such as cost symbols and icons, are loaded from `resources/` when present and fall back to built-in symbols or colors when absent.
 
+## Adjusting card icon placement
+
+Edit `cardIconLayouts` near the top of `app.js` to resize each card icon and adjust its vertical position. Center-row icons automatically line up next to each other; their `y` setting is a vertical offset within the row and `size` is a percentage of the card's width. Left-side and separately placed icons also have individual `x`/`y` positions. The left-side group allows one icon or **Nincs**; PNG exports use the same layout as the preview.
+
+The **Teszt** button beside **Ikonok** keeps the last selected icon visible in the preview while adjusting layouts, even after a page reload or form reset. The test-only icon does not appear in downloaded cards and the selection is remembered for the current browser tab session.
+
+The **Teszt** button beside **Alap színek** similarly previews the last selected faction without changing the card's actual faction or PNG export. It starts off with Narancs lap as the remembered preview.
+
+The **Mágikus támadás** and **Védekezés** checkboxes under the stats toggle the Erő and Védettség/Strukturális pont indicators, respectively. They are not separate card icons.
+
+The card-creation rule selector above the faction choices restricts colors, costs, and stats for Varázslat/Tárgy, Lény, Építmény, Követő/Szabálylap, and Őslich. **Egyéb** is the unrestricted default. Switching rules clears values that are no longer allowed; the rule definitions and guidance are maintained in `cardRuleDefinitions` and `cardRuleGuidance` in `app.js`.
+
 In the card-text field, select text and use the **Félkövér** button to mark it bold. The preview and PNG export both preserve the formatting, and longer ability or flavor text shrinks to fit. Flavor text is shown centered, italicized, and in Hungarian quotation marks.
 
 ## Notes

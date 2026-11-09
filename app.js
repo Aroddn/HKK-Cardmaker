@@ -7,11 +7,22 @@ const backgroundImagePositionControls = document.querySelector('#background-imag
 const fileName = document.querySelector('#file-name');
 const imageError = document.querySelector('#image-error');
 const factionInputs = [...form.querySelectorAll('input[name="faction"]')];
+const factionTestToggle = document.querySelector('#faction-test-toggle');
+const factionTestStatus = document.querySelector('#faction-test-status');
+const factionTestLayer = document.querySelector('#faction-test-layer');
+const cardRuleInput = form.querySelector('#card-rule');
+const costInputs = [...form.querySelectorAll('.cost-value')];
+const powerInput = form.querySelector('#card-power');
+const secondaryStatTypeInput = form.querySelector('#card-secondary-stat-type');
+const secondaryStatInput = form.querySelector('#card-toughness');
+const powerIconInput = form.querySelector('input[name="powerIcon"]');
+const secondaryStatIconInput = form.querySelector('input[name="secondaryStatIcon"]');
 const rulesTextInput = form.querySelector('#card-text');
 const typeTextColorToggle = document.querySelector('#toggle-type-text-color');
 const cardBandIconAssets = new Map([
   ['védekezés', 'Védekezés'],
   ['életkioltó', 'Életkioltó'],
+  ['élőholt', 'Élőholt'],
   ['ereklye', 'Ereklye'],
   ['erőd', 'Erőd'],
   ['fa', 'Fa'],
@@ -21,6 +32,7 @@ const cardBandIconAssets = new Map([
   ['hideg', null],
   ['horgony', 'Horgony'],
   ['idézés', null],
+  ['isteni', null],
   ['kegy', 'Kegy'],
   ['KF', 'KF'],
   ['kincs', null],
@@ -28,6 +40,8 @@ const cardBandIconAssets = new Map([
   ['legendás', 'Legendás'],
   ['mentális', null],
   ['ősmágia', 'Ősmágia'],
+  ['őrző', null],
+  ['repül', null],
   ['Reakció drágítás', null],
   ['rezisztencia', 'Rezisztencia'],
   ['sav', 'Sav'],
@@ -36,6 +50,45 @@ const cardBandIconAssets = new Map([
   ['Oltalom', null],
   ['Szörnykomponens', 'Szörnykomponens']
 ].map(([value, name]) => [value, name && `resources/Icons/${name}.png`]));
+// Center-row y is a vertical offset; positioned icons use card x/y percentages.
+// Size is a percentage of the card width.
+const cardIconLayouts = new Map([
+  ['életkioltó', { group: 'center', y: -15, size: 11 }],
+  ['ereklye', { group: 'center', y: -17.5, size: 7.1 }],
+  ['fa', { group: 'center', y: -17, size: 9.5 }],
+  ['fém', { group: 'center', y: -25, size: 7.7  }],
+  ['háló', { group: 'center', y: 0, size: 3.2 }],
+  ['hegymélyi', { group: 'center', y: 0, size: 3.2 }],
+  ['hideg', { group: 'center', y: 0, size: 3.2 }],
+  ['idézés', { group: 'center', y: 0, size: 3.2 }],
+  ['KF', { group: 'center', y: 0, size: 3.2 }],
+  ['kincs', { group: 'center', y: 0, size: 3.2 }],
+  ['köd', { group: 'center', y: 0, size: 3.2 }],
+  ['legendás', { group: 'center', y: 0, size: 3.2 }],
+  ['mentális', { group: 'center', y: 0, size: 3.2 }],
+  ['Oltalom', { group: 'center', y: 0, size: 3.2 }],
+  ['Szörnykomponens', { group: 'center', y: 0, size: 3.2 }],
+  ['ősmágia', { group: 'center', y: 0, size: 3.2 }],
+  ['Reakció drágítás', { group: 'center', y: 0, size: 3.2 }],
+  ['rezisztencia', { group: 'center', y: 0, size: 3.2 }],
+  ['sav', { group: 'center', y: 0, size: 3.2 }],
+  ['tűz', { group: 'center', y: 0, size: 3.2 }],
+  ['védekezés', { group: 'center', y: 0, size: 3.2 }],
+  ['villám', { group: 'center', y: 0, size: 3.2 }],
+  ['élőholt', { group: 'positioned', x: 6, y: 56.7, size: 7.5 }],
+  ['erőd', { group: 'positioned', x: 5.5, y: 57.8, size: 4.4 }],
+  ['horgony', { group: 'positioned', x: 5.5, y: 57.8, size: 4.4 }],
+  ['kegy', { group: 'positioned', x: 5.5, y: 57.8, size: 4.4 }],
+  ['őrző', { group: 'positioned', x: 5.5, y: 57.8, size: 4.4 }],
+  ['isteni', { group: 'positioned', x: 94, y: 55.8, size: 3.8 }],
+  ['repül', { group: 'positioned', x: 94, y: 59.3, size: 3.8 }]
+]);
+const iconTestToggle = document.querySelector('#icon-test-toggle');
+const iconTestStatus = document.querySelector('#icon-test-status');
+let rememberedCardIcon = '';
+let iconTestEnabled = false;
+let rememberedFaction = 'no-color';
+let factionTestEnabled = false;
 const rulesTextIcons = [
   ...[
     'Csont',
@@ -99,6 +152,63 @@ const factions = [
 ];
 const factionByKey = new Map(factions.map((faction) => [faction.key, faction]));
 const exclusiveFactionKeys = new Set(['bufa', 'colorless', 'no-color']);
+const cardRuleDefinitions = {
+  other: {
+    allowOrange: true,
+    orangeOnly: false,
+    allowCosts: true,
+    allowBuilderCost: true,
+    allowPower: true,
+    secondaryStats: ['toughness', 'structural']
+  },
+  'spell-item': {
+    allowOrange: false,
+    orangeOnly: false,
+    allowCosts: true,
+    allowBuilderCost: false,
+    allowPower: false,
+    secondaryStats: []
+  },
+  creature: {
+    allowOrange: false,
+    orangeOnly: false,
+    allowCosts: true,
+    allowBuilderCost: false,
+    allowPower: true,
+    secondaryStats: ['toughness']
+  },
+  building: {
+    allowOrange: false,
+    orangeOnly: false,
+    allowCosts: true,
+    allowBuilderCost: true,
+    allowPower: false,
+    secondaryStats: ['structural']
+  },
+  follower: {
+    allowOrange: true,
+    orangeOnly: true,
+    allowCosts: false,
+    allowBuilderCost: false,
+    allowPower: false,
+    secondaryStats: []
+  },
+  lich: {
+    allowOrange: true,
+    orangeOnly: true,
+    allowCosts: false,
+    allowPower: false,
+    secondaryStats: ['toughness']
+  }
+};
+const cardRuleGuidance = {
+  other: 'Minden szín, költség és stat szabadon választható.',
+  'spell-item': 'Narancs lap és Építő költség nélkül; Erő és második érték nem adható meg.',
+  creature: 'Narancs lap és Építő költség nélkül; Erő és Védettség választható.',
+  building: 'Narancs lap nélkül; csak Strukturális pont adható meg. Építő költség is választható.',
+  follower: 'Csak Narancs lap; költség és stat nem adható meg.',
+  lich: 'Csak Narancs lap; költség és Erő nem adható meg.'
+};
 const factionCombinationByKeys = new Map([
   ['chara-din+fairlight', {
     label: 'Chara-din-Fairlight',
@@ -283,12 +393,12 @@ const factionCombinationByKeys = new Map([
 ]);
 
 const costDetails = [
-  { key: 'vp', label: 'VP', symbol: 'VP', style: 'vp', image: 'resources/cost-vp.png' },
-  { key: 'zanszilank', label: 'Zanszilánk', symbol: 'Z', style: 'zanszilank', image: 'resources/cost-zanszilank.png' },
-  { key: 'nekron', label: 'Nekron', symbol: 'N', style: 'nekron', image: 'resources/cost-nekron.png' },
-  { key: 'szk', label: 'SZK', symbol: 'SZK', style: 'szk', image: 'resources/cost-szk.png' },
-  { key: 'epito', label: 'Építő', symbol: 'É', style: 'builder', image: 'resources/cost-builder.png' },
-  { key: 'aldozas', label: 'Áldozás', symbol: 'Á', style: 'sacrifice', image: 'resources/cost-sacrifice.png' }
+  { key: 'vp', label: 'VP', symbol: 'VP', style: 'vp', image: 'resources/Cost/VP_transparent.png' },
+  { key: 'szk', label: 'SZK', symbol: 'SZK', style: 'szk', image: 'resources/Cost/Csont_transparent.png' },
+  { key: 'epito', label: 'Építő', symbol: 'É', style: 'builder', image: 'resources/Cost/Építő_transparent.png' },
+  { key: 'zanszilank', label: 'Zanszilánk', symbol: 'Z', style: 'zanszilank', image: 'resources/Cost/ZSZ_transparent.png' },
+  { key: 'nekron', label: 'Nekron', symbol: 'N', style: 'nekron', image: 'resources/Cost/Nekron_transparent.png' },
+  { key: 'aldozas', label: 'Áldozás', symbol: 'Á', style: 'sacrifice', image: 'resources/Cost/Áldozás_transparent.png' }
 ];
 
 function watchResourceImages(root = document) {
@@ -324,16 +434,102 @@ function updateFactionImageStatus() {
     : '';
 }
 
-function updateFactionControls(message = 'Legfeljebb kettőt válassz. A Színtelen, a Bufa és a Narancs lap külön kell legyen kiválasztva.') {
+function updateFactionTestControls() {
+  const faction = factionByKey.get(rememberedFaction);
+  factionTestToggle.setAttribute('aria-pressed', String(factionTestEnabled));
+  factionTestToggle.textContent = `Teszt: ${factionTestEnabled ? 'be' : 'ki'}`;
+  factionTestStatus.textContent = factionTestStorageError
+    ? 'A tesztszín beállítása nem menthető ebben a böngészőmunkamenetben.'
+    : `Utolsó tesztszín: ${faction?.label || 'Narancs lap'}.${factionTestEnabled ? ' Csak az előnézetben látható, a kiválasztott alapszínt nem módosítja.' : ''}`;
+}
+
+function rememberTestFaction(factionKey) {
+  rememberedFaction = factionKey;
+  try {
+    sessionStorage.setItem('hkk-cardmaker-test-faction', factionKey);
+  } catch {
+    factionTestStorageError = true;
+  }
+  updateFactionTestControls();
+  if (factionTestEnabled) updatePreview();
+}
+
+function applyCardRuleRestrictions(clearInvalidValues = false) {
+  const rule = cardRuleDefinitions[cardRuleInput.value] || cardRuleDefinitions.other;
+  const orangeFaction = factionInputs.find((input) => input.value === 'no-color');
+  const orangeFactionLabel = orangeFaction.closest('.faction-option');
+
+  if (rule.orangeOnly) {
+    factionInputs.forEach((input) => {
+      if (input !== orangeFaction) input.checked = false;
+    });
+    orangeFaction.checked = true;
+  } else if (!rule.allowOrange && orangeFaction.checked) {
+    if (clearInvalidValues) orangeFaction.checked = false;
+  }
+
+  costInputs.forEach((input) => {
+    const allowed = rule.allowCosts && (rule.allowBuilderCost || input.name !== 'epito');
+    input.disabled = !allowed;
+    if (clearInvalidValues && !allowed) input.value = '';
+  });
+
+  const previousSecondaryType = secondaryStatTypeInput.value;
+  const secondaryStatTypeOptions = [...secondaryStatTypeInput.options].filter((option) => option.value);
+  secondaryStatTypeOptions.forEach((option) => {
+    option.disabled = !rule.secondaryStats.includes(option.value);
+  });
+  if (cardRuleInput.value === 'building') {
+    secondaryStatTypeInput.value = 'structural';
+    if (clearInvalidValues && previousSecondaryType !== 'structural') secondaryStatInput.value = '';
+  } else if (!rule.secondaryStats.includes(previousSecondaryType)) {
+    secondaryStatTypeInput.value = '';
+    if (clearInvalidValues && previousSecondaryType) secondaryStatInput.value = '';
+  }
+
+  powerInput.disabled = !rule.allowPower;
+  secondaryStatInput.disabled = !rule.secondaryStats.length;
+  secondaryStatTypeInput.disabled = !rule.secondaryStats.length;
+  powerIconInput.disabled = !rule.allowPower;
+  secondaryStatIconInput.disabled = !rule.secondaryStats.length;
+  if (clearInvalidValues && !rule.allowPower) {
+    powerInput.value = '';
+    powerIconInput.checked = false;
+  }
+  if (clearInvalidValues && !rule.secondaryStats.length) {
+    secondaryStatInput.value = '';
+    secondaryStatIconInput.checked = false;
+  } else if (clearInvalidValues && !rule.secondaryStats.includes(previousSecondaryType) && previousSecondaryType) {
+    secondaryStatInput.value = '';
+    secondaryStatIconInput.checked = false;
+  }
+
+  orangeFactionLabel.classList.toggle('rule-locked', rule.orangeOnly);
+  document.querySelector('#card-rule-guidance').textContent = cardRuleGuidance[cardRuleInput.value] || cardRuleGuidance.other;
+}
+
+function updateFactionControls(message) {
   const selected = factionInputs.filter((input) => input.checked);
   const hasExclusive = selected.some((input) => exclusiveFactionKeys.has(input.value));
+  const rule = cardRuleDefinitions[cardRuleInput.value] || cardRuleDefinitions.other;
+  const orangeFaction = factionInputs.find((input) => input.value === 'no-color');
+  const maxFactionsReached = selected.length >= 2;
 
   factionInputs.forEach((input) => {
-    input.disabled = !input.checked && (selected.length >= 2 || hasExclusive);
+    const disallowedByRule = rule.orangeOnly
+      ? input !== orangeFaction
+      : input === orangeFaction && !rule.allowOrange;
+    input.disabled = disallowedByRule || (!input.checked && (maxFactionsReached || hasExclusive));
   });
 
   document.querySelector('#faction-count').textContent = `${selected.length} / 2 kiválasztva`;
-  document.querySelector('#faction-guidance').textContent = message;
+  const ruleGuidance = rule.orangeOnly
+    ? 'Ez a szabály csak Narancs lap színt enged.'
+    : rule.allowOrange
+      ? ''
+      : 'Ez a szabály nem engedi a Narancs lap színt.';
+  const standardGuidance = message || 'Legfeljebb kettőt válassz. A Színtelen, a Bufa és a Narancs lap nem kombinálható más színnel.';
+  document.querySelector('#faction-guidance').textContent = [ruleGuidance, standardGuidance].filter(Boolean).join(' ');
 }
 
 function renderRulesText(element, text) {
@@ -381,9 +577,12 @@ function fitPreviewText() {
 
 function handleFactionChange(event) {
   const input = event.currentTarget;
+  const rule = cardRuleDefinitions[cardRuleInput.value] || cardRuleDefinitions.other;
   const selected = factionInputs.filter((option) => option.checked);
 
-  if (input.checked && selected.length > 2) {
+  if (rule.orangeOnly && input.value === 'no-color' && !input.checked) {
+    input.checked = true;
+  } else if (input.checked && selected.length > 2) {
     input.checked = false;
     updateFactionControls('Egy kártyán legfeljebb két alapszín lehet.');
   } else if (input.checked && selected.some((option) => option !== input && exclusiveFactionKeys.has(option.value))) {
@@ -409,6 +608,8 @@ function updatePreview() {
   const subtype = String(values.get('subtype') || '').trim();
   const power = String(values.get('power') || '').trim();
   const toughness = String(values.get('toughness') || '').trim();
+  const powerIconEnabled = values.get('powerIcon') === 'on';
+  const secondaryStatIconEnabled = values.get('secondaryStatIcon') === 'on';
   const secondaryStatType = values.get('secondaryStatType') || 'toughness';
   const secondaryStatLabel = secondaryStatType === 'structural' ? 'Strukturális pont' : 'Védettség';
 
@@ -428,17 +629,20 @@ function updatePreview() {
   document.querySelector('#preview-power').textContent = power;
   document.querySelector('#preview-toughness').textContent = toughness;
   const powerStat = document.querySelector('.stat-power');
+  const powerIcon = document.querySelector('#preview-power-icon');
   const secondaryStat = document.querySelector('#preview-secondary-stat');
   const toughnessIcon = document.querySelector('#preview-toughness-icon');
   powerStat.hidden = !power;
   secondaryStat.hidden = !toughness;
+  powerIcon.hidden = !powerIconEnabled || !power;
   secondaryStat.setAttribute('aria-label', `${secondaryStatLabel}: ${toughness}`);
-  toughnessIcon.hidden = secondaryStatType !== 'toughness' || !toughness;
+  toughnessIcon.hidden = !secondaryStatIconEnabled || !toughness;
   document.querySelector('#card-toughness').setAttribute('aria-label', `${secondaryStatLabel} értéke`);
   document.querySelector('#preview-stats').hidden = !power && !toughness;
 
   const activeCostCount = costDetails.filter(({ key }) => String(values.get(key) || '').trim() !== '').length;
   card.dataset.costCount = String(activeCostCount);
+  document.querySelector('#cost-warning').hidden = activeCostCount <= 3;
   const baseLayers = document.querySelector('#base-color-layers');
   const combination = selectedFactions.length === 2
     ? factionCombinationByKeys.get([...selectedFactions].sort().join('+'))
@@ -469,10 +673,21 @@ function updatePreview() {
       : '';
     return `<div class="card-base-layer" data-faction-label="${faction.label}" style="--faction-fallback: ${faction.fallback}">${image}</div>`;
   }).join('');
+  const testFaction = factionByKey.get(rememberedFaction) || factionByKey.get('no-color');
+  factionTestLayer.innerHTML = testFaction.image
+    ? `<div class="card-base-layer" data-faction-label="${testFaction.label}" style="--faction-fallback: ${testFaction.fallback}"><img class="resource-image" src="${testFaction.image}" alt=""></div>`
+    : `<div class="card-base-layer" data-faction-label="${testFaction.label}" style="--faction-fallback: ${testFaction.fallback}"></div>`;
+  baseLayers.style.visibility = factionTestEnabled ? 'hidden' : '';
+  factionTestLayer.hidden = !factionTestEnabled;
+  watchResourceImages(factionTestLayer);
   updateFactionImageStatus();
   watchResourceImages(baseLayers);
 
-  const selectedIcons = values.getAll('icon');
+  const selectedIcons = [
+    ...values.getAll('icon'),
+    values.get('sideIcon'),
+    ...values.getAll('separateIcon')
+  ].filter(Boolean);
   const selectedBandIcons = selectedIcons
     .filter((icon) => cardBandIconAssets.has(icon))
     .flatMap((icon) => icon === 'Szörnykomponens'
@@ -488,24 +703,57 @@ function updatePreview() {
     if (protection) bandIconValueLabels.push(`Oltalom: ${protection}`);
   }
   const bandIconContainer = document.querySelector('#preview-band-icons');
-  bandIconContainer.replaceChildren(...selectedBandIcons.map((iconName) => {
+  const renderedIconCounts = new Map();
+  const totalIconCounts = new Map();
+  selectedBandIcons.forEach((iconName) => {
+    totalIconCounts.set(iconName, (totalIconCounts.get(iconName) || 0) + 1);
+  });
+  const previewTestIcon = iconTestEnabled && !selectedBandIcons.includes(rememberedCardIcon)
+    ? rememberedCardIcon
+    : '';
+  if (previewTestIcon) {
+    selectedBandIcons.push(previewTestIcon);
+    totalIconCounts.set(previewTestIcon, (totalIconCounts.get(previewTestIcon) || 0) + 1);
+  }
+  const centerIconContainer = bandIconContainer.querySelector('.card-band-icons-center');
+  const positionedIconContainer = bandIconContainer.querySelector('.card-band-icons-positioned');
+  centerIconContainer.replaceChildren();
+  positionedIconContainer.replaceChildren();
+  selectedBandIcons.forEach((iconName) => {
     const icon = document.createElement('span');
     icon.className = 'card-band-icon';
     icon.title = iconName;
     icon.setAttribute('aria-label', iconName);
-    const asset = cardBandIconAssets.get(iconName);
-    if (asset) {
+    const layout = cardIconLayouts.get(iconName);
+    if (!layout) throw new Error(`Missing card icon layout for "${iconName}".`);
+    if (layout.group === 'center') icon.classList.add('card-band-icon-center-item');
+    if (iconName === previewTestIcon) {
+      icon.dataset.testIcon = 'true';
+      icon.title = `${iconName} (teszt)`;
+    }
+    const occurrence = renderedIconCounts.get(iconName) || 0;
+    renderedIconCounts.set(iconName, occurrence + 1);
+    const duplicateOffset = (occurrence - (totalIconCounts.get(iconName) - 1) / 2) * (layout.size + 0.5);
+    if (layout.group === 'center') {
+      icon.style.setProperty('--icon-size', `${layout.size}cqw`);
+      icon.style.setProperty('--icon-y', `${layout.y}%`);
+    } else {
+      icon.style.setProperty('--icon-size', `${layout.size}%`);
+      icon.style.left = `calc(${layout.x}% + ${duplicateOffset}%)`;
+      icon.style.top = `${layout.y}%`;
+    }
+    const assetPath = cardBandIconAssets.get(iconName);
+    if (assetPath) {
       const image = document.createElement('img');
-      image.src = asset;
+      image.src = assetPath;
       image.alt = '';
       icon.append(image);
     } else {
       icon.classList.add('card-band-icon-placeholder');
       icon.textContent = '?';
     }
-    return icon;
-  }));
-  bandIconContainer.style.setProperty('--band-icon-count', String(selectedBandIcons.length));
+    (layout.group === 'center' ? centerIconContainer : positionedIconContainer).append(icon);
+  });
   bandIconContainer.hidden = selectedBandIcons.length === 0;
   selectedIcons.splice(0, selectedIcons.length, ...selectedIcons.filter((icon) => !cardBandIconAssets.has(icon)), ...bandIconValueLabels);
   const reactionSurcharge = String(values.get('reactionSurcharge') || '').trim();
@@ -663,8 +911,94 @@ rulesTextIcons.forEach((icon) => {
   button.addEventListener('click', () => insertRulesTextIcon(icon.token));
   rulesTextIconButtons.append(button);
 });
+let iconTestStorageError = false;
+let factionTestStorageError = false;
+function updateIconTestControls() {
+  iconTestToggle.setAttribute('aria-pressed', String(iconTestEnabled));
+  iconTestToggle.textContent = `Teszt: ${iconTestEnabled ? 'be' : 'ki'}`;
+  if (iconTestStorageError) {
+    iconTestStatus.textContent = 'A tesztikon beállítása nem menthető ebben a böngészőmunkamenetben.';
+  } else if (!rememberedCardIcon) {
+    iconTestStatus.textContent = 'Utolsó tesztikon: nincs kiválasztva.';
+  } else {
+    iconTestStatus.textContent = `Utolsó tesztikon: ${rememberedCardIcon}.${iconTestEnabled ? ' Csak az előnézetben jelenik meg, a letöltött kártyán nem.' : ''}`;
+  }
+}
+
+function rememberTestIcon(iconName) {
+  rememberedCardIcon = iconName;
+  try {
+    sessionStorage.setItem('hkk-cardmaker-test-icon', iconName);
+  } catch {
+    iconTestStorageError = true;
+  }
+  updateIconTestControls();
+  if (iconTestEnabled) updatePreview();
+}
+
+try {
+  const savedTestIcon = sessionStorage.getItem('hkk-cardmaker-test-icon');
+  if (cardIconLayouts.has(savedTestIcon)) rememberedCardIcon = savedTestIcon;
+  iconTestEnabled = sessionStorage.getItem('hkk-cardmaker-test-enabled') === 'true'
+    && Boolean(rememberedCardIcon);
+} catch {
+  iconTestStorageError = true;
+}
+updateIconTestControls();
+
+try {
+  const savedTestFaction = sessionStorage.getItem('hkk-cardmaker-test-faction');
+  if (factionByKey.has(savedTestFaction)) rememberedFaction = savedTestFaction;
+  factionTestEnabled = sessionStorage.getItem('hkk-cardmaker-test-faction-enabled') === 'true';
+} catch {
+  factionTestStorageError = true;
+}
+updateFactionTestControls();
+
+factionTestToggle.addEventListener('click', () => {
+  factionTestEnabled = !factionTestEnabled;
+  try {
+    sessionStorage.setItem('hkk-cardmaker-test-faction-enabled', String(factionTestEnabled));
+  } catch {
+    factionTestStorageError = true;
+  }
+  updateFactionTestControls();
+  updatePreview();
+});
+
+iconTestToggle.addEventListener('click', () => {
+  if (!rememberedCardIcon) {
+    iconTestStatus.textContent = 'Előbb válassz ki egy ikont a teszteléshez.';
+    return;
+  }
+  iconTestEnabled = !iconTestEnabled;
+  try {
+    sessionStorage.setItem('hkk-cardmaker-test-enabled', String(iconTestEnabled));
+  } catch {
+    iconTestStorageError = true;
+  }
+  updateIconTestControls();
+  updatePreview();
+});
+
+form.addEventListener('change', (event) => {
+  const input = event.target;
+  if (input instanceof HTMLInputElement && input.name === 'faction' && input.checked) {
+    rememberTestFaction(input.value);
+  } else if (input instanceof HTMLInputElement
+    && ['icon', 'sideIcon', 'separateIcon'].includes(input.name)
+    && input.checked
+    && cardIconLayouts.has(input.value)) {
+    rememberTestIcon(input.value);
+  }
+});
 form.addEventListener('input', updatePreview);
 form.addEventListener('change', updatePreview);
+cardRuleInput.addEventListener('change', () => {
+  applyCardRuleRestrictions(true);
+  updateFactionControls();
+  updatePreview();
+});
 form.querySelectorAll('.icon-choice-numeric').forEach((choice) => {
   const toggle = choice.querySelector('input[name="icon"]');
   const valueInput = choice.querySelector('.icon-value, .icon-quantity');
@@ -735,6 +1069,7 @@ document.querySelector('#reset-button').addEventListener('click', () => {
     valueInput.hidden = !toggle.checked;
     valueInput.disabled = !toggle.checked;
   });
+  applyCardRuleRestrictions();
   updateFactionControls();
   updatePreview();
 });
@@ -1014,32 +1349,32 @@ async function renderCardPng() {
     const badge = cost.querySelector('b');
     const rect = getCanvasRect(badge, cardRect, scaleX, scaleY);
     const style = ['vp', 'zanszilank', 'nekron', 'szk', 'builder', 'sacrifice'].find((name) => cost.classList.contains(name));
-    traceCostShape(context, style, rect.x, rect.y, rect.width, rect.height);
-    context.fillStyle = getComputedStyle(badge).backgroundColor;
-    context.fill();
-    context.save();
-    context.clip();
     const symbolImage = badge.querySelector('img');
-    if (symbolImage?.naturalWidth) context.drawImage(symbolImage, rect.x, rect.y, rect.width, rect.height);
-    context.restore();
-    const glyph = badge.querySelector('.cost-glyph');
-    if (glyph && getComputedStyle(glyph).display !== 'none') {
-      const glyphRect = getCanvasRect(glyph, cardRect, scaleX, scaleY);
-      const glyphStyle = getComputedStyle(glyph);
-      context.save();
-      context.fillStyle = '#fff';
-      context.font = `${glyphStyle.fontWeight} ${parseFloat(glyphStyle.fontSize) * cssZoom * scaleX}px ${glyphStyle.fontFamily}`;
-      context.textAlign = 'center';
-      context.textBaseline = 'top';
-      context.fillText(glyph.textContent, rect.x + rect.width / 2, glyphRect.y);
-      context.restore();
+    if (!symbolImage?.naturalWidth) {
+      traceCostShape(context, style, rect.x, rect.y, rect.width, rect.height);
+      context.fillStyle = getComputedStyle(badge).backgroundColor;
+      context.fill();
+      const glyph = badge.querySelector('.cost-glyph');
+      if (glyph) {
+        const glyphRect = getCanvasRect(glyph, cardRect, scaleX, scaleY);
+        const glyphStyle = getComputedStyle(glyph);
+        context.save();
+        context.fillStyle = '#fff';
+        context.font = `${glyphStyle.fontWeight} ${parseFloat(glyphStyle.fontSize) * cssZoom * scaleX}px ${glyphStyle.fontFamily}`;
+        context.textAlign = 'center';
+        context.textBaseline = 'top';
+        context.fillText(glyph.textContent, rect.x + rect.width / 2, glyphRect.y);
+        context.restore();
+      }
+    } else {
+      context.drawImage(symbolImage, rect.x, rect.y, rect.width, rect.height);
     }
     const amount = badge.querySelector('.cost-amount');
     const amountRect = getCanvasRect(amount, cardRect, scaleX, scaleY);
     const amountStyle = getComputedStyle(amount);
     context.save();
-    context.fillStyle = '#fff';
-    context.font = `${amountStyle.fontWeight} ${parseFloat(amountStyle.fontSize) * cssZoom * scaleX}px ${amountStyle.fontFamily}`;
+    context.fillStyle = amountStyle.color;
+    context.font = `${amountStyle.fontStyle} ${amountStyle.fontWeight} ${parseFloat(amountStyle.fontSize) * cssZoom * scaleX}px ${amountStyle.fontFamily}`;
     context.letterSpacing = `${parseFloat(amountStyle.letterSpacing) * cssZoom * scaleX}px`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
@@ -1062,7 +1397,7 @@ async function renderCardPng() {
     context.fillText(icon.textContent, rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width - 4 * scaleX);
   });
 
-  document.querySelectorAll('#preview-band-icons .card-band-icon').forEach((icon) => {
+  document.querySelectorAll('#preview-band-icons .card-band-icon:not([data-test-icon="true"])').forEach((icon) => {
     const rect = getCanvasRect(icon, cardRect, scaleX, scaleY);
     const image = icon.querySelector('img');
     if (image?.naturalWidth) {
@@ -1129,9 +1464,25 @@ async function renderCardPng() {
       context.strokeRect(boxRect.x, boxRect.y, boxRect.width, boxRect.height);
 
       const icon = box.querySelector('.stat-icon');
-      if (icon && !icon.hidden && icon.naturalWidth) {
+      if (icon && !icon.hidden && icon.tagName === 'IMG' && icon.naturalWidth) {
         const iconRect = getCanvasRect(icon, cardRect, scaleX, scaleY);
         context.drawImage(icon, iconRect.x, iconRect.y, iconRect.width, iconRect.height);
+      } else if (icon && !icon.hidden && icon.classList.contains('stat-power-icon')) {
+        const iconRect = getCanvasRect(icon, cardRect, scaleX, scaleY);
+        const iconStyle = getComputedStyle(icon);
+        context.beginPath();
+        context.arc(iconRect.x + iconRect.width / 2, iconRect.y + iconRect.height / 2,
+          Math.min(iconRect.width, iconRect.height) / 2, 0, Math.PI * 2);
+        context.fillStyle = iconStyle.backgroundColor;
+        context.fill();
+        context.strokeStyle = iconStyle.borderTopColor;
+        context.lineWidth = Math.max(1, scaleX);
+        context.stroke();
+        context.fillStyle = iconStyle.color;
+        context.font = `${iconStyle.fontWeight} ${parseFloat(iconStyle.fontSize) * cssZoom * scaleX}px ${iconStyle.fontFamily}`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(icon.textContent, iconRect.x + iconRect.width / 2, iconRect.y + iconRect.height / 2);
       }
 
       const value = box.querySelector('strong');
@@ -1221,5 +1572,6 @@ downloadButton.addEventListener('click', async () => {
 const cardResizeObserver = new ResizeObserver(fitPreviewText);
 cardResizeObserver.observe(card);
 watchResourceImages();
+applyCardRuleRestrictions();
 updateFactionControls();
 updatePreview();
