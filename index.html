@@ -128,7 +128,6 @@
                   <label class="icon-choice"><input type="checkbox" name="icon" value="fa">fa</label>
                   <label class="icon-choice"><input type="checkbox" name="icon" value="fém">fém</label>
                   <label class="icon-choice"><input type="checkbox" name="icon" value="háló">háló</label>
-                  <label class="icon-choice"><input type="checkbox" name="icon" value="hegymélyi">hegymélyi</label>
                   <label class="icon-choice"><input type="checkbox" name="icon" value="hideg">hideg</label>
                   <label class="icon-choice"><input type="checkbox" name="icon" value="idézés">idézés</label>
                   <label class="icon-choice"><input type="checkbox" name="icon" value="KF">KF</label>
@@ -149,14 +148,14 @@
               </fieldset>
 
               <fieldset class="icon-option-group">
-                <legend>Bal oldal (egyszerre egy)</legend>
+                <legend>Bal oldal (több is választható, egymásra kerülnek)</legend>
                 <div class="icon-choices">
-                  <label class="icon-choice"><input type="radio" name="sideIcon" value="">Nincs</label>
-                  <label class="icon-choice"><input type="radio" name="sideIcon" value="élőholt">élőholt</label>
-                  <label class="icon-choice"><input type="radio" name="sideIcon" value="erőd">erőd</label>
-                  <label class="icon-choice"><input type="radio" name="sideIcon" value="horgony">horgony</label>
-                  <label class="icon-choice"><input type="radio" name="sideIcon" value="kegy">kegy</label>
-                  <label class="icon-choice"><input type="radio" name="sideIcon" value="őrző">őrző</label>
+                  <label class="icon-choice"><input type="checkbox" name="sideIcon" value="élőholt">élőholt</label>
+                  <label class="icon-choice"><input type="checkbox" name="sideIcon" value="erőd">erőd</label>
+                  <label class="icon-choice"><input type="checkbox" name="sideIcon" value="hegymélyi">hegymélyi</label>
+                  <label class="icon-choice"><input type="checkbox" name="sideIcon" value="horgony">horgony</label>
+                  <label class="icon-choice"><input type="checkbox" name="sideIcon" value="kegy">kegy</label>
+                  <label class="icon-choice"><input type="checkbox" name="sideIcon" value="őrző">őrző</label>
                 </div>
               </fieldset>
 
@@ -444,6 +443,7 @@
               <div class="card-icons" id="preview-icons" aria-label="Kártya ikonok"></div>
               <div id="preview-band-icons" class="card-band-icons" aria-hidden="true" hidden>
                 <div class="card-band-icons-center"></div>
+                <div class="card-band-icons-side"></div>
                 <div class="card-band-icons-positioned"></div>
               </div>
               <div class="card-rules">

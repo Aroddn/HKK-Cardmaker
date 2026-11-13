@@ -29,25 +29,25 @@ const cardBandIconAssets = new Map([
   ['fém', 'Fém'],
   ['háló', 'Háló'],
   ['hegymélyi', 'Hegymélyi'],
-  ['hideg', null],
+  ['hideg', 'Hideg'],
   ['horgony', 'Horgony'],
-  ['idézés', null],
-  ['isteni', null],
+  ['idézés', 'Idézés'],
+  ['isteni', 'Isteni'],
   ['kegy', 'Kegy'],
   ['KF', 'KF'],
-  ['kincs', null],
-  ['köd', null],
+  ['kincs', 'Kincs'],
+  ['köd', 'Köd'],
   ['legendás', 'Legendás'],
-  ['mentális', null],
+  ['mentális', 'Mentális'],
   ['ősmágia', 'Ősmágia'],
-  ['őrző', null],
-  ['repül', null],
-  ['Reakció drágítás', null],
+  ['őrző', 'Őrző'],
+  ['repül', 'Repül'],
+  ['Reakció drágítás', 'Reakció drágítás'],
   ['rezisztencia', 'Rezisztencia'],
   ['sav', 'Sav'],
   ['tűz', 'Tűz'],
   ['villám', 'Villám'],
-  ['Oltalom', null],
+  ['Oltalom', 'Oltalom'],
   ['Szörnykomponens', 'Szörnykomponens']
 ].map(([value, name]) => [value, name && `resources/Icons/${name}.png`]));
 // Center-row y is a vertical offset; positioned icons use card x/y percentages.
@@ -57,11 +57,10 @@ const cardIconLayouts = new Map([
   ['ereklye', { group: 'center', y: -17.5, size: 7.1 }],
   ['fa', { group: 'center', y: -17, size: 9.5 }],
   ['fém', { group: 'center', y: -25, size: 7.7  }],
-  ['háló', { group: 'center', y: 0, size: 3.2 }],
-  ['hegymélyi', { group: 'center', y: 0, size: 3.2 }],
-  ['hideg', { group: 'center', y: 0, size: 3.2 }],
+  ['háló', { group: 'center', y: -16, size: 9.5 }],
+  ['hideg', { group: 'center', y: -15, size: 11 }],
   ['idézés', { group: 'center', y: 0, size: 3.2 }],
-  ['KF', { group: 'center', y: 0, size: 3.2 }],
+  ['KF', { group: 'center', y: -17, size: 7.1 }],
   ['kincs', { group: 'center', y: 0, size: 3.2 }],
   ['köd', { group: 'center', y: 0, size: 3.2 }],
   ['legendás', { group: 'center', y: 0, size: 3.2 }],
@@ -75,14 +74,18 @@ const cardIconLayouts = new Map([
   ['tűz', { group: 'center', y: 0, size: 3.2 }],
   ['védekezés', { group: 'center', y: 0, size: 3.2 }],
   ['villám', { group: 'center', y: 0, size: 3.2 }],
-  ['élőholt', { group: 'positioned', x: 6, y: 56.7, size: 7.5 }],
-  ['erőd', { group: 'positioned', x: 5.5, y: 57.8, size: 4.4 }],
-  ['horgony', { group: 'positioned', x: 5.5, y: 57.8, size: 4.4 }],
-  ['kegy', { group: 'positioned', x: 5.5, y: 57.8, size: 4.4 }],
-  ['őrző', { group: 'positioned', x: 5.5, y: 57.8, size: 4.4 }],
+
+  ['élőholt', { group: 'side', x: 5.1, size: 8.5 }],
+  ['hegymélyi', { group: 'side', x: 4, size: 9.5 }],
+  ['erőd', { group: 'side', x: 4, size: 10.5 }],
+  ['horgony', { group: 'side', x: 3.5, size: 10.5 }],
+  ['kegy', { group: 'side', x: 4.5, size: 8 }],
+  ['őrző', { group: 'side', x: 6, size: 8 }],
+
   ['isteni', { group: 'positioned', x: 94, y: 55.8, size: 3.8 }],
   ['repül', { group: 'positioned', x: 94, y: 59.3, size: 3.8 }]
 ]);
+const sideIconStackY = 59.7;
 const iconTestToggle = document.querySelector('#icon-test-toggle');
 const iconTestStatus = document.querySelector('#icon-test-status');
 let rememberedCardIcon = '';
@@ -685,7 +688,7 @@ function updatePreview() {
 
   const selectedIcons = [
     ...values.getAll('icon'),
-    values.get('sideIcon'),
+    ...values.getAll('sideIcon'),
     ...values.getAll('separateIcon')
   ].filter(Boolean);
   const selectedBandIcons = selectedIcons
@@ -716,8 +719,11 @@ function updatePreview() {
     totalIconCounts.set(previewTestIcon, (totalIconCounts.get(previewTestIcon) || 0) + 1);
   }
   const centerIconContainer = bandIconContainer.querySelector('.card-band-icons-center');
+  const sideIconContainer = bandIconContainer.querySelector('.card-band-icons-side');
   const positionedIconContainer = bandIconContainer.querySelector('.card-band-icons-positioned');
+  sideIconContainer.style.top = `${sideIconStackY}%`;
   centerIconContainer.replaceChildren();
+  sideIconContainer.replaceChildren();
   positionedIconContainer.replaceChildren();
   selectedBandIcons.forEach((iconName) => {
     const icon = document.createElement('span');
@@ -737,6 +743,10 @@ function updatePreview() {
     if (layout.group === 'center') {
       icon.style.setProperty('--icon-size', `${layout.size}cqw`);
       icon.style.setProperty('--icon-y', `${layout.y}%`);
+    } else if (layout.group === 'side') {
+      icon.classList.add('card-band-icon-side-item');
+      icon.style.setProperty('--icon-size', `${layout.size}cqw`);
+      icon.style.marginLeft = `${layout.x}cqw`;
     } else {
       icon.style.setProperty('--icon-size', `${layout.size}%`);
       icon.style.left = `calc(${layout.x}% + ${duplicateOffset}%)`;
@@ -752,7 +762,12 @@ function updatePreview() {
       icon.classList.add('card-band-icon-placeholder');
       icon.textContent = '?';
     }
-    (layout.group === 'center' ? centerIconContainer : positionedIconContainer).append(icon);
+    const iconContainer = layout.group === 'center'
+      ? centerIconContainer
+      : layout.group === 'side'
+        ? sideIconContainer
+        : positionedIconContainer;
+    iconContainer.append(icon);
   });
   bandIconContainer.hidden = selectedBandIcons.length === 0;
   selectedIcons.splice(0, selectedIcons.length, ...selectedIcons.filter((icon) => !cardBandIconAssets.has(icon)), ...bandIconValueLabels);

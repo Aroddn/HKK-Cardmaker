@@ -452,9 +452,11 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .card-band-icons { position: absolute; z-index: 4; inset: 0; pointer-events: none; }
 .card-band-icons[hidden] { display: none; }
 .card-band-icons-center { position: absolute; top: 57%; left: 8%; display: flex; align-items: center; justify-content: center; gap: .3%; width: 84%; height: 6%; }
+.card-band-icons-side { position: absolute; left: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; transform: translateY(-50%); }
 .card-band-icons-positioned { position: absolute; inset: 0; }
 .card-band-icon { position: absolute; display: grid; place-items: center; width: var(--icon-size); min-width: 0; aspect-ratio: 145 / 155; }
 .card-band-icon-center-item { position: relative; top: var(--icon-y); flex: 0 1 var(--icon-size); width: var(--icon-size); max-height: 100%; }
+.card-band-icon-side-item { position: relative; flex: none; }
 .card-band-icon img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .card-band-icon[data-test-icon="true"] { filter: drop-shadow(0 0 2px #f4d36a); }
 .card-band-icon-placeholder { color: #292c2b; background: #fffdf7; border: 1px solid #514b3b; border-radius: 50%; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(7px, 2.4cqw, 12px); font-weight: 700; line-height: 1; }
