@@ -62,6 +62,8 @@ The card-creation rule selector above the faction choices restricts colors, cost
 
 In the card-text field, select text and use the **Félkövér** button to mark it bold. The preview and PNG export both preserve the formatting, and longer ability or flavor text shrinks to fit. Flavor text is shown centered, italicized, and in Hungarian quotation marks.
 
+For a number inside an inline Építő, Áldozás, VP, SZK, Nekron, ZSZ, Oltalom, or Reakció drágítás icon, put the number before its name in the token, for example `[3VP]` or `[2Reakció drágítás]`. Unnumbered tokens such as `[VP]` still work.
+
 ## Notes
 
 - No package install or build step is required.

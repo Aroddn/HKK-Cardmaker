@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Type text export tests</title>
+  <style>
+    body { font: 16px/1.5 sans-serif; }
+    [data-result="fail"] { color: #a00; }
+    [data-result="pass"] { color: #075b20; }
+    iframe { position: absolute; left: -10000px; width: 1400px; height: 1000px; }
+  </style>
+</head>
+<body>
+  <h1>Type text export tests</h1>
+  <p>Serve the repository root and open <code>/tests/type-text-export.html</code>.</p>
+  <p id="summary" role="status">Waiting for the editor to load.</p>
+  <ol id="results"></ol>
+  <iframe title="HKK Card Maker under test" src="../index.html"></iframe>
+  <script>
+    const frame = document.querySelector('iframe');
+    const summary = document.querySelector('#summary');
+    const results = document.querySelector('#results');
+
+    function assert(condition, message) {
+      if (!condition) throw new Error(message);
+    }
+
+    async function runTests() {
+      const window = frame.contentWindow;
+      const document = frame.contentDocument;
+      const contextPrototype = window.CanvasRenderingContext2D.prototype;
+      const originalFillText = contextPrototype.fillText;
+      const originalDrawImage = contextPrototype.drawImage;
+      const originalClip = contextPrototype.clip;
+      const originalSave = contextPrototype.save;
+      const originalRestore = contextPrototype.restore;
+      const originalToBlob = window.HTMLCanvasElement.prototype.toBlob;
+      const calls = [];
+      const clips = new WeakMap();
+      contextPrototype.save = function () {
+        const stack = clips.get(this) || [false];
+        stack.push(stack[stack.length - 1]);
+        clips.set(this, stack);
+        return originalSave.call(this);
+      };
+      contextPrototype.restore = function () {
+        const stack = clips.get(this);
+        if (stack && stack.length > 1) stack.pop();
+        return originalRestore.call(this);
+      };
+      contextPrototype.clip = function (...args) {
+        const stack = clips.get(this) || [false];
+        stack[stack.length - 1] = true;
+        clips.set(this, stack);
+        return originalClip.apply(this, args);
+      };
+      contextPrototype.fillText = function (text, ...args) {
+        calls.push({ text, font: this.font, width: this.measureText(text).width,
+          clipped: (clips.get(this) || [false]).at(-1) });
+        return originalFillText.call(this, text, ...args);
+      };
+      contextPrototype.drawImage = function () {};
+      window.HTMLCanvasElement.prototype.toBlob = function (callback) {
+        callback(new window.Blob(['test'], { type: 'image/png' }));
+      };
+
+      const tests = [
+        { name: 'exports type and subtype at normal zoom', zoom: '1' },
+        { name: 'exports type and subtype at increased zoom', zoom: '1.25' }
+      ];
+      try {
+        await document.fonts.ready;
+        for (const test of tests) {
+          const item = document.createElement('li');
+          try {
+            document.querySelector('.desktop-shell').style.zoom = test.zoom;
+            const type = document.querySelector('#card-type');
+            const subtype = document.querySelector('#card-subtype');
+            type.value = 'long type text extending beyond its box';
+            subtype.value = 'long subtype text extending beyond its box';
+            type.dispatchEvent(new window.Event('input', { bubbles: true }));
+            subtype.dispatchEvent(new window.Event('input', { bubbles: true }));
+            calls.length = 0;
+            await window.renderCardPng();
+
+            const base = document.querySelector('#base-color-layers');
+            const image = base.querySelector('img');
+            const scaleX = (image?.naturalWidth || 1061) / base.getBoundingClientRect().width;
+            for (const selector of ['#preview-card-type', '#preview-subtype']) {
+              const element = document.querySelector(selector);
+              const style = window.getComputedStyle(element);
+              const call = calls.find((entry) => entry.text === element.textContent && entry.font.includes(style.fontFamily));
+              const expected = document.createElement('canvas').getContext('2d');
+              const zoom = window.getEffectiveCssZoom(element);
+              expected.font = `${style.fontStyle} ${style.fontWeight} ${parseFloat(style.fontSize) * zoom * scaleX}px ${style.fontFamily}`;
+              expected.letterSpacing = `${parseFloat(style.letterSpacing) * zoom * scaleX}px`;
+              assert(call, `${selector} was not drawn.`);
+              assert(call.font === expected.font, `${selector} font differs from the preview: ${call.font} vs ${expected.font}.`);
+              assert(Math.abs(call.width - expected.measureText(element.textContent).width) < 0.01,
+                `${selector} text width differs from the preview.`);
+              assert(element.scrollWidth > element.clientWidth, `${selector} test text must overflow its box.`);
+              assert(!call.clipped, `${selector} should not be clipped to its box.`);
+            }
+            item.dataset.result = 'pass';
+            item.textContent = `PASS: ${test.name}`;
+          } catch (error) {
+            item.dataset.result = 'fail';
+            item.textContent = `FAIL: ${test.name} - ${error.message}`;
+          }
+          results.append(item);
+        }
+      } finally {
+        contextPrototype.fillText = originalFillText;
+        contextPrototype.drawImage = originalDrawImage;
+        contextPrototype.clip = originalClip;
+        contextPrototype.save = originalSave;
+        contextPrototype.restore = originalRestore;
+        window.HTMLCanvasElement.prototype.toBlob = originalToBlob;
+      }
+      const smokeResult = document.createElement('li');
+      try {
+        const blob = await window.renderCardPng();
+        const image = await window.createImageBitmap(blob);
+        assert(blob.type === 'image/png' && image.width > 0 && image.height > 0,
+          'Export should produce a decodable PNG.');
+        image.close();
+        smokeResult.dataset.result = 'pass';
+        smokeResult.textContent = 'PASS: renders a PNG without mocked canvas methods';
+      } catch (error) {
+        smokeResult.dataset.result = 'fail';
+        smokeResult.textContent = `FAIL: renders a PNG without mocked canvas methods - ${error.message}`;
+      }
+      results.append(smokeResult);
+      const failed = results.querySelectorAll('[data-result="fail"]').length;
+      summary.textContent = `${tests.length + 1 - failed} passed, ${failed} failed.`;
+      summary.dataset.result = failed ? 'fail' : 'pass';
+    }
+
+    frame.addEventListener('load', runTests, { once: true });
+  </script>
+</body>
+</html>

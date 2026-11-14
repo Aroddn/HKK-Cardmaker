@@ -375,20 +375,13 @@
           <div class="field-row stat-grid">
             <div class="field-group">
               <label class="field-label" for="card-power">Erő</label>
-              <input id="card-power" name="power" type="text" maxlength="12" placeholder="0-9, X, +, -, *, /" aria-label="Erő értéke">
-              <label class="stat-icon-toggle"><input type="checkbox" name="powerIcon">Mágikus támadás (Erő ikon)</label>
+              <input id="card-power" name="power" type="text" value="1" maxlength="12" placeholder="0-9, X, +, -, *, /" aria-label="Erő értéke">
+              <label class="stat-icon-toggle"><input type="checkbox" name="powerIcon" disabled>Mágikus támadás (hamarosan)</label>
             </div>
             <div class="field-group">
-              <label class="field-label" for="card-secondary-stat-type">Második érték típusa</label>
-              <div class="select-wrap">
-                <select id="card-secondary-stat-type" name="secondaryStatType">
-                  <option value="" selected>--nincs--</option>
-                  <option value="toughness">Védettség</option>
-                  <option value="structural">Strukturális pont</option>
-                </select>
-              </div>
-              <input id="card-toughness" name="toughness" type="text" maxlength="12" placeholder="0-9, X, +, -, *, /" aria-label="Védettség értéke">
-              <label class="stat-icon-toggle"><input type="checkbox" name="secondaryStatIcon">Védekezés (Védettség / Strukturális pont ikon)</label>
+              <label class="field-label" id="card-secondary-stat-label" for="card-toughness">Védettség</label>
+              <input id="card-toughness" name="toughness" type="text" value="1" maxlength="12" placeholder="0-9, X, +, -, *, /" aria-label="Védettség értéke">
+              <label class="stat-icon-toggle"><input type="checkbox" name="secondaryStatIcon" disabled>Védekezés (hamarosan)</label>
             </div>
           </div>
 
@@ -401,7 +394,7 @@
               </span>
               <span><b id="text-count">0</b> / 260</span>
             </div>
-            <span class="field-hint">Jelöld ki a szöveget a félkövér gombhoz. A hosszú szöveg automatikusan kisebb lesz. Az ikon a kijelölt helyre kerül.</span>
+            <span class="field-hint">Jelöld ki a szöveget a félkövér gombhoz. A hosszú szöveg automatikusan kisebb lesz. Az ikon a kijelölt helyre kerül. Számot is adhatsz az Építő, Áldozás, VP, SZK, Nekron, ZSZ, Oltalom és Reakció drágítás ikonokhoz, például [3VP].</span>
           </div>
 
           <div class="field-row text-field">
@@ -456,7 +449,7 @@
               <div class="card-stats" id="preview-stats" aria-live="polite" hidden>
                 <span class="stat-box stat-power" aria-label="Erő">
                   <span class="stat-content">
-                    <span class="stat-icon stat-power-icon" id="preview-power-icon" aria-hidden="true">E</span>
+                    <img class="stat-icon resource-image" id="preview-power-icon" src="resources/Icons/Erő.png" alt="" aria-hidden="true">
                     <strong id="preview-power"></strong>
                   </span>
                 </span>

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Stat icon tests</title>
+  <style>
+    body { font: 16px/1.5 sans-serif; }
+    [data-result="fail"] { color: #a00; }
+    [data-result="pass"] { color: #075b20; }
+    iframe { position: absolute; left: -10000px; width: 1400px; height: 1000px; }
+  </style>
+</head>
+<body>
+  <h1>Stat icon tests</h1>
+  <p>Serve the repository root and open <code>/tests/stat-icons.html</code>.</p>
+  <p id="summary" role="status">Waiting for the editor to load.</p>
+  <ol id="results"></ol>
+  <iframe title="HKK Card Maker under test" src="../index.html"></iframe>
+  <script>
+    const frame = document.querySelector('iframe');
+    const results = document.querySelector('#results');
+    const summary = document.querySelector('#summary');
+
+    function assert(condition, message) {
+      if (!condition) throw new Error(message);
+    }
+
+    async function runTests() {
+      const window = frame.contentWindow;
+      const editor = frame.contentDocument;
+      const power = editor.querySelector('#card-power');
+      const defense = editor.querySelector('#card-toughness');
+      const rule = editor.querySelector('#card-rule');
+      const stats = editor.querySelector('#preview-stats');
+      const powerBox = editor.querySelector('.stat-power');
+      const defenseBox = editor.querySelector('#preview-secondary-stat');
+      const powerIcon = editor.querySelector('#preview-power-icon');
+      const defenseIcon = editor.querySelector('#preview-toughness-icon');
+      editor.querySelector('#hkk-card').style.animation = 'none';
+      const change = (element, value) => {
+        element.value = value;
+        element.dispatchEvent(new window.Event(element === rule ? 'change' : 'input', { bubbles: true }));
+      };
+      const tests = [
+        ['starts and resets with both stats set to 1', async () => {
+          for (const [input, box] of [[power, powerBox], [defense, defenseBox]]) {
+            assert(input.value === '1' && !box.hidden && box.querySelector('strong').textContent === '1',
+              'Each stat should start at 1 and appear in the preview.');
+          }
+          change(power, '2');
+          change(defense, '3');
+          editor.querySelector('#reset-button').click();
+          for (const [input, box] of [[power, powerBox], [defense, defenseBox]]) {
+            assert(input.value === '1' && !box.hidden && box.querySelector('strong').textContent === '1',
+              'Reset should restore each stat to 1.');
+          }
+        }],
+        ['shows each stat image with its value inside and hides empty stats', async () => {
+          change(power, '');
+          change(defense, '');
+          assert(stats.hidden, 'Empty stats should be hidden.');
+          change(power, '2');
+          assert(!powerBox.hidden && defenseBox.hidden, 'Only power should be shown.');
+          change(defense, '1');
+          await Promise.all([powerIcon.decode(), defenseIcon.decode()]);
+          for (const [box, icon, expected] of [[powerBox, powerIcon, '2'], [defenseBox, defenseIcon, '1']]) {
+            const imageRect = icon.getBoundingClientRect();
+            const value = box.querySelector('strong');
+            const rect = value.getBoundingClientRect();
+            assert(!box.hidden && value.textContent === expected, 'The stat and its value should be visible.');
+            assert(rect.left >= imageRect.left && rect.right <= imageRect.right &&
+              rect.top >= imageRect.top && rect.bottom <= imageRect.bottom, 'The value should fit inside its icon.');
+          }
+          assert(editor.querySelector('[name="powerIcon"]').disabled &&
+            editor.querySelector('[name="secondaryStatIcon"]').disabled, 'Special icons should be disabled.');
+          change(power, '123456789012');
+          const longValue = powerBox.querySelector('strong').getBoundingClientRect();
+          const powerRect = powerIcon.getBoundingClientRect();
+          assert(longValue.left >= powerRect.left && longValue.right <= powerRect.right,
+            'A long value should fit inside the power icon.');
+          change(power, '');
+          change(defense, '');
+          assert(stats.hidden, 'Clearing both values should hide the stats.');
+        }],
+        ['preserves defense when switching between creature and building', async () => {
+          change(rule, 'creature');
+          change(defense, '3');
+          change(rule, 'building');
+          assert(defense.value === '3' && !defense.disabled, 'Building should retain the shared stat.');
+          assert(editor.querySelector('#card-secondary-stat-label').textContent === 'Strukturális pont', 'Building label should match.');
+          change(rule, 'creature');
+          assert(defense.value === '3' && editor.querySelector('#card-secondary-stat-label').textContent === 'Védettség',
+            'Creature should retain the value and use the defense label.');
+          change(rule, 'follower');
+          assert(defense.disabled && defense.value === '', 'Disallowed stats should be cleared.');
+        }],
+        ['exports the two stat images and values at the preview positions', async () => {
+          change(rule, 'other');
+          change(power, '2');
+          change(defense, '1');
+          await editor.fonts.ready;
+          const prototype = window.CanvasRenderingContext2D.prototype;
+          const drawImage = prototype.drawImage;
+          const fillText = prototype.fillText;
+          const imageCalls = [];
+          const textCalls = [];
+          prototype.drawImage = function (image, ...args) {
+            if (image === powerIcon || image === defenseIcon) imageCalls.push({ image, args });
+            return drawImage.call(this, image, ...args);
+          };
+          prototype.fillText = function (text, ...args) {
+            if (text === '2' || text === '1') textCalls.push({ text, args, font: this.font });
+            return fillText.call(this, text, ...args);
+          };
+          try {
+            for (const zoom of ['1', '1.25']) {
+              editor.querySelector('.desktop-shell').style.zoom = zoom;
+              imageCalls.length = 0;
+              textCalls.length = 0;
+              const blob = await window.renderCardPng();
+              assert(blob.type === 'image/png', 'Export should produce a PNG.');
+              const base = editor.querySelector('#base-color-layers').getBoundingClientRect();
+              const baseImage = editor.querySelector('#base-color-layers img');
+              const scaleX = (baseImage?.naturalWidth || 1061) / base.width;
+              const scaleY = (baseImage?.naturalHeight || 1483) / base.height;
+              for (const [icon, box, text] of [[powerIcon, powerBox, '2'], [defenseIcon, defenseBox, '1']]) {
+                const call = imageCalls.find((entry) => entry.image === icon);
+                const value = box.querySelector('strong');
+                const valueRect = value.getBoundingClientRect();
+                const textCall = textCalls.find((entry) => entry.text === text);
+                assert(call && textCall, `Export must draw icon and value ${text}.`);
+                assert(Math.abs(textCall.args[0] - (valueRect.left + valueRect.width / 2 - base.left) * scaleX) < 1 &&
+                  Math.abs(textCall.args[1] - (valueRect.top + valueRect.height / 2 - base.top) * scaleY) < 1,
+                `Export must position ${text} as in the preview at zoom ${zoom}.`);
+                const style = window.getComputedStyle(value);
+                const expectedFontSize = parseFloat(style.fontSize) * window.getEffectiveCssZoom(value) * scaleX;
+                assert(Math.abs(parseFloat(textCall.font.match(/([\d.]+)px/)[1]) - expectedFontSize) < 0.1,
+                  `Export must size ${text} as in the preview at zoom ${zoom}.`);
+              }
+            }
+          } finally {
+            prototype.drawImage = drawImage;
+            prototype.fillText = fillText;
+            editor.querySelector('.desktop-shell').style.zoom = '';
+          }
+        }],
+        ['keeps values visible and exportable when an icon is missing', async () => {
+          powerIcon.dispatchEvent(new window.Event('error'));
+          change(power, '4');
+          assert(powerBox.querySelector('.missing-resource'), 'Missing icon should use the visible fallback.');
+          assert(powerBox.querySelector('strong').textContent === '4', 'The value should remain visible.');
+          const blob = await window.renderCardPng();
+          assert(blob.type === 'image/png', 'Export should work with a missing icon.');
+        }]
+      ];
+      for (const [name, test] of tests) {
+        const item = document.createElement('li');
+        try {
+          await test();
+          item.dataset.result = 'pass';
+          item.textContent = `PASS: ${name}`;
+        } catch (error) {
+          item.dataset.result = 'fail';
+          item.textContent = `FAIL: ${name} - ${error.message}`;
+        }
+        results.append(item);
+      }
+      const failed = results.querySelectorAll('[data-result="fail"]').length;
+      summary.textContent = `${tests.length - failed} passed, ${failed} failed.`;
+      summary.dataset.result = failed ? 'fail' : 'pass';
+    }
+
+    frame.addEventListener('load', runTests, { once: true });
+  </script>
+</body>
+</html>

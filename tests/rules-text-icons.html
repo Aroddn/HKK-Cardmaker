@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Rules text icon tests</title>
+  <style>
+    body { font: 16px/1.5 sans-serif; }
+    [data-result="fail"] { color: #a00; }
+    [data-result="pass"] { color: #075b20; }
+    iframe { position: absolute; left: -10000px; width: 1400px; height: 1000px; }
+  </style>
+</head>
+<body>
+  <h1>Rules text icon tests</h1>
+  <p>Serve the repository root and open <code>/tests/rules-text-icons.html</code>.</p>
+  <p id="summary" role="status">Waiting for the editor to load.</p>
+  <iframe title="HKK Card Maker under test" src="../index.html"></iframe>
+  <script>
+    const frame = document.querySelector('iframe');
+    const summary = document.querySelector('#summary');
+
+    frame.addEventListener('load', async () => {
+      try {
+        const editor = frame.contentDocument;
+        const window = frame.contentWindow;
+        editor.querySelector('#hkk-card').style.animation = 'none';
+        const buttons = [...editor.querySelectorAll('#rules-text-icon-buttons .text-insert-button')]
+          .filter((button) => button.querySelector('img'));
+        if (!buttons.length || buttons.some((button) => !button.textContent.trim() ||
+          button.textContent.trim() === 'undefined' || button.title !== button.textContent.trim())) {
+          throw new Error('Each icon button must have a name and a matching tooltip.');
+        }
+        const vpButton = buttons.find((button) => button.textContent.trim() === 'VP');
+        if (!vpButton) throw new Error('The VP icon button was not found.');
+        const input = editor.querySelector('#card-text');
+        input.value = '';
+        input.setSelectionRange(0, 0);
+        vpButton.click();
+        const icon = editor.querySelector('#preview-text .rules-inline-icon');
+        if (input.value !== '[VP]' || !icon || icon.alt !== 'VP') {
+          throw new Error('Inserting VP must show the icon with its alternative text.');
+        }
+
+        const names = ['Építő', 'Áldozás', 'VP', 'SZK', 'Nekron', 'ZSZ', 'Oltalom', 'Reakció drágítás'];
+        input.value = `${names.map((name, index) => `[${index + 13}${name}]`).join(' ')} **[21VP]** [VP] [3Fa] [xVP]`;
+        input.dispatchEvent(new window.Event('input', { bubbles: true }));
+        const preview = editor.querySelector('#preview-text');
+        const numbered = [...preview.querySelectorAll('.rules-inline-numbered')];
+        if (numbered.length !== 9) throw new Error('All eight supported numbered icons and the bold icon must render.');
+        for (const [index, name] of names.entries()) {
+          const item = numbered[index];
+          const image = item.querySelector('img');
+          const value = item.querySelector('.rules-inline-value');
+          if (value.textContent !== String(index + 13) || image.alt !== `${index + 13} ${name}`) {
+            throw new Error(`The value and alternative text must match ${name}.`);
+          }
+          if (name === 'Nekron' && !decodeURIComponent(image.src).endsWith('/resources/Icons/Nekron.png')) {
+            throw new Error('Rules-text Nekron must use the Nekron icon.');
+          }
+          await image.decode();
+          const imageRect = image.getBoundingClientRect();
+          const valueRect = value.getBoundingClientRect();
+          const valueStyle = window.getComputedStyle(value);
+          const centerY = (valueRect.top + valueRect.height / 2 - imageRect.top) / imageRect.height;
+          if (valueStyle.fontWeight < 900 || parseFloat(valueStyle.webkitTextStrokeWidth) <= 0) {
+            throw new Error(`The value inside ${name} must be extra bold.`);
+          }
+          if (Math.abs(centerY - (name === 'Áldozás' ? 0.58 : 0.5)) > 0.02) {
+            throw new Error(`Only Áldozás should have a lowered value.`);
+          }
+          if (valueRect.left < imageRect.left || valueRect.right > imageRect.right ||
+            valueRect.top < imageRect.top || valueRect.bottom > imageRect.bottom) {
+            throw new Error(`The number must fit inside ${name}.`);
+          }
+        }
+        if (!numbered[8].closest('strong') || numbered[8].querySelector('.rules-inline-value').textContent !== '21' ||
+          !preview.textContent.includes('[3Fa]') || !preview.textContent.includes('[xVP]') ||
+          ![...preview.querySelectorAll('img')].some((image) => image.alt === 'VP')) {
+          throw new Error('Bold, unnumbered, and unsupported tokens must retain their intended behavior.');
+        }
+        await numbered[8].querySelector('img').decode();
+
+        const prototype = window.CanvasRenderingContext2D.prototype;
+        const drawImage = prototype.drawImage;
+        const fillText = prototype.fillText;
+        const strokeText = prototype.strokeText;
+        const images = [];
+        const values = [];
+        const strokes = [];
+        prototype.drawImage = function (image, ...args) {
+          if (numbered.some((item) => item.querySelector('img') === image)) images.push(image);
+          return drawImage.call(this, image, ...args);
+        };
+        prototype.fillText = function (text, ...args) {
+          if (/^(1[3-9]|2[01])$/.test(text)) values.push({ text, args, font: this.font });
+          return fillText.call(this, text, ...args);
+        };
+        prototype.strokeText = function (text, ...args) {
+          if (/^(1[3-9]|2[01])$/.test(text)) strokes.push({ text, args, width: this.lineWidth });
+          return strokeText.call(this, text, ...args);
+        };
+        try {
+          for (const zoom of ['1', '1.25']) {
+            editor.querySelector('.desktop-shell').style.zoom = zoom;
+            images.length = 0;
+            values.length = 0;
+            strokes.length = 0;
+            await window.renderCardPng();
+            const base = editor.querySelector('#base-color-layers').getBoundingClientRect();
+            const baseImage = editor.querySelector('#base-color-layers img');
+            const scaleX = (baseImage?.naturalWidth || 1061) / base.width;
+            const scaleY = (baseImage?.naturalHeight || 1483) / base.height;
+            for (const item of numbered) {
+              const value = item.querySelector('.rules-inline-value');
+              const rect = value.getBoundingClientRect();
+              const call = values.find((entry) => entry.text === value.textContent);
+              const stroke = strokes.find((entry) => entry.text === value.textContent);
+              const style = window.getComputedStyle(value);
+              const zoomFactor = window.getEffectiveCssZoom(value) * scaleX;
+              const expectedSize = parseFloat(style.fontSize) * zoomFactor;
+              const expectedStroke = parseFloat(style.webkitTextStrokeWidth) * zoomFactor;
+              if (!images.includes(item.querySelector('img')) || !call || !stroke ||
+                Math.abs(call.args[0] - (rect.left + rect.width / 2 - base.left) * scaleX) > 1 ||
+                Math.abs(call.args[1] - (rect.top + rect.height / 2 - base.top) * scaleY) > 1 ||
+                Math.abs(parseFloat(call.font.match(/([\d.]+)px/)[1]) - expectedSize) > 0.1 ||
+                Math.abs(stroke.args[0] - call.args[0]) > 0.1 || Math.abs(stroke.args[1] - call.args[1]) > 0.1 ||
+                Math.abs(stroke.width - expectedStroke) > 0.1) {
+                throw new Error(`Export must match the ${value.textContent} icon and value at zoom ${zoom}.`);
+              }
+            }
+          }
+        } finally {
+          prototype.drawImage = drawImage;
+          prototype.fillText = fillText;
+          prototype.strokeText = strokeText;
+          editor.querySelector('.desktop-shell').style.zoom = '';
+        }
+
+        const numberedImage = numbered[0].querySelector('img');
+        const decode = numberedImage.decode;
+        let releaseImage;
+        let decodeStarted = false;
+        numberedImage.decode = () => {
+          decodeStarted = true;
+          return new Promise((resolve) => { releaseImage = resolve; });
+        };
+        try {
+          let finished = false;
+          const exportPromise = window.renderCardPng().then(() => { finished = true; });
+          await new Promise((resolve) => setTimeout(resolve, 20));
+          if (!decodeStarted || finished) throw new Error('Export must wait for numbered icon images to load.');
+          releaseImage();
+          await exportPromise;
+        } finally {
+          numberedImage.decode = decode;
+        }
+
+        summary.dataset.result = 'pass';
+        summary.textContent = 'PASS: icon labels, numbered tokens, bold text, and PNG export.';
+      } catch (error) {
+        summary.dataset.result = 'fail';
+        summary.textContent = `FAIL: ${error.message}`;
+      }
+    }, { once: true });
+  </script>
+</body>
+</html>

@@ -10,10 +10,7 @@ const factionInputs = [...form.querySelectorAll('input[name="faction"]')];
 const cardRuleInput = form.querySelector('#card-rule');
 const costInputs = [...form.querySelectorAll('.cost-value')];
 const powerInput = form.querySelector('#card-power');
-const secondaryStatTypeInput = form.querySelector('#card-secondary-stat-type');
 const secondaryStatInput = form.querySelector('#card-toughness');
-const powerIconInput = form.querySelector('input[name="powerIcon"]');
-const secondaryStatIconInput = form.querySelector('input[name="secondaryStatIcon"]');
 const rulesTextInput = form.querySelector('#card-text');
 const typeTextColorToggle = document.querySelector('#toggle-type-text-color');
 const cardBandIconAssets = new Map([
@@ -83,50 +80,80 @@ const cardIconLayouts = new Map([
   ['repül', { group: 'positioned', x: 94, y: 59.3, size: 3.8 }]
 ]);
 const sideIconStackY = 59.7;
+const costDetails = [
+  { key: 'vp', label: 'VP', symbol: 'VP', style: 'vp', image: 'resources/Cost/VP_transparent.png' },
+  { key: 'szk', label: 'SZK', symbol: 'SZK', style: 'szk', image: 'resources/Cost/Csont_transparent.png' },
+  { key: 'epito', label: 'Építő', symbol: 'É', style: 'builder', image: 'resources/Cost/Építő_transparent.png' },
+  { key: 'zanszilank', label: 'Zanszilánk', symbol: 'Z', style: 'zanszilank', image: 'resources/Cost/ZSZ_transparent.png' },
+  { key: 'nekron', label: 'Nekron', symbol: 'N', style: 'nekron', image: 'resources/Cost/Nekron_transparent.png' },
+  { key: 'aldozas', label: 'Áldozás', symbol: 'Á', style: 'sacrifice', image: 'resources/Cost/Áldozás_transparent.png' }
+];
+const rulesTextCostKeys = new Map([
+  ['Áldozás', 'aldozas'],
+  ['SZK', 'szk'],
+  ['ZSZ', 'zanszilank']
+]);
+const numberedRulesTextIcons = new Set(['Építő', 'Áldozás', 'VP', 'SZK', 'Nekron', 'ZSZ', 'Oltalom', 'Reakció drágítás']);
 const rulesTextIcons = [
   ...[
-    'Csont',
+    'Játékonként egyszer',
     'Ell körében egyszer',
+    'Körönként egyszer',
+    'Saját körben egyszer',
+    'Passzivizálás',
+    'Repül',
+
+    'Építő',
+    'Áldozás',
+    'VP',
+    'SZK',
+    'Nekron',
+    'ZSZ',
+
+    'Lehelet',
+    'Életkioltó',
     'Ereklye',
-    'Erőd',
     'Fa',
     'Fém',
-    'Hegymélyi',
-    'Horgony',
     'Háló',
-    'Játékonként egyszer',
-    'Játékonként egyszer_new',
+    'Hideg',
+    'Idézés',
     'KF',
-    'Kegy',
-    'Körönként egyszer',
-    'Körönként egyszer_new',
+    'Kincs',
+    'Köd',
     'Legendás',
-    'Lehelet',
-    'Passzivizálás',
     'Mentális',
+    'Oltalom',
+    'Szörnykomponens',
+    'Ősmágia',
+    'Reakció drágítás',
     'Rezisztencia',
     'Sav',
-    'Szörnykomponens',
     'Tűz',
-    'VP',
     'Villám',
     'Védekezés',
-    'Védelem',
-    'Áldozás',
-    'Életkioltó',
+
     'Élőholt',
-    'Építő',
-    'Ősmágia',
-    'Saját körben egyszer'
+    'Erőd',
+    'Hegymélyi',
+    'Horgony',
+    'Kegy',
+    'Őrző'
   ].map((name) => ({
     token: `[${name}]`,
-    path: `resources/Icons/${name}.png`,
-    alt: name.replace(/_new$/, ' (új)')
+    path: rulesTextCostKeys.has(name)
+      ? costDetails.find(({ key }) => key === rulesTextCostKeys.get(name)).image
+      : `resources/Icons/${name}.png`,
+    alt: name
   }))
 ];
 const rulesTextIconByToken = new Map(rulesTextIcons.map((icon) => [icon.token, icon]));
 const rulesTextIconTokenPattern = rulesTextIcons
   .map(({ token }) => token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+  .sort((a, b) => b.length - a.length)
+  .join('|');
+const numberedRulesTextIconPattern = [...numberedRulesTextIcons]
+  .map((name) => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
   .sort((a, b) => b.length - a.length)
   .join('|');
 let imageUrl = null;
@@ -154,7 +181,7 @@ const cardRuleDefinitions = {
     allowCosts: true,
     allowBuilderCost: true,
     allowPower: true,
-    secondaryStats: ['toughness', 'structural']
+    allowSecondaryStat: true
   },
   'spell-item': {
     allowOrange: false,
@@ -162,7 +189,7 @@ const cardRuleDefinitions = {
     allowCosts: true,
     allowBuilderCost: false,
     allowPower: false,
-    secondaryStats: []
+    allowSecondaryStat: false
   },
   creature: {
     allowOrange: false,
@@ -170,7 +197,7 @@ const cardRuleDefinitions = {
     allowCosts: true,
     allowBuilderCost: false,
     allowPower: true,
-    secondaryStats: ['toughness']
+    allowSecondaryStat: true
   },
   building: {
     allowOrange: false,
@@ -178,7 +205,7 @@ const cardRuleDefinitions = {
     allowCosts: true,
     allowBuilderCost: true,
     allowPower: false,
-    secondaryStats: ['structural']
+    allowSecondaryStat: true
   },
   follower: {
     allowOrange: true,
@@ -186,14 +213,14 @@ const cardRuleDefinitions = {
     allowCosts: false,
     allowBuilderCost: false,
     allowPower: false,
-    secondaryStats: []
+    allowSecondaryStat: false
   },
   lich: {
     allowOrange: true,
     orangeOnly: true,
     allowCosts: false,
     allowPower: false,
-    secondaryStats: ['toughness']
+    allowSecondaryStat: true
   }
 };
 const cardRuleGuidance = {
@@ -387,15 +414,6 @@ const factionCombinationByKeys = new Map([
   }]
 ]);
 
-const costDetails = [
-  { key: 'vp', label: 'VP', symbol: 'VP', style: 'vp', image: 'resources/Cost/VP_transparent.png' },
-  { key: 'szk', label: 'SZK', symbol: 'SZK', style: 'szk', image: 'resources/Cost/Csont_transparent.png' },
-  { key: 'epito', label: 'Építő', symbol: 'É', style: 'builder', image: 'resources/Cost/Építő_transparent.png' },
-  { key: 'zanszilank', label: 'Zanszilánk', symbol: 'Z', style: 'zanszilank', image: 'resources/Cost/ZSZ_transparent.png' },
-  { key: 'nekron', label: 'Nekron', symbol: 'N', style: 'nekron', image: 'resources/Cost/Nekron_transparent.png' },
-  { key: 'aldozas', label: 'Áldozás', symbol: 'Á', style: 'sacrifice', image: 'resources/Cost/Áldozás_transparent.png' }
-];
-
 function watchResourceImages(root = document) {
   root.querySelectorAll('.resource-image').forEach((image) => {
     const imageContainer = image.parentElement;
@@ -449,34 +467,13 @@ function applyCardRuleRestrictions(clearInvalidValues = false) {
     if (clearInvalidValues && !allowed) input.value = '';
   });
 
-  const previousSecondaryType = secondaryStatTypeInput.value;
-  const secondaryStatTypeOptions = [...secondaryStatTypeInput.options].filter((option) => option.value);
-  secondaryStatTypeOptions.forEach((option) => {
-    option.disabled = !rule.secondaryStats.includes(option.value);
-  });
-  if (cardRuleInput.value === 'building') {
-    secondaryStatTypeInput.value = 'structural';
-    if (clearInvalidValues && previousSecondaryType !== 'structural') secondaryStatInput.value = '';
-  } else if (!rule.secondaryStats.includes(previousSecondaryType)) {
-    secondaryStatTypeInput.value = '';
-    if (clearInvalidValues && previousSecondaryType) secondaryStatInput.value = '';
-  }
-
   powerInput.disabled = !rule.allowPower;
-  secondaryStatInput.disabled = !rule.secondaryStats.length;
-  secondaryStatTypeInput.disabled = !rule.secondaryStats.length;
-  powerIconInput.disabled = !rule.allowPower;
-  secondaryStatIconInput.disabled = !rule.secondaryStats.length;
+  secondaryStatInput.disabled = !rule.allowSecondaryStat;
   if (clearInvalidValues && !rule.allowPower) {
     powerInput.value = '';
-    powerIconInput.checked = false;
   }
-  if (clearInvalidValues && !rule.secondaryStats.length) {
+  if (clearInvalidValues && !rule.allowSecondaryStat) {
     secondaryStatInput.value = '';
-    secondaryStatIconInput.checked = false;
-  } else if (clearInvalidValues && !rule.secondaryStats.includes(previousSecondaryType) && previousSecondaryType) {
-    secondaryStatInput.value = '';
-    secondaryStatIconInput.checked = false;
   }
 
   orangeFactionLabel.classList.toggle('rule-locked', rule.orangeOnly);
@@ -509,7 +506,7 @@ function updateFactionControls(message) {
 
 function renderRulesText(element, text) {
   element.replaceChildren();
-  const segments = new RegExp(`\\*\\*([\\s\\S]+?)\\*\\*|(${rulesTextIconTokenPattern})`, 'g');
+  const segments = new RegExp(`\\*\\*([\\s\\S]+?)\\*\\*|(${rulesTextIconTokenPattern})|\\[(\\d+)(${numberedRulesTextIconPattern})\\]`, 'g');
   let position = 0;
   for (const match of text.matchAll(segments)) {
     if (match.index > position) element.append(document.createTextNode(text.slice(position, match.index)));
@@ -518,12 +515,26 @@ function renderRulesText(element, text) {
       renderRulesText(bold, match[1]);
       element.append(bold);
     } else {
-      const icon = rulesTextIconByToken.get(match[2]);
+      const amount = match[3];
+      const icon = rulesTextIconByToken.get(match[2] || `[${match[4]}]`);
       const image = document.createElement('img');
       image.className = 'rules-inline-icon';
       image.src = icon.path;
-      image.alt = icon.alt;
-      element.append(image);
+      image.alt = amount ? `${amount} ${icon.alt}` : icon.alt;
+      if (amount) {
+        const container = document.createElement('span');
+        container.className = 'rules-inline-numbered';
+        if (icon.alt === 'Áldozás') container.classList.add('rules-inline-sacrifice');
+        const value = document.createElement('span');
+        value.className = 'rules-inline-value';
+        value.textContent = amount;
+        value.setAttribute('aria-hidden', 'true');
+        value.style.fontSize = `${Math.min(0.65, 1.15 / amount.length)}em`;
+        container.append(image, value);
+        element.append(container);
+      } else {
+        element.append(image);
+      }
     }
     position = match.index + match[0].length;
   }
@@ -600,6 +611,26 @@ function drawDomText(context, element, renderRect, scaleX, scaleY) {
   const drawNode = (node) => {
     if (node.nodeType === Node.TEXT_NODE) {
       drawTextNode(node);
+    } else if (node instanceof HTMLElement && node.classList.contains('rules-inline-numbered')) {
+      const image = node.querySelector('img');
+      if (image.complete && image.naturalWidth) {
+        drawContain(context, image, getCanvasRect(image, renderRect, scaleX, scaleY));
+      }
+      const value = node.querySelector('.rules-inline-value');
+      const valueRect = getCanvasRect(value, renderRect, scaleX, scaleY);
+      const style = getComputedStyle(value);
+      context.save();
+      const zoom = getEffectiveCssZoom(value);
+      context.font = `${style.fontStyle} ${style.fontWeight} ${parseFloat(style.fontSize) * zoom * scaleX}px ${style.fontFamily}`;
+      context.fillStyle = style.color;
+      context.strokeStyle = style.webkitTextStrokeColor;
+      context.lineWidth = parseFloat(style.webkitTextStrokeWidth) * zoom * scaleX;
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.letterSpacing = '0px';
+      context.strokeText(value.textContent, valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
+      context.fillText(value.textContent, valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
+      context.restore();
     } else if (node instanceof HTMLImageElement) {
       if (node.complete && node.naturalWidth) {
         drawContain(context, node, getCanvasRect(node, renderRect, scaleX, scaleY));
@@ -666,10 +697,7 @@ function updatePreview() {
   const subtype = String(values.get('subtype') || '').trim();
   const power = String(values.get('power') || '').trim();
   const toughness = String(values.get('toughness') || '').trim();
-  const powerIconEnabled = values.get('powerIcon') === 'on';
-  const secondaryStatIconEnabled = values.get('secondaryStatIcon') === 'on';
-  const secondaryStatType = values.get('secondaryStatType') || 'toughness';
-  const secondaryStatLabel = secondaryStatType === 'structural' ? 'Strukturális pont' : 'Védettség';
+  const secondaryStatLabel = cardRuleInput.value === 'building' ? 'Strukturális pont' : 'Védettség';
 
   document.querySelector('#preview-name').textContent = name;
   document.querySelector('#preview-card-type').textContent = type;
@@ -684,18 +712,19 @@ function updatePreview() {
   fitPreviewText();
   document.querySelector('#text-count').textContent = values.get('text').length;
 
-  document.querySelector('#preview-power').textContent = power;
-  document.querySelector('#preview-toughness').textContent = toughness;
+  const powerValue = document.querySelector('#preview-power');
+  const toughnessValue = document.querySelector('#preview-toughness');
+  powerValue.textContent = power;
+  toughnessValue.textContent = toughness;
+  powerValue.style.setProperty('--stat-length', Math.max(power.length, 1));
+  toughnessValue.style.setProperty('--stat-length', Math.max(toughness.length, 1));
   const powerStat = document.querySelector('.stat-power');
-  const powerIcon = document.querySelector('#preview-power-icon');
   const secondaryStat = document.querySelector('#preview-secondary-stat');
-  const toughnessIcon = document.querySelector('#preview-toughness-icon');
+  document.querySelector('#card-secondary-stat-label').textContent = secondaryStatLabel;
   powerStat.hidden = !power;
   secondaryStat.hidden = !toughness;
-  powerIcon.hidden = !powerIconEnabled || !power;
   secondaryStat.setAttribute('aria-label', `${secondaryStatLabel}: ${toughness}`);
-  toughnessIcon.hidden = !secondaryStatIconEnabled || !toughness;
-  document.querySelector('#card-toughness').setAttribute('aria-label', `${secondaryStatLabel} értéke`);
+  secondaryStatInput.setAttribute('aria-label', `${secondaryStatLabel} értéke`);
   document.querySelector('#preview-stats').hidden = !power && !toughness;
 
   const activeCostCount = costDetails.filter(({ key }) => String(values.get(key) || '').trim() !== '').length;
@@ -1167,6 +1196,8 @@ function drawContain(context, image, rect) {
 }
 
 async function renderCardPng() {
+  await Promise.all([...document.querySelectorAll('#preview-text .rules-inline-numbered img')]
+    .map((image) => image.decode()));
   const renderRect = document.querySelector('#base-color-layers').getBoundingClientRect();
   const baseImage = card.querySelector('#base-color-layers img');
   const exportWidth = baseImage?.naturalWidth || 1061;
@@ -1244,13 +1275,11 @@ async function renderCardPng() {
     [metaType, metaSubtype].filter((element) => !element.hidden).forEach((element) => {
       const metaRect = getCanvasRect(element, renderRect, scaleX, scaleY);
       const metaStyle = getComputedStyle(element);
+      const cssZoom = getEffectiveCssZoom(element);
       context.save();
-      context.beginPath();
-      context.rect(metaRect.x, metaRect.y, metaRect.width, metaRect.height);
-      context.clip();
       context.fillStyle = metaStyle.color;
-      context.font = `${metaStyle.fontStyle} ${metaStyle.fontWeight} ${parseFloat(metaStyle.fontSize) * scaleX}px ${metaStyle.fontFamily}`;
-      context.letterSpacing = `${parseFloat(metaStyle.letterSpacing) * scaleX}px`;
+      context.font = `${metaStyle.fontStyle} ${metaStyle.fontWeight} ${parseFloat(metaStyle.fontSize) * cssZoom * scaleX}px ${metaStyle.fontFamily}`;
+      context.letterSpacing = `${parseFloat(metaStyle.letterSpacing) * cssZoom * scaleX}px`;
       context.textAlign = metaStyle.textAlign;
       context.textBaseline = 'middle';
       const textX = metaStyle.textAlign === 'right'
@@ -1363,33 +1392,18 @@ async function renderCardPng() {
   if (!statsPanel.hidden) {
     const statBoxes = [...statsPanel.querySelectorAll('.stat-box')].filter((box) => !box.hidden);
     statBoxes.forEach((box) => {
-      const boxRect = getCanvasRect(box, renderRect, scaleX, scaleY);
-      context.fillStyle = '#101a20';
-      context.fillRect(boxRect.x, boxRect.y, boxRect.width, boxRect.height);
-      context.strokeStyle = '#d2b15e';
-      context.lineWidth = Math.max(1, scaleX);
-      context.strokeRect(boxRect.x, boxRect.y, boxRect.width, boxRect.height);
-
       const icon = box.querySelector('.stat-icon');
-      if (icon && !icon.hidden && icon.tagName === 'IMG' && icon.naturalWidth) {
+      if (icon?.naturalWidth) {
         const iconRect = getCanvasRect(icon, renderRect, scaleX, scaleY);
         drawContain(context, icon, iconRect);
-      } else if (icon && !icon.hidden && icon.classList.contains('stat-power-icon')) {
-        const iconRect = getCanvasRect(icon, renderRect, scaleX, scaleY);
-        const iconStyle = getComputedStyle(icon);
-        context.beginPath();
-        context.arc(iconRect.x + iconRect.width / 2, iconRect.y + iconRect.height / 2,
-          Math.min(iconRect.width, iconRect.height) / 2, 0, Math.PI * 2);
-        context.fillStyle = iconStyle.backgroundColor;
-        context.fill();
-        context.strokeStyle = iconStyle.borderTopColor;
+      } else {
+        const content = box.querySelector('.stat-content');
+        const rect = getCanvasRect(content, renderRect, scaleX, scaleY);
+        context.fillStyle = '#fff';
+        context.fillRect(rect.x, rect.y, rect.width, rect.height);
+        context.strokeStyle = '#171717';
         context.lineWidth = Math.max(1, scaleX);
-        context.stroke();
-        context.fillStyle = iconStyle.color;
-        context.font = `${iconStyle.fontWeight} ${parseFloat(iconStyle.fontSize) * scaleX}px ${iconStyle.fontFamily}`;
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillText(icon.textContent, iconRect.x + iconRect.width / 2, iconRect.y + iconRect.height / 2);
+        context.strokeRect(rect.x, rect.y, rect.width, rect.height);
       }
 
       const value = box.querySelector('strong');
@@ -1397,7 +1411,7 @@ async function renderCardPng() {
         const valueRect = getCanvasRect(value, renderRect, scaleX, scaleY);
         const valueStyle = getComputedStyle(value);
         context.fillStyle = valueStyle.color;
-        context.font = `${valueStyle.fontWeight} ${parseFloat(valueStyle.fontSize) * scaleX}px ${valueStyle.fontFamily}`;
+        context.font = `${valueStyle.fontWeight} ${parseFloat(valueStyle.fontSize) * getEffectiveCssZoom(value) * scaleX}px ${valueStyle.fontFamily}`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         context.fillText(value.textContent, valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);

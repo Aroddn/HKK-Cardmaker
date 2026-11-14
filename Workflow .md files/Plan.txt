@@ -1,6 +1,6 @@
 Varázslat/Tárgy: any color besides narancs lap, can have cost beside építő, no erő or védettség
 Lény: any color besides narancs lap, can have cost besides építő, can have erő or védettség
-Építmény: can only have struktuláis pont, only this can have építő as an option, any color besides narancs lap
+Építmény: can only have Strukturális pont (the same secondary stat as Védettség, labeled by card type), only this can have építő as an option, any color besides narancs lap
 Követő/Szabálylap: dont have cost, dont have power nor defense only narancs lap
 Őslich: dont have cost, dont have power only narancs lap
 Céh: not yet available cant pick it yet
@@ -10,12 +10,9 @@ Other: can pick and choose anything(this should be the default when loading in)
 
 Known small issues:
 Zoomed in costs have different sizes when downlaoded
-Structure point and hit point are the same image
 Maximum card name lenght
 Custom icon for rarity(pálinkás pohár)
-Körönként icons should be smaller
-Add more icons and rearrange for text use
 Add missing icons like: kincs, isteni, őrző
 
 Known big issues:
-Need attack and defense implemented
+Mágikus támadás and Védekezés need their own images
