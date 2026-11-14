@@ -7,9 +7,6 @@ const backgroundImagePositionControls = document.querySelector('#background-imag
 const fileName = document.querySelector('#file-name');
 const imageError = document.querySelector('#image-error');
 const factionInputs = [...form.querySelectorAll('input[name="faction"]')];
-const factionTestToggle = document.querySelector('#faction-test-toggle');
-const factionTestStatus = document.querySelector('#faction-test-status');
-const factionTestLayer = document.querySelector('#faction-test-layer');
 const cardRuleInput = form.querySelector('#card-rule');
 const costInputs = [...form.querySelectorAll('.cost-value')];
 const powerInput = form.querySelector('#card-power');
@@ -39,7 +36,7 @@ const cardBandIconAssets = new Map([
   ['köd', 'Köd'],
   ['legendás', 'Legendás'],
   ['mentális', 'Mentális'],
-  ['ősmágia', 'Ősmágia'],
+  ['ősmágia', 'Ősmágiaa'],
   ['őrző', 'Őrző'],
   ['repül', 'Repül'],
   ['Reakció drágítás', 'Reakció drágítás'],
@@ -59,21 +56,21 @@ const cardIconLayouts = new Map([
   ['fém', { group: 'center', y: -25, size: 7.7  }],
   ['háló', { group: 'center', y: -16, size: 9.5 }],
   ['hideg', { group: 'center', y: -15, size: 11 }],
-  ['idézés', { group: 'center', y: 0, size: 3.2 }],
+  ['idézés', { group: 'center', y: -16, size: 9.5 }],
   ['KF', { group: 'center', y: -17, size: 7.1 }],
-  ['kincs', { group: 'center', y: 0, size: 3.2 }],
-  ['köd', { group: 'center', y: 0, size: 3.2 }],
-  ['legendás', { group: 'center', y: 0, size: 3.2 }],
-  ['mentális', { group: 'center', y: 0, size: 3.2 }],
-  ['Oltalom', { group: 'center', y: 0, size: 3.2 }],
-  ['Szörnykomponens', { group: 'center', y: 0, size: 3.2 }],
-  ['ősmágia', { group: 'center', y: 0, size: 3.2 }],
-  ['Reakció drágítás', { group: 'center', y: 0, size: 3.2 }],
-  ['rezisztencia', { group: 'center', y: 0, size: 3.2 }],
-  ['sav', { group: 'center', y: 0, size: 3.2 }],
-  ['tűz', { group: 'center', y: 0, size: 3.2 }],
-  ['védekezés', { group: 'center', y: 0, size: 3.2 }],
-  ['villám', { group: 'center', y: 0, size: 3.2 }],
+  ['kincs', { group: 'center', y: -17, size: 7.1 }],
+  ['köd', { group: 'center', y: -16, size: 13 }],
+  ['legendás', { group: 'center', y: -25, size: 11 }],
+  ['mentális', { group: 'center', y: -16, size: 8.5 }],
+  ['Oltalom', { group: 'center', y: -17, size: 8.8 }],
+  ['Szörnykomponens', { group: 'center', y: -17, size: 9.5 }],
+  ['ősmágia', { group: 'center', y: -15, size: 9.5 }],
+  ['Reakció drágítás', { group: 'center', y: -17, size: 9.5 }],
+  ['rezisztencia', { group: 'center', y: -17, size: 9.5 }],
+  ['sav', { group: 'center', y: -15, size: 8.5 }],
+  ['tűz', { group: 'center', y: -17, size: 7.7 }],
+  ['védekezés', { group: 'center', y: -9, size:8.5 }],
+  ['villám', { group: 'center', y: -17, size: 8.5 }],
 
   ['élőholt', { group: 'side', x: 5.1, size: 8.5 }],
   ['hegymélyi', { group: 'side', x: 4, size: 9.5 }],
@@ -86,12 +83,6 @@ const cardIconLayouts = new Map([
   ['repül', { group: 'positioned', x: 94, y: 59.3, size: 3.8 }]
 ]);
 const sideIconStackY = 59.7;
-const iconTestToggle = document.querySelector('#icon-test-toggle');
-const iconTestStatus = document.querySelector('#icon-test-status');
-let rememberedCardIcon = '';
-let iconTestEnabled = false;
-let rememberedFaction = 'no-color';
-let factionTestEnabled = false;
 const rulesTextIcons = [
   ...[
     'Csont',
@@ -104,13 +95,15 @@ const rulesTextIcons = [
     'Horgony',
     'Háló',
     'Játékonként egyszer',
+    'Játékonként egyszer_new',
     'KF',
     'Kegy',
     'Körönként egyszer',
+    'Körönként egyszer_new',
     'Legendás',
     'Lehelet',
     'Passzivizálás',
-    'Pszionikus',
+    'Mentális',
     'Rezisztencia',
     'Sav',
     'Szörnykomponens',
@@ -123,11 +116,12 @@ const rulesTextIcons = [
     'Életkioltó',
     'Élőholt',
     'Építő',
-    'Ősmágia'
+    'Ősmágia',
+    'Saját körben egyszer'
   ].map((name) => ({
     token: `[${name}]`,
     path: `resources/Icons/${name}.png`,
-    alt: name
+    alt: name.replace(/_new$/, ' (új)')
   }))
 ];
 const rulesTextIconByToken = new Map(rulesTextIcons.map((icon) => [icon.token, icon]));
@@ -135,8 +129,6 @@ const rulesTextIconTokenPattern = rulesTextIcons
   .map(({ token }) => token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
   .sort((a, b) => b.length - a.length)
   .join('|');
-const rulesTextIconPattern = new RegExp(`(${rulesTextIconTokenPattern})`, 'g');
-const rulesTextIconWordPattern = new RegExp(`${rulesTextIconTokenPattern}|[^\\s]+`, 'g');
 let imageUrl = null;
 
 const factions = [
@@ -437,26 +429,6 @@ function updateFactionImageStatus() {
     : '';
 }
 
-function updateFactionTestControls() {
-  const faction = factionByKey.get(rememberedFaction);
-  factionTestToggle.setAttribute('aria-pressed', String(factionTestEnabled));
-  factionTestToggle.textContent = `Teszt: ${factionTestEnabled ? 'be' : 'ki'}`;
-  factionTestStatus.textContent = factionTestStorageError
-    ? 'A tesztszín beállítása nem menthető ebben a böngészőmunkamenetben.'
-    : `Utolsó tesztszín: ${faction?.label || 'Narancs lap'}.${factionTestEnabled ? ' Csak az előnézetben látható, a kiválasztott alapszínt nem módosítja.' : ''}`;
-}
-
-function rememberTestFaction(factionKey) {
-  rememberedFaction = factionKey;
-  try {
-    sessionStorage.setItem('hkk-cardmaker-test-faction', factionKey);
-  } catch {
-    factionTestStorageError = true;
-  }
-  updateFactionTestControls();
-  if (factionTestEnabled) updatePreview();
-}
-
 function applyCardRuleRestrictions(clearInvalidValues = false) {
   const rule = cardRuleDefinitions[cardRuleInput.value] || cardRuleDefinitions.other;
   const orangeFaction = factionInputs.find((input) => input.value === 'no-color');
@@ -558,6 +530,89 @@ function renderRulesText(element, text) {
   if (position < text.length) element.append(document.createTextNode(text.slice(position)));
 }
 
+function drawDomText(context, element, renderRect, scaleX, scaleY) {
+  const rect = getCanvasRect(element, renderRect, scaleX, scaleY);
+  context.save();
+  context.beginPath();
+  context.rect(rect.x, rect.y, rect.width, rect.height);
+  context.clip();
+
+  const drawTextNode = (node) => {
+    const style = getComputedStyle(node.parentElement);
+    const cssZoom = getEffectiveCssZoom(node.parentElement);
+    const fontSize = parseFloat(style.fontSize) * cssZoom * scaleX;
+    const lineHeight = parseFloat(style.lineHeight) * cssZoom * scaleY;
+    const letterSpacing = parseFloat(style.letterSpacing) * cssZoom * scaleX;
+    context.font = `${style.fontStyle} ${style.fontWeight} ${fontSize}px ${style.fontFamily}`;
+    context.fillStyle = style.color;
+    context.textAlign = 'left';
+    context.textBaseline = 'alphabetic';
+    if ('letterSpacing' in context) {
+      context.letterSpacing = Number.isFinite(letterSpacing) ? `${letterSpacing}px` : '0px';
+    }
+
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    const lineRects = [...range.getClientRects()];
+    if (!lineRects.length) return;
+    let text = '';
+    let lineTop = null;
+    let lineX = 0;
+    let sourceOffset = 0;
+    const drawLine = () => {
+      if (!text || lineTop === null) return;
+      const metrics = context.measureText(text);
+      const ascent = metrics.fontBoundingBoxAscent || fontSize * 0.8;
+      const descent = metrics.fontBoundingBoxDescent || fontSize * 0.2;
+      const baseline = lineTop + Math.max(0, (lineHeight - ascent - descent) / 2) + ascent;
+      context.fillText(text, lineX, baseline);
+      text = '';
+      lineTop = null;
+    };
+
+    for (const character of node.textContent) {
+      const start = sourceOffset;
+      sourceOffset += character.length;
+      if (character === '\n') {
+        drawLine();
+        continue;
+      }
+
+      range.setStart(node, start);
+      range.setEnd(node, sourceOffset);
+      const charRect = range.getBoundingClientRect();
+      if (!charRect.width && !charRect.height) continue;
+
+      const lineRect = lineRects.reduce((nearest, candidate) => (
+        Math.abs(candidate.top - charRect.top) < Math.abs(nearest.top - charRect.top) ? candidate : nearest
+      ), lineRects[0]);
+      const currentLineTop = (lineRect.top - renderRect.top) * scaleY;
+      if (lineTop !== null && Math.abs(currentLineTop - lineTop) > 0.5) drawLine();
+      if (lineTop === null) {
+        lineTop = currentLineTop;
+        lineX = (charRect.left - renderRect.left) * scaleX;
+      }
+      text += character;
+    }
+    drawLine();
+  };
+
+  const drawNode = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      drawTextNode(node);
+    } else if (node instanceof HTMLImageElement) {
+      if (node.complete && node.naturalWidth) {
+        drawContain(context, node, getCanvasRect(node, renderRect, scaleX, scaleY));
+      }
+    } else {
+      node.childNodes.forEach(drawNode);
+    }
+  };
+
+  element.childNodes.forEach(drawNode);
+  context.restore();
+}
+
 function fitRulesText(element, textLength, maxLength) {
   element.style.removeProperty('font-size');
   const baseSize = parseFloat(getComputedStyle(element).fontSize);
@@ -624,7 +679,7 @@ function updatePreview() {
   const previewRulesText = document.querySelector('#preview-text');
   renderRulesText(previewRulesText, text);
   const previewFlavorText = document.querySelector('#preview-flavor-text');
-  previewFlavorText.textContent = flavorText;
+  previewFlavorText.textContent = `„${flavorText}”`;
   previewFlavorText.hidden = !flavorText;
   fitPreviewText();
   document.querySelector('#text-count').textContent = values.get('text').length;
@@ -676,13 +731,6 @@ function updatePreview() {
       : '';
     return `<div class="card-base-layer" data-faction-label="${faction.label}" style="--faction-fallback: ${faction.fallback}">${image}</div>`;
   }).join('');
-  const testFaction = factionByKey.get(rememberedFaction) || factionByKey.get('no-color');
-  factionTestLayer.innerHTML = testFaction.image
-    ? `<div class="card-base-layer" data-faction-label="${testFaction.label}" style="--faction-fallback: ${testFaction.fallback}"><img class="resource-image" src="${testFaction.image}" alt=""></div>`
-    : `<div class="card-base-layer" data-faction-label="${testFaction.label}" style="--faction-fallback: ${testFaction.fallback}"></div>`;
-  baseLayers.style.visibility = factionTestEnabled ? 'hidden' : '';
-  factionTestLayer.hidden = !factionTestEnabled;
-  watchResourceImages(factionTestLayer);
   updateFactionImageStatus();
   watchResourceImages(baseLayers);
 
@@ -696,31 +744,48 @@ function updatePreview() {
     .flatMap((icon) => icon === 'Szörnykomponens'
       ? Array(Math.max(1, Number(values.get('monsterComponent')) || 1)).fill(icon)
       : [icon]);
-  const bandIconValueLabels = [];
-  if (selectedIcons.includes('Reakció drágítás')) {
-    const surcharge = String(values.get('reactionSurcharge') || '').trim();
-    if (surcharge) bandIconValueLabels.push(`Reakció drágítás: ${surcharge}`);
-  }
-  if (selectedIcons.includes('Oltalom')) {
-    const protection = String(values.get('protection') || '').trim();
-    if (protection) bandIconValueLabels.push(`Oltalom: ${protection}`);
-  }
+  const bandIconValues = new Map([
+    ['Reakció drágítás', String(values.get('reactionSurcharge') || '').trim()],
+    ['Oltalom', String(values.get('protection') || '').trim()]
+  ].filter(([iconName, value]) => value && selectedIcons.includes(iconName)));
   const bandIconContainer = document.querySelector('#preview-band-icons');
   const renderedIconCounts = new Map();
   const totalIconCounts = new Map();
   selectedBandIcons.forEach((iconName) => {
     totalIconCounts.set(iconName, (totalIconCounts.get(iconName) || 0) + 1);
   });
-  const previewTestIcon = iconTestEnabled && !selectedBandIcons.includes(rememberedCardIcon)
-    ? rememberedCardIcon
-    : '';
-  if (previewTestIcon) {
-    selectedBandIcons.push(previewTestIcon);
-    totalIconCounts.set(previewTestIcon, (totalIconCounts.get(previewTestIcon) || 0) + 1);
-  }
   const centerIconContainer = bandIconContainer.querySelector('.card-band-icons-center');
   const sideIconContainer = bandIconContainer.querySelector('.card-band-icons-side');
   const positionedIconContainer = bandIconContainer.querySelector('.card-band-icons-positioned');
+  const centerIconOffsetX = String(values.get('centerIconOffsetX') || '0');
+  const centerIconOffsetY = String(values.get('centerIconOffsetY') || '0');
+  centerIconContainer.style.setProperty('--center-icons-offset-x', `${centerIconOffsetX}%`);
+  centerIconContainer.style.setProperty('--center-icons-offset-y', `${centerIconOffsetY}%`);
+  document.querySelector('#center-icon-offset-x-value').textContent = `${centerIconOffsetX}%`;
+  document.querySelector('#center-icon-offset-y-value').textContent = `${centerIconOffsetY}%`;
+  const monsterComponentLayout = cardIconLayouts.get('Szörnykomponens');
+  const monsterComponentCount = totalIconCounts.get('Szörnykomponens') || 0;
+  const centerIconNames = selectedBandIcons.filter((iconName) => cardIconLayouts.get(iconName)?.group === 'center');
+  const otherCenterIconWidth = centerIconNames.reduce((width, iconName) => (
+    iconName === 'Szörnykomponens' ? width : width + cardIconLayouts.get(iconName).size
+  ), 0);
+  const centerIconGap = 0.3 * 0.84;
+  const availableMonsterWidth = Math.max(
+    0,
+    84 - otherCenterIconWidth - Math.max(0, centerIconNames.length - 1) * centerIconGap
+  );
+  const monsterComponentStep = monsterComponentCount > 1
+    ? Math.max(
+      monsterComponentLayout.size * 0.02,
+      (availableMonsterWidth - monsterComponentLayout.size) / (monsterComponentCount - 1)
+    )
+    : 0;
+  const defaultMonsterComponentOverlap = Number.parseFloat(
+    getComputedStyle(centerIconContainer).getPropertyValue('--monster-component-overlap')
+  );
+  const monsterComponentOverlap = monsterComponentCount > 1
+    ? Math.min(defaultMonsterComponentOverlap, (monsterComponentStep - centerIconGap) / monsterComponentLayout.size - 1)
+    : defaultMonsterComponentOverlap;
   sideIconContainer.style.top = `${sideIconStackY}%`;
   centerIconContainer.replaceChildren();
   sideIconContainer.replaceChildren();
@@ -728,14 +793,19 @@ function updatePreview() {
   selectedBandIcons.forEach((iconName) => {
     const icon = document.createElement('span');
     icon.className = 'card-band-icon';
-    icon.title = iconName;
-    icon.setAttribute('aria-label', iconName);
+    const iconValue = bandIconValues.get(iconName);
+    const iconLabel = iconValue ? `${iconName}: ${iconValue}` : iconName;
+    icon.title = iconLabel;
+    icon.setAttribute('aria-label', iconLabel);
     const layout = cardIconLayouts.get(iconName);
     if (!layout) throw new Error(`Missing card icon layout for "${iconName}".`);
     if (layout.group === 'center') icon.classList.add('card-band-icon-center-item');
-    if (iconName === previewTestIcon) {
-      icon.dataset.testIcon = 'true';
-      icon.title = `${iconName} (teszt)`;
+    if (iconName === 'Szörnykomponens') {
+      icon.style.zIndex = String((renderedIconCounts.get(iconName) || 0) + 1);
+      icon.style.setProperty('--monster-component-overlap', String(monsterComponentOverlap));
+      if (renderedIconCounts.get(iconName)) {
+        icon.style.marginLeft = 'calc(var(--icon-size) * var(--monster-component-overlap))';
+      }
     }
     const occurrence = renderedIconCounts.get(iconName) || 0;
     renderedIconCounts.set(iconName, occurrence + 1);
@@ -758,6 +828,15 @@ function updatePreview() {
       image.src = assetPath;
       image.alt = '';
       icon.append(image);
+      if (iconValue) {
+        const value = document.createElement('span');
+        value.className = 'card-band-icon-value';
+        if (iconName === 'Reakció drágítás') {
+          value.classList.add('card-band-icon-value-reaction-surcharge');
+        }
+        value.textContent = iconValue;
+        icon.append(value);
+      }
     } else {
       icon.classList.add('card-band-icon-placeholder');
       icon.textContent = '?';
@@ -770,16 +849,8 @@ function updatePreview() {
     iconContainer.append(icon);
   });
   bandIconContainer.hidden = selectedBandIcons.length === 0;
-  selectedIcons.splice(0, selectedIcons.length, ...selectedIcons.filter((icon) => !cardBandIconAssets.has(icon)), ...bandIconValueLabels);
-  const reactionSurcharge = String(values.get('reactionSurcharge') || '').trim();
-  if (selectedIcons.includes('Reakció drágítás') && reactionSurcharge) {
-    selectedIcons[selectedIcons.indexOf('Reakció drágítás')] = `Reakció drágítás: ${reactionSurcharge}`;
-  }
-
-  const protection = values.get('protection');
-  if (selectedIcons.includes('Oltalom') && protection) {
-    selectedIcons[selectedIcons.indexOf('Oltalom')] = `Oltalom: ${String(protection).trim()}`;
-  }
+  fitBandIconValues();
+  selectedIcons.splice(0, selectedIcons.length, ...selectedIcons.filter((icon) => !cardBandIconAssets.has(icon)));
   const monsterComponent = Number(values.get('monsterComponent'));
   if (selectedIcons.includes('Szörnykomponens')) {
     const componentCount = Number.isInteger(monsterComponent) && monsterComponent > 0 ? monsterComponent : 1;
@@ -917,7 +988,7 @@ rulesTextIcons.forEach((icon) => {
   const button = document.createElement('button');
   button.className = 'text-insert-button';
   button.type = 'button';
-  button.title = icon.token;
+  button.title = icon.alt;
 
   const image = document.createElement('img');
   image.src = icon.path;
@@ -926,89 +997,13 @@ rulesTextIcons.forEach((icon) => {
   button.addEventListener('click', () => insertRulesTextIcon(icon.token));
   rulesTextIconButtons.append(button);
 });
-let iconTestStorageError = false;
-let factionTestStorageError = false;
-function updateIconTestControls() {
-  iconTestToggle.setAttribute('aria-pressed', String(iconTestEnabled));
-  iconTestToggle.textContent = `Teszt: ${iconTestEnabled ? 'be' : 'ki'}`;
-  if (iconTestStorageError) {
-    iconTestStatus.textContent = 'A tesztikon beállítása nem menthető ebben a böngészőmunkamenetben.';
-  } else if (!rememberedCardIcon) {
-    iconTestStatus.textContent = 'Utolsó tesztikon: nincs kiválasztva.';
-  } else {
-    iconTestStatus.textContent = `Utolsó tesztikon: ${rememberedCardIcon}.${iconTestEnabled ? ' Csak az előnézetben jelenik meg, a letöltött kártyán nem.' : ''}`;
-  }
-}
-
-function rememberTestIcon(iconName) {
-  rememberedCardIcon = iconName;
-  try {
-    sessionStorage.setItem('hkk-cardmaker-test-icon', iconName);
-  } catch {
-    iconTestStorageError = true;
-  }
-  updateIconTestControls();
-  if (iconTestEnabled) updatePreview();
-}
-
-try {
-  const savedTestIcon = sessionStorage.getItem('hkk-cardmaker-test-icon');
-  if (cardIconLayouts.has(savedTestIcon)) rememberedCardIcon = savedTestIcon;
-  iconTestEnabled = sessionStorage.getItem('hkk-cardmaker-test-enabled') === 'true'
-    && Boolean(rememberedCardIcon);
-} catch {
-  iconTestStorageError = true;
-}
-updateIconTestControls();
-
-try {
-  const savedTestFaction = sessionStorage.getItem('hkk-cardmaker-test-faction');
-  if (factionByKey.has(savedTestFaction)) rememberedFaction = savedTestFaction;
-  factionTestEnabled = sessionStorage.getItem('hkk-cardmaker-test-faction-enabled') === 'true';
-} catch {
-  factionTestStorageError = true;
-}
-updateFactionTestControls();
-
-factionTestToggle.addEventListener('click', () => {
-  factionTestEnabled = !factionTestEnabled;
-  try {
-    sessionStorage.setItem('hkk-cardmaker-test-faction-enabled', String(factionTestEnabled));
-  } catch {
-    factionTestStorageError = true;
-  }
-  updateFactionTestControls();
-  updatePreview();
-});
-
-iconTestToggle.addEventListener('click', () => {
-  if (!rememberedCardIcon) {
-    iconTestStatus.textContent = 'Előbb válassz ki egy ikont a teszteléshez.';
-    return;
-  }
-  iconTestEnabled = !iconTestEnabled;
-  try {
-    sessionStorage.setItem('hkk-cardmaker-test-enabled', String(iconTestEnabled));
-  } catch {
-    iconTestStorageError = true;
-  }
-  updateIconTestControls();
-  updatePreview();
-});
-
-form.addEventListener('change', (event) => {
-  const input = event.target;
-  if (input instanceof HTMLInputElement && input.name === 'faction' && input.checked) {
-    rememberTestFaction(input.value);
-  } else if (input instanceof HTMLInputElement
-    && ['icon', 'sideIcon', 'separateIcon'].includes(input.name)
-    && input.checked
-    && cardIconLayouts.has(input.value)) {
-    rememberTestIcon(input.value);
-  }
-});
 form.addEventListener('input', updatePreview);
 form.addEventListener('change', updatePreview);
+document.querySelector('#center-icon-position-reset').addEventListener('click', () => {
+  form.querySelector('#center-icon-offset-x').value = '0';
+  form.querySelector('#center-icon-offset-y').value = '0';
+  updatePreview();
+});
 cardRuleInput.addEventListener('change', () => {
   applyCardRuleRestrictions(true);
   updateFactionControls();
@@ -1089,11 +1084,11 @@ document.querySelector('#reset-button').addEventListener('click', () => {
   updatePreview();
 });
 
-function getCanvasRect(element, cardRect, scaleX, scaleY) {
+function getCanvasRect(element, renderRect, scaleX, scaleY) {
   const rect = element.getBoundingClientRect();
   return {
-    x: (rect.left - cardRect.left) * scaleX,
-    y: (rect.top - cardRect.top) * scaleY,
+    x: (rect.left - renderRect.left) * scaleX,
+    y: (rect.top - renderRect.top) * scaleY,
     width: rect.width * scaleX,
     height: rect.height * scaleY
   };
@@ -1106,6 +1101,17 @@ function getEffectiveCssZoom(element) {
     if (Number.isFinite(ancestorZoom)) zoom *= ancestorZoom;
   }
   return zoom;
+}
+
+function fitBandIconValues() {
+  document.querySelectorAll('#preview-band-icons .card-band-icon-value').forEach((value) => {
+    const icon = value.closest('.card-band-icon');
+    if (!icon) throw new Error('Card icon value is missing its icon container.');
+    const textWidth = value.scrollWidth;
+    const availableWidth = icon.clientWidth * 0.58;
+    const scale = textWidth > 0 ? Math.min(1, availableWidth / textWidth) : 1;
+    value.style.setProperty('--band-icon-value-scale-x', String(scale));
+  });
 }
 
 function truncateCanvasText(context, text, maxWidth) {
@@ -1153,123 +1159,20 @@ function drawCover(context, image, rect) {
   context.restore();
 }
 
-function drawWrappedText(context, text, rect, font, color, lineHeight, alignment) {
-  context.save();
-  context.beginPath();
-  context.rect(rect.x, rect.y, rect.width, rect.height);
-  context.clip();
-  context.font = font;
-  context.fillStyle = color;
-  context.textAlign = alignment;
-  context.textBaseline = 'top';
-  const textX = alignment === 'center'
-    ? rect.x + rect.width / 2
-    : alignment === 'right'
-      ? rect.x + rect.width
-      : rect.x;
-  let y = rect.y;
-  const paragraphs = text.split('\n');
-
-  for (const paragraph of paragraphs) {
-    let line = '';
-    for (const word of paragraph.split(/\s+/)) {
-      const candidate = line ? `${line} ${word}` : word;
-      if (line && context.measureText(candidate).width > rect.width) {
-        context.fillText(line, textX, y);
-        y += lineHeight;
-        line = word;
-      } else {
-        line = candidate;
-      }
-      if (y + lineHeight > rect.y + rect.height) break;
-    }
-    if (line && y + lineHeight <= rect.y + rect.height) {
-      context.fillText(line, textX, y);
-      y += lineHeight;
-    }
-    if (y + lineHeight > rect.y + rect.height) break;
-  }
-  context.restore();
-}
-
-function drawWrappedRulesText(context, text, rect, font, boldFont, color, lineHeight, alignment, icons) {
-  context.save();
-  context.beginPath();
-  context.rect(rect.x, rect.y, rect.width, rect.height);
-  context.clip();
-  context.font = font;
-  context.fillStyle = color;
-  context.textAlign = 'left';
-  context.textBaseline = 'top';
-  const iconSize = lineHeight * 1.25;
-  const paragraphs = text.split('\n');
-  let y = rect.y;
-  let bold = false;
-
-  for (const paragraph of paragraphs) {
-    const words = paragraph.match(new RegExp(`\\*\\*|${rulesTextIconTokenPattern}|\\S+`, 'g')) || [];
-    let line = [];
-    let lineWidth = 0;
-
-    const drawLine = () => {
-      const startX = alignment === 'center'
-        ? rect.x + (rect.width - lineWidth) / 2
-        : alignment === 'right'
-          ? rect.x + rect.width - lineWidth
-          : rect.x;
-      let x = startX;
-      line.forEach((part) => {
-        if (part.type === 'icon') {
-          context.drawImage(icons.get(part.token), x, y + (lineHeight - iconSize) / 2, iconSize, iconSize);
-        } else {
-          context.font = part.bold ? boldFont : font;
-          context.fillText(part.text, x, y);
-        }
-        x += part.width;
-      });
-      y += lineHeight;
-      line = [];
-      lineWidth = 0;
-    };
-
-    for (const word of words) {
-      if (word === '**') {
-        bold = !bold;
-        continue;
-      }
-      let parts;
-      if (rulesTextIconByToken.has(word)) {
-        parts = [{ type: 'icon', token: word, width: iconSize }];
-      } else {
-        context.font = bold ? boldFont : font;
-        parts = [{ type: 'text', text: word, bold, width: context.measureText(word).width }];
-      }
-      const wordWidth = parts[0].width;
-      context.font = font;
-      const spaceWidth = line.length ? context.measureText(' ').width : 0;
-      if (line.length && lineWidth + spaceWidth + wordWidth > rect.width) drawLine();
-      if (line.length) {
-        line.push({ type: 'text', text: ' ', width: context.measureText(' ').width });
-        lineWidth += context.measureText(' ').width;
-      }
-      line.push(...parts);
-      lineWidth += wordWidth;
-      if (y + lineHeight > rect.y + rect.height) break;
-    }
-    if (line.length && y + lineHeight <= rect.y + rect.height) drawLine();
-    if (y + lineHeight > rect.y + rect.height) break;
-  }
-  context.restore();
+function drawContain(context, image, rect) {
+  const scale = Math.min(rect.width / image.naturalWidth, rect.height / image.naturalHeight);
+  const width = image.naturalWidth * scale;
+  const height = image.naturalHeight * scale;
+  context.drawImage(image, rect.x + (rect.width - width) / 2, rect.y + (rect.height - height) / 2, width, height);
 }
 
 async function renderCardPng() {
-  const cardRect = card.getBoundingClientRect();
+  const renderRect = document.querySelector('#base-color-layers').getBoundingClientRect();
   const baseImage = card.querySelector('#base-color-layers img');
   const exportWidth = baseImage?.naturalWidth || 1061;
   const exportHeight = baseImage?.naturalHeight || 1483;
-  const scaleX = exportWidth / cardRect.width;
-  const scaleY = exportHeight / cardRect.height;
-  const cssZoom = getEffectiveCssZoom(card);
+  const scaleX = exportWidth / renderRect.width;
+  const scaleY = exportHeight / renderRect.height;
   const canvas = document.createElement('canvas');
   canvas.width = exportWidth;
   canvas.height = exportHeight;
@@ -1279,7 +1182,7 @@ async function renderCardPng() {
 
   const baseLayers = [...document.querySelectorAll('#base-color-layers .card-base-layer')];
   if (card.dataset.backgroundImageMode === 'true' && backgroundCardImage.naturalWidth) {
-    drawCover(context, backgroundCardImage, getCanvasRect(backgroundCardImage, cardRect, scaleX, scaleY));
+    drawCover(context, backgroundCardImage, getCanvasRect(backgroundCardImage, renderRect, scaleX, scaleY));
   }
   if (!baseLayers.length) {
     context.fillStyle = '#111719';
@@ -1311,20 +1214,20 @@ async function renderCardPng() {
   });
 
   if (card.dataset.backgroundImageMode !== 'true' && !previewImage.hidden && previewImage.naturalWidth) {
-    drawCover(context, previewImage, getCanvasRect(document.querySelector('.art-frame'), cardRect, scaleX, scaleY));
+    drawCover(context, previewImage, getCanvasRect(document.querySelector('.art-frame'), renderRect, scaleX, scaleY));
   }
 
   const nameElement = document.querySelector('#preview-name');
-  const nameRect = getCanvasRect(nameElement, cardRect, scaleX, scaleY);
+  const nameRect = getCanvasRect(nameElement, renderRect, scaleX, scaleY);
   const nameStyle = getComputedStyle(nameElement);
   context.fillStyle = nameStyle.color;
-  context.font = `${nameStyle.fontWeight} ${parseFloat(nameStyle.fontSize) * cssZoom * scaleX}px ${nameStyle.fontFamily}`;
-  context.letterSpacing = `${parseFloat(nameStyle.letterSpacing) * cssZoom * scaleX}px`;
+  context.font = `${nameStyle.fontWeight} ${parseFloat(nameStyle.fontSize) * scaleX}px ${nameStyle.fontFamily}`;
+  context.letterSpacing = `${parseFloat(nameStyle.letterSpacing) * scaleX}px`;
   context.textAlign = nameStyle.textAlign;
   context.textBaseline = 'top';
   context.shadowColor = 'rgba(255, 249, 232, .8)';
-  context.shadowBlur = 3 * cssZoom * scaleY;
-  context.shadowOffsetY = cssZoom * scaleY;
+  context.shadowBlur = 3 * scaleY;
+  context.shadowOffsetY = scaleY;
   const nameTextX = nameStyle.textAlign === 'right'
     ? nameRect.x + nameRect.width
     : nameStyle.textAlign === 'center'
@@ -1339,15 +1242,15 @@ async function renderCardPng() {
   const metaSubtype = document.querySelector('#preview-subtype');
   if (metaType && metaSubtype) {
     [metaType, metaSubtype].filter((element) => !element.hidden).forEach((element) => {
-      const metaRect = getCanvasRect(element, cardRect, scaleX, scaleY);
+      const metaRect = getCanvasRect(element, renderRect, scaleX, scaleY);
       const metaStyle = getComputedStyle(element);
       context.save();
       context.beginPath();
       context.rect(metaRect.x, metaRect.y, metaRect.width, metaRect.height);
       context.clip();
       context.fillStyle = metaStyle.color;
-      context.font = `${metaStyle.fontStyle} ${metaStyle.fontWeight} ${parseFloat(metaStyle.fontSize) * cssZoom * scaleX}px ${metaStyle.fontFamily}`;
-      context.letterSpacing = `${parseFloat(metaStyle.letterSpacing) * cssZoom * scaleX}px`;
+      context.font = `${metaStyle.fontStyle} ${metaStyle.fontWeight} ${parseFloat(metaStyle.fontSize) * scaleX}px ${metaStyle.fontFamily}`;
+      context.letterSpacing = `${parseFloat(metaStyle.letterSpacing) * scaleX}px`;
       context.textAlign = metaStyle.textAlign;
       context.textBaseline = 'middle';
       const textX = metaStyle.textAlign === 'right'
@@ -1362,7 +1265,7 @@ async function renderCardPng() {
 
   document.querySelectorAll('#preview-costs .card-cost').forEach((cost) => {
     const badge = cost.querySelector('b');
-    const rect = getCanvasRect(badge, cardRect, scaleX, scaleY);
+    const rect = getCanvasRect(badge, renderRect, scaleX, scaleY);
     const style = ['vp', 'zanszilank', 'nekron', 'szk', 'builder', 'sacrifice'].find((name) => cost.classList.contains(name));
     const symbolImage = badge.querySelector('img');
     if (!symbolImage?.naturalWidth) {
@@ -1371,26 +1274,26 @@ async function renderCardPng() {
       context.fill();
       const glyph = badge.querySelector('.cost-glyph');
       if (glyph) {
-        const glyphRect = getCanvasRect(glyph, cardRect, scaleX, scaleY);
+        const glyphRect = getCanvasRect(glyph, renderRect, scaleX, scaleY);
         const glyphStyle = getComputedStyle(glyph);
         context.save();
         context.fillStyle = '#fff';
-        context.font = `${glyphStyle.fontWeight} ${parseFloat(glyphStyle.fontSize) * cssZoom * scaleX}px ${glyphStyle.fontFamily}`;
+        context.font = `${glyphStyle.fontWeight} ${parseFloat(glyphStyle.fontSize) * scaleX}px ${glyphStyle.fontFamily}`;
         context.textAlign = 'center';
         context.textBaseline = 'top';
         context.fillText(glyph.textContent, rect.x + rect.width / 2, glyphRect.y);
         context.restore();
       }
     } else {
-      context.drawImage(symbolImage, rect.x, rect.y, rect.width, rect.height);
+      drawContain(context, symbolImage, rect);
     }
     const amount = badge.querySelector('.cost-amount');
-    const amountRect = getCanvasRect(amount, cardRect, scaleX, scaleY);
+    const amountRect = getCanvasRect(amount, renderRect, scaleX, scaleY);
     const amountStyle = getComputedStyle(amount);
     context.save();
     context.fillStyle = amountStyle.color;
-    context.font = `${amountStyle.fontStyle} ${amountStyle.fontWeight} ${parseFloat(amountStyle.fontSize) * cssZoom * scaleX}px ${amountStyle.fontFamily}`;
-    context.letterSpacing = `${parseFloat(amountStyle.letterSpacing) * cssZoom * scaleX}px`;
+    context.font = `${amountStyle.fontStyle} ${amountStyle.fontWeight} ${parseFloat(amountStyle.fontSize) * scaleX}px ${amountStyle.fontFamily}`;
+    context.letterSpacing = `${parseFloat(amountStyle.letterSpacing) * scaleX}px`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(amount.textContent, rect.x + rect.width / 2, amountRect.y + amountRect.height / 2, rect.width * .9);
@@ -1398,7 +1301,7 @@ async function renderCardPng() {
   });
 
   document.querySelectorAll('#preview-icons .card-icon').forEach((icon) => {
-    const rect = getCanvasRect(icon, cardRect, scaleX, scaleY);
+    const rect = getCanvasRect(icon, renderRect, scaleX, scaleY);
     context.fillStyle = 'rgba(41, 45, 44, .8)';
     context.fillRect(rect.x, rect.y, rect.width, rect.height);
     context.strokeStyle = '#777970';
@@ -1406,23 +1309,24 @@ async function renderCardPng() {
     context.strokeRect(rect.x, rect.y, rect.width, rect.height);
     const iconStyle = getComputedStyle(icon);
     context.fillStyle = iconStyle.color;
-    context.font = `700 ${parseFloat(iconStyle.fontSize) * cssZoom * scaleX}px ${iconStyle.fontFamily}`;
+    context.font = `700 ${parseFloat(iconStyle.fontSize) * scaleX}px ${iconStyle.fontFamily}`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(icon.textContent, rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width - 4 * scaleX);
   });
 
-  document.querySelectorAll('#preview-band-icons .card-band-icon:not([data-test-icon="true"])').forEach((icon) => {
-    const rect = getCanvasRect(icon, cardRect, scaleX, scaleY);
+  document.querySelectorAll('#preview-band-icons .card-band-icon').forEach((icon) => {
+    const rect = getCanvasRect(icon, renderRect, scaleX, scaleY);
     const image = icon.querySelector('img');
     if (image?.naturalWidth) {
-      context.drawImage(image, rect.x, rect.y, rect.width, rect.height);
+      drawContain(context, image, getCanvasRect(image, renderRect, scaleX, scaleY));
     } else {
       context.fillStyle = '#fffdf7';
       context.strokeStyle = '#514b3b';
       context.lineWidth = Math.max(1, scaleX);
       context.beginPath();
-      context.arc(rect.x + rect.width / 2, rect.y + rect.height / 2, Math.min(rect.width, rect.height) / 2, 0, Math.PI * 2);
+      context.arc(rect.x + rect.width / 2, rect.y + rect.height / 2,
+        Math.min(rect.width, rect.height) / 2, 0, Math.PI * 2);
       context.fill();
       context.stroke();
       context.fillStyle = '#292c2b';
@@ -1431,47 +1335,35 @@ async function renderCardPng() {
       context.textBaseline = 'middle';
       context.fillText('?', rect.x + rect.width / 2, rect.y + rect.height / 2);
     }
+    const value = icon.querySelector('.card-band-icon-value');
+    if (value) {
+      const valueRect = getCanvasRect(value, renderRect, scaleX, scaleY);
+      const valueStyle = getComputedStyle(value);
+      context.fillStyle = valueStyle.color;
+      context.font = `${valueStyle.fontWeight} ${parseFloat(valueStyle.fontSize) * scaleX}px ${valueStyle.fontFamily}`;
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      const horizontalScale = Number.parseFloat(value.style.getPropertyValue('--band-icon-value-scale-x')) || 1;
+      context.save();
+      context.translate(valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
+      context.scale(horizontalScale, 1);
+      context.fillText(value.textContent, 0, 0);
+      context.restore();
+    }
   });
 
-  const rules = document.querySelector('#preview-text');
-  const rulesRect = getCanvasRect(rules, cardRect, scaleX, scaleY);
-  const rulesStyle = getComputedStyle(rules);
-  const fontSize = parseFloat(rulesStyle.fontSize) * cssZoom * scaleX;
-  const lineHeight = parseFloat(rulesStyle.lineHeight) * cssZoom * scaleX || fontSize * 1.42;
-  const rulesInlineIcons = new Map();
-  for (const icon of rulesTextIcons) {
-    if (rulesTextInput.value.includes(icon.token)) {
-      const image = new Image();
-      image.src = icon.path;
-      await image.decode();
-      rulesInlineIcons.set(icon.token, image);
-    }
-  }
-  drawWrappedRulesText(context, rulesTextInput.value.trim(), {
-    x: rulesRect.x,
-    y: rulesRect.y,
-    width: rulesRect.width,
-    height: rulesRect.height
-  }, `${rulesStyle.fontStyle} ${rulesStyle.fontWeight} ${fontSize}px ${rulesStyle.fontFamily}`,
-  `${rulesStyle.fontStyle} 700 ${fontSize}px ${rulesStyle.fontFamily}`, rulesStyle.color, lineHeight, rulesStyle.textAlign,
-  rulesInlineIcons);
+  drawDomText(context, document.querySelector('#preview-text'), renderRect, scaleX, scaleY);
 
   const flavor = document.querySelector('#preview-flavor-text');
   if (!flavor.hidden) {
-    const flavorRect = getCanvasRect(flavor, cardRect, scaleX, scaleY);
-    const flavorStyle = getComputedStyle(flavor);
-    const flavorFontSize = parseFloat(flavorStyle.fontSize) * cssZoom * scaleX;
-    const flavorLineHeight = parseFloat(flavorStyle.lineHeight) * cssZoom * scaleX || flavorFontSize * 1.2;
-    drawWrappedText(context, `„${flavor.textContent}”`, flavorRect,
-      `${flavorStyle.fontStyle} ${flavorStyle.fontWeight} ${flavorFontSize}px ${flavorStyle.fontFamily}`,
-      flavorStyle.color, flavorLineHeight, flavorStyle.textAlign);
+    drawDomText(context, flavor, renderRect, scaleX, scaleY);
   }
 
   const statsPanel = document.querySelector('#preview-stats');
   if (!statsPanel.hidden) {
     const statBoxes = [...statsPanel.querySelectorAll('.stat-box')].filter((box) => !box.hidden);
     statBoxes.forEach((box) => {
-      const boxRect = getCanvasRect(box, cardRect, scaleX, scaleY);
+      const boxRect = getCanvasRect(box, renderRect, scaleX, scaleY);
       context.fillStyle = '#101a20';
       context.fillRect(boxRect.x, boxRect.y, boxRect.width, boxRect.height);
       context.strokeStyle = '#d2b15e';
@@ -1480,10 +1372,10 @@ async function renderCardPng() {
 
       const icon = box.querySelector('.stat-icon');
       if (icon && !icon.hidden && icon.tagName === 'IMG' && icon.naturalWidth) {
-        const iconRect = getCanvasRect(icon, cardRect, scaleX, scaleY);
-        context.drawImage(icon, iconRect.x, iconRect.y, iconRect.width, iconRect.height);
+        const iconRect = getCanvasRect(icon, renderRect, scaleX, scaleY);
+        drawContain(context, icon, iconRect);
       } else if (icon && !icon.hidden && icon.classList.contains('stat-power-icon')) {
-        const iconRect = getCanvasRect(icon, cardRect, scaleX, scaleY);
+        const iconRect = getCanvasRect(icon, renderRect, scaleX, scaleY);
         const iconStyle = getComputedStyle(icon);
         context.beginPath();
         context.arc(iconRect.x + iconRect.width / 2, iconRect.y + iconRect.height / 2,
@@ -1494,7 +1386,7 @@ async function renderCardPng() {
         context.lineWidth = Math.max(1, scaleX);
         context.stroke();
         context.fillStyle = iconStyle.color;
-        context.font = `${iconStyle.fontWeight} ${parseFloat(iconStyle.fontSize) * cssZoom * scaleX}px ${iconStyle.fontFamily}`;
+        context.font = `${iconStyle.fontWeight} ${parseFloat(iconStyle.fontSize) * scaleX}px ${iconStyle.fontFamily}`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         context.fillText(icon.textContent, iconRect.x + iconRect.width / 2, iconRect.y + iconRect.height / 2);
@@ -1502,10 +1394,10 @@ async function renderCardPng() {
 
       const value = box.querySelector('strong');
       if (value) {
-        const valueRect = getCanvasRect(value, cardRect, scaleX, scaleY);
+        const valueRect = getCanvasRect(value, renderRect, scaleX, scaleY);
         const valueStyle = getComputedStyle(value);
         context.fillStyle = valueStyle.color;
-        context.font = `${valueStyle.fontWeight} ${parseFloat(valueStyle.fontSize) * cssZoom * scaleX}px ${valueStyle.fontFamily}`;
+        context.font = `${valueStyle.fontWeight} ${parseFloat(valueStyle.fontSize) * scaleX}px ${valueStyle.fontFamily}`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         context.fillText(value.textContent, valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
@@ -1569,7 +1461,9 @@ downloadButton.addEventListener('click', async () => {
     status.classList.add('is-visible');
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
-      status.textContent = 'A mentés megszakítva.';
+      status.textContent = location.protocol === 'file:'
+        ? 'A fájlválasztó megszakította a mentést; a kártyakép nem lett elmentve. Ez az oldal file:// címen fut. Indítsd el a node serve.js parancsot, majd nyisd meg a http://localhost:8000/ címet.'
+        : 'A fájlválasztó megszakította a mentést; a kártyakép nem lett elmentve.';
       status.dataset.state = 'info';
     } else {
       status.textContent = location.protocol === 'file:' && error instanceof DOMException && error.name === 'SecurityError'
@@ -1584,9 +1478,13 @@ downloadButton.addEventListener('click', async () => {
   }
 });
 
-const cardResizeObserver = new ResizeObserver(fitPreviewText);
+const cardResizeObserver = new ResizeObserver(() => {
+  fitPreviewText();
+  fitBandIconValues();
+});
 cardResizeObserver.observe(card);
 watchResourceImages();
 applyCardRuleRestrictions();
 updateFactionControls();
 updatePreview();
+document.fonts.ready.then(fitBandIconValues);

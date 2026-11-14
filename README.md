@@ -10,7 +10,8 @@ Unofficial HKK Card Maker is a lightweight browser-based card designer for creat
 - Mix up to two base colors with built-in validation rules; Színtelen, Bufa, and Narancs lap are exclusive
 - Download the final card as an image
 - Use transparent PNG base-card images where available, with JPG and fallback-color alternatives
-- Emphasize selected ability text in bold, automatically shrink long text to fit, and display centered italic flavor text
+- Start with editable Lorem ipsum samples for rules and flavor text; insert inline ability icons, including once-per-turn and once-per-game variants
+- Emphasize selected ability text in bold, automatically shrink long text to fit, and display centered italic flavor text with matching weight
 
 ## Project structure
 
