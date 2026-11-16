@@ -13,6 +13,7 @@ const powerInput = form.querySelector('#card-power');
 const secondaryStatInput = form.querySelector('#card-toughness');
 const rulesTextInput = form.querySelector('#card-text');
 const typeTextColorToggle = document.querySelector('#toggle-type-text-color');
+const centerIconSelectionOrder = new Set();
 const cardBandIconAssets = new Map([
   ['védekezés', 'Védekezés'],
   ['életkioltó', 'Életkioltó'],
@@ -36,6 +37,8 @@ const cardBandIconAssets = new Map([
   ['ősmágia', 'Ősmágiaa'],
   ['őrző', 'Őrző'],
   ['repül', 'Repül'],
+  ['repül-left', 'Repül left'],
+  ['repül-right', 'Repül right'],
   ['Reakció drágítás', 'Reakció drágítás'],
   ['rezisztencia', 'Rezisztencia'],
   ['sav', 'Sav'],
@@ -77,7 +80,8 @@ const cardIconLayouts = new Map([
   ['őrző', { group: 'side', x: 6, size: 8 }],
 
   ['isteni', { group: 'positioned', x: 94, y: 55.8, size: 3.8 }],
-  ['repül', { group: 'positioned', x: 94, y: 59.3, size: 3.8 }]
+  ['repül-left', { group: 'positioned', x: 2, y: 70, size: 11 }],
+  ['repül-right', { group: 'positioned', x: 87, y: 70, size: 11 }]
 ]);
 const sideIconStackY = 59.7;
 const costDetails = [
@@ -121,6 +125,7 @@ const rulesTextIcons = [
     'KF',
     'Kincs',
     'Köd',
+    'Kötelék',
     'Legendás',
     'Mentális',
     'Oltalom',
@@ -132,6 +137,7 @@ const rulesTextIcons = [
     'Tűz',
     'Villám',
     'Védekezés',
+    
 
     'Élőholt',
     'Erőd',
@@ -415,7 +421,7 @@ const factionCombinationByKeys = new Map([
 ]);
 
 function watchResourceImages(root = document) {
-  root.querySelectorAll('.resource-image').forEach((image) => {
+  root.querySelectorAll('.resource-image:not(.stat-icon)').forEach((image) => {
     const imageContainer = image.parentElement;
     const markLoaded = () => {
       imageContainer.classList.add('has-resource-image');
@@ -436,6 +442,19 @@ function watchResourceImages(root = document) {
       else removeMissing();
     }
   });
+}
+
+function setStatIconSource(image, source) {
+  const content = image.parentElement;
+  image.onload = () => content.classList.remove('missing-resource');
+  image.onerror = () => content.classList.add('missing-resource');
+
+  if (image.getAttribute('src') !== source) {
+    content.classList.remove('missing-resource');
+    image.src = source;
+  } else if (image.complete) {
+    content.classList.toggle('missing-resource', image.naturalWidth === 0);
+  }
 }
 
 function updateFactionImageStatus() {
@@ -506,7 +525,7 @@ function updateFactionControls(message) {
 
 function renderRulesText(element, text) {
   element.replaceChildren();
-  const segments = new RegExp(`\\*\\*([\\s\\S]+?)\\*\\*|(${rulesTextIconTokenPattern})|\\[(\\d+)(${numberedRulesTextIconPattern})\\]`, 'g');
+  const segments = new RegExp(`\\*\\*([\\s\\S]+?)\\*\\*|\\*([^*]+?)\\*(?!\\*)|(${rulesTextIconTokenPattern})|\\[(\\d+)(${numberedRulesTextIconPattern})\\]`, 'g');
   let position = 0;
   for (const match of text.matchAll(segments)) {
     if (match.index > position) element.append(document.createTextNode(text.slice(position, match.index)));
@@ -514,16 +533,22 @@ function renderRulesText(element, text) {
       const bold = document.createElement('strong');
       renderRulesText(bold, match[1]);
       element.append(bold);
+    } else if (match[2]) {
+      const italic = document.createElement('em');
+      renderRulesText(italic, match[2]);
+      element.append(italic);
     } else {
-      const amount = match[3];
-      const icon = rulesTextIconByToken.get(match[2] || `[${match[4]}]`);
+      const amount = match[4];
+      const icon = rulesTextIconByToken.get(match[3] || `[${match[5]}]`);
       const image = document.createElement('img');
       image.className = 'rules-inline-icon';
+      if (icon.alt === 'VP' && !amount) image.classList.add('rules-inline-vp');
       image.src = icon.path;
       image.alt = amount ? `${amount} ${icon.alt}` : icon.alt;
       if (amount) {
         const container = document.createElement('span');
         container.className = 'rules-inline-numbered';
+        if (icon.alt === 'VP') container.classList.add('rules-inline-vp');
         if (icon.alt === 'Áldozás') container.classList.add('rules-inline-sacrifice');
         const value = document.createElement('span');
         value.className = 'rules-inline-value';
@@ -644,24 +669,37 @@ function drawDomText(context, element, renderRect, scaleX, scaleY) {
   context.restore();
 }
 
-function fitRulesText(element, textLength, maxLength) {
-  element.style.removeProperty('font-size');
-  const baseSize = parseFloat(getComputedStyle(element).fontSize);
-  const minimumSize = baseSize * 0.65;
-  const lengthScale = Math.min(1, textLength / maxLength);
-  let size = Math.max(minimumSize, baseSize * (1 - 0.3 * lengthScale));
-  if (size < baseSize) element.style.fontSize = `${size}px`;
-  while (element.scrollHeight > element.clientHeight + 1 && size > minimumSize) {
-    size = Math.max(minimumSize, size - baseSize * 0.015);
-    element.style.fontSize = `${size}px`;
-  }
-}
-
 function fitPreviewText() {
-  const rulesText = rulesTextInput.value.trim();
-  const flavorInput = document.querySelector('#card-flavor-text');
-  fitRulesText(document.querySelector('#preview-text'), rulesText.length, rulesTextInput.maxLength);
-  fitRulesText(document.querySelector('#preview-flavor-text'), flavorInput.value.trim().length, flavorInput.maxLength);
+  const rulesText = document.querySelector('#preview-text');
+  const flavorText = document.querySelector('#preview-flavor-text');
+  const container = rulesText.parentElement;
+  const sizePercent = Number(form.querySelector('#text-size').value);
+  const positionPercent = Number(form.querySelector('#text-position').value);
+  document.querySelector('#text-size-value').textContent = `${sizePercent}%`;
+  document.querySelector('#text-position-value').textContent = `${positionPercent}%`;
+  rulesText.style.removeProperty('font-size');
+  flavorText.style.removeProperty('font-size');
+  const baseSize = Number.parseFloat(getComputedStyle(rulesText).fontSize);
+  const containerStyle = getComputedStyle(container);
+  const availableHeight = container.clientHeight
+    - Number.parseFloat(containerStyle.paddingTop) - Number.parseFloat(containerStyle.paddingBottom);
+  const visibleText = [rulesText, flavorText].filter((element) => !element.hidden);
+  const rowGap = containerStyle.rowGap.endsWith('%')
+    ? availableHeight * Number.parseFloat(containerStyle.rowGap) / 100
+    : Number.parseFloat(containerStyle.rowGap);
+  const contentHeight = () => visibleText.reduce((height, element) => height + element.scrollHeight, 0)
+    + Math.max(0, visibleText.length - 1) * rowGap;
+  const minimumSize = baseSize * 0.1;
+  let size = baseSize * sizePercent / 100;
+  do {
+    rulesText.style.fontSize = `${size}px`;
+    flavorText.style.fontSize = `${size}px`;
+    if (contentHeight() <= availableHeight || size <= minimumSize) break;
+    size = Math.max(minimumSize, size - baseSize * 0.015);
+  } while (true);
+  const remainingHeight = Math.max(0, availableHeight - contentHeight());
+  container.style.setProperty('--text-position-offset', `${remainingHeight * positionPercent / 200}px`);
+  document.querySelector('#text-fit-warning').hidden = contentHeight() <= availableHeight;
 }
 
 function handleFactionChange(event) {
@@ -706,6 +744,7 @@ function updatePreview() {
   document.querySelector('#preview-subtype').hidden = !subtype;
   const previewRulesText = document.querySelector('#preview-text');
   renderRulesText(previewRulesText, text);
+  previewRulesText.hidden = !text;
   const previewFlavorText = document.querySelector('#preview-flavor-text');
   previewFlavorText.textContent = `„${flavorText}”`;
   previewFlavorText.hidden = !flavorText;
@@ -714,6 +753,14 @@ function updatePreview() {
 
   const powerValue = document.querySelector('#preview-power');
   const toughnessValue = document.querySelector('#preview-toughness');
+  setStatIconSource(
+    document.querySelector('#preview-power-icon'),
+    values.has('powerIcon') ? 'resources/Icons/Mágikus támadás.png' : 'resources/Icons/Erő.png'
+  );
+  setStatIconSource(
+    document.querySelector('#preview-toughness-icon'),
+    values.has('secondaryStatIcon') ? 'resources/Icons/Mágikus védelem.png' : 'resources/Icons/Védelem.png'
+  );
   powerValue.textContent = power;
   toughnessValue.textContent = toughness;
   powerValue.style.setProperty('--stat-length', Math.max(power.length, 1));
@@ -763,16 +810,23 @@ function updatePreview() {
   updateFactionImageStatus();
   watchResourceImages(baseLayers);
 
+  const selectedCenterIcons = values.getAll('icon');
+  for (const icon of centerIconSelectionOrder) {
+    if (!selectedCenterIcons.includes(icon)) centerIconSelectionOrder.delete(icon);
+  }
+  selectedCenterIcons.forEach((icon) => centerIconSelectionOrder.add(icon));
   const selectedIcons = [
-    ...values.getAll('icon'),
+    ...centerIconSelectionOrder,
     ...values.getAll('sideIcon'),
     ...values.getAll('separateIcon')
   ].filter(Boolean);
   const selectedBandIcons = selectedIcons
     .filter((icon) => cardBandIconAssets.has(icon))
-    .flatMap((icon) => icon === 'Szörnykomponens'
-      ? Array(Math.max(1, Number(values.get('monsterComponent')) || 1)).fill(icon)
-      : [icon]);
+    .flatMap((icon) => icon === 'repül'
+      ? ['repül-left', 'repül-right']
+      : icon === 'Szörnykomponens'
+        ? Array(Math.max(1, Number(values.get('monsterComponent')) || 1)).fill(icon)
+        : [icon]);
   const bandIconValues = new Map([
     ['Reakció drágítás', String(values.get('reactionSurcharge') || '').trim()],
     ['Oltalom', String(values.get('protection') || '').trim()]
@@ -994,24 +1048,29 @@ function insertRulesTextIcon(token) {
   const prefix = before && !/\s$/.test(before) ? ' ' : '';
   const suffix = after && !/^\s/.test(after) ? ' ' : '';
   const insertion = `${prefix}${token}${suffix}`;
-  const availableLength = rulesTextInput.maxLength - (rulesTextInput.value.length - (end - start));
-  if (availableLength < insertion.length) return;
+  if (rulesTextInput.maxLength >= 0) {
+    const availableLength = rulesTextInput.maxLength - (rulesTextInput.value.length - (end - start));
+    if (availableLength < insertion.length) return;
+  }
 
   rulesTextInput.setRangeText(insertion, start, end, 'end');
   rulesTextInput.dispatchEvent(new Event('input', { bubbles: true }));
   rulesTextInput.focus();
 }
-document.querySelector('#bold-rules-text').addEventListener('click', () => {
+function wrapSelectedRulesText(marker) {
   const start = rulesTextInput.selectionStart;
   const end = rulesTextInput.selectionEnd;
-  if (start === end || rulesTextInput.value.length + 4 > rulesTextInput.maxLength) return;
+  if (start === end || (rulesTextInput.maxLength >= 0 &&
+    rulesTextInput.value.length + marker.length * 2 > rulesTextInput.maxLength)) return;
 
   const selection = rulesTextInput.value.slice(start, end);
-  rulesTextInput.setRangeText(`**${selection}**`, start, end, 'select');
+  rulesTextInput.setRangeText(`${marker}${selection}${marker}`, start, end, 'select');
   rulesTextInput.dispatchEvent(new Event('input', { bubbles: true }));
   rulesTextInput.focus();
-  rulesTextInput.setSelectionRange(start + 2, end + 2);
-});
+  rulesTextInput.setSelectionRange(start + marker.length, end + marker.length);
+}
+document.querySelector('#bold-rules-text').addEventListener('click', () => wrapSelectedRulesText('**'));
+document.querySelector('#italic-rules-text').addEventListener('click', () => wrapSelectedRulesText('*'));
 const rulesTextIconButtons = document.querySelector('#rules-text-icon-buttons');
 rulesTextIcons.forEach((icon) => {
   const button = document.createElement('button');
@@ -1251,9 +1310,10 @@ async function renderCardPng() {
   const nameElement = document.querySelector('#preview-name');
   const nameRect = getCanvasRect(nameElement, renderRect, scaleX, scaleY);
   const nameStyle = getComputedStyle(nameElement);
+  const nameZoom = getEffectiveCssZoom(nameElement);
   context.fillStyle = nameStyle.color;
-  context.font = `${nameStyle.fontWeight} ${parseFloat(nameStyle.fontSize) * scaleX}px ${nameStyle.fontFamily}`;
-  context.letterSpacing = `${parseFloat(nameStyle.letterSpacing) * scaleX}px`;
+  context.font = `${nameStyle.fontWeight} ${parseFloat(nameStyle.fontSize) * nameZoom * scaleX}px ${nameStyle.fontFamily}`;
+  context.letterSpacing = `${parseFloat(nameStyle.letterSpacing) * nameZoom * scaleX}px`;
   context.textAlign = nameStyle.textAlign;
   context.textBaseline = 'top';
   context.shadowColor = 'rgba(255, 249, 232, .8)';
@@ -1305,9 +1365,10 @@ async function renderCardPng() {
       if (glyph) {
         const glyphRect = getCanvasRect(glyph, renderRect, scaleX, scaleY);
         const glyphStyle = getComputedStyle(glyph);
+        const glyphZoom = getEffectiveCssZoom(glyph);
         context.save();
         context.fillStyle = '#fff';
-        context.font = `${glyphStyle.fontWeight} ${parseFloat(glyphStyle.fontSize) * scaleX}px ${glyphStyle.fontFamily}`;
+        context.font = `${glyphStyle.fontWeight} ${parseFloat(glyphStyle.fontSize) * glyphZoom * scaleX}px ${glyphStyle.fontFamily}`;
         context.textAlign = 'center';
         context.textBaseline = 'top';
         context.fillText(glyph.textContent, rect.x + rect.width / 2, glyphRect.y);
@@ -1319,10 +1380,11 @@ async function renderCardPng() {
     const amount = badge.querySelector('.cost-amount');
     const amountRect = getCanvasRect(amount, renderRect, scaleX, scaleY);
     const amountStyle = getComputedStyle(amount);
+    const amountZoom = getEffectiveCssZoom(amount);
     context.save();
     context.fillStyle = amountStyle.color;
-    context.font = `${amountStyle.fontStyle} ${amountStyle.fontWeight} ${parseFloat(amountStyle.fontSize) * scaleX}px ${amountStyle.fontFamily}`;
-    context.letterSpacing = `${parseFloat(amountStyle.letterSpacing) * scaleX}px`;
+    context.font = `${amountStyle.fontStyle} ${amountStyle.fontWeight} ${parseFloat(amountStyle.fontSize) * amountZoom * scaleX}px ${amountStyle.fontFamily}`;
+    context.letterSpacing = `${parseFloat(amountStyle.letterSpacing) * amountZoom * scaleX}px`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(amount.textContent, rect.x + rect.width / 2, amountRect.y + amountRect.height / 2, rect.width * .9);
@@ -1338,7 +1400,7 @@ async function renderCardPng() {
     context.strokeRect(rect.x, rect.y, rect.width, rect.height);
     const iconStyle = getComputedStyle(icon);
     context.fillStyle = iconStyle.color;
-    context.font = `700 ${parseFloat(iconStyle.fontSize) * scaleX}px ${iconStyle.fontFamily}`;
+    context.font = `700 ${parseFloat(iconStyle.fontSize) * getEffectiveCssZoom(icon) * scaleX}px ${iconStyle.fontFamily}`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(icon.textContent, rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width - 4 * scaleX);
@@ -1368,15 +1430,28 @@ async function renderCardPng() {
     if (value) {
       const valueRect = getCanvasRect(value, renderRect, scaleX, scaleY);
       const valueStyle = getComputedStyle(value);
-      context.fillStyle = valueStyle.color;
-      context.font = `${valueStyle.fontWeight} ${parseFloat(valueStyle.fontSize) * scaleX}px ${valueStyle.fontFamily}`;
-      context.textAlign = 'center';
-      context.textBaseline = 'middle';
+      const valueText = value.textContent;
+      const baselineProbe = document.createElement('span');
+      baselineProbe.style.cssText = 'position: absolute; top: 0; left: 0; visibility: hidden; white-space: inherit;';
+      baselineProbe.textContent = valueText;
+      const baselineMarker = document.createElement('span');
+      baselineMarker.style.cssText = 'display: inline-block; width: 0; height: 0; vertical-align: baseline;';
+      baselineProbe.append(baselineMarker);
+      value.append(baselineProbe);
+      const baselineY = (baselineMarker.getBoundingClientRect().top - renderRect.top) * scaleY;
+      baselineProbe.remove();
+      const valueZoom = getEffectiveCssZoom(value);
+      const letterSpacing = Number.parseFloat(valueStyle.letterSpacing) * valueZoom * scaleX;
       const horizontalScale = Number.parseFloat(value.style.getPropertyValue('--band-icon-value-scale-x')) || 1;
       context.save();
-      context.translate(valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
-      context.scale(horizontalScale, 1);
-      context.fillText(value.textContent, 0, 0);
+      context.fillStyle = valueStyle.color;
+      context.font = `${valueStyle.fontStyle} ${valueStyle.fontWeight} ${parseFloat(valueStyle.fontSize) * valueZoom * scaleX}px ${valueStyle.fontFamily}`;
+      context.letterSpacing = Number.isFinite(letterSpacing) ? `${letterSpacing}px` : '0px';
+      context.textAlign = 'center';
+      context.textBaseline = 'alphabetic';
+      context.translate(valueRect.x + valueRect.width / 2, baselineY);
+      context.scale(horizontalScale, scaleY / scaleX);
+      context.fillText(valueText, 0, 0);
       context.restore();
     }
   });
@@ -1501,4 +1576,7 @@ watchResourceImages();
 applyCardRuleRestrictions();
 updateFactionControls();
 updatePreview();
-document.fonts.ready.then(fitBandIconValues);
+document.fonts.ready.then(() => {
+  fitPreviewText();
+  fitBandIconValues();
+});

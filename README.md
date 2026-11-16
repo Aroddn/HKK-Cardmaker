@@ -50,7 +50,7 @@ Other optional resources, such as cost symbols and icons, are loaded from `resou
 
 ## Adjusting card icon placement
 
-Edit `cardIconLayouts` near the top of `app.js` to resize each card icon and adjust its vertical position. Center-row icons automatically line up next to each other; their `y` setting is a vertical offset within the row and `size` is a percentage of the card's width. Left-side and separately placed icons also have individual `x`/`y` positions. The left-side group allows one icon or **Nincs**; PNG exports use the same layout as the preview.
+Edit `cardIconLayouts` near the top of `app.js` to resize each card icon and adjust its vertical position. Center-row icons line up left to right in selection order; deselecting and selecting an icon again moves it to the end. Their `y` setting is a vertical offset within the row and `size` is a percentage of the card's width. Left-side and separately placed icons also have individual `x`/`y` positions. The left-side group allows one icon or **Nincs**; PNG exports use the same layout as the preview.
 
 The **Teszt** button beside **Ikonok** keeps the last selected icon visible in the preview while adjusting layouts, even after a page reload or form reset. The test-only icon does not appear in downloaded cards and the selection is remembered for the current browser tab session.
 
@@ -60,7 +60,7 @@ The **Mágikus támadás** and **Védekezés** checkboxes under the stats toggle
 
 The card-creation rule selector above the faction choices restricts colors, costs, and stats for Varázslat/Tárgy, Lény, Építmény, Követő/Szabálylap, and Őslich. **Egyéb** is the unrestricted default. Switching rules clears values that are no longer allowed; the rule definitions and guidance are maintained in `cardRuleDefinitions` and `cardRuleGuidance` in `app.js`.
 
-In the card-text field, select text and use the **Félkövér** button to mark it bold. The preview and PNG export both preserve the formatting, and longer ability or flavor text shrinks to fit. Flavor text is shown centered, italicized, and in Hungarian quotation marks.
+In the card-text field, select text and use the **Félkövér** button to mark it bold. The preview and PNG export both preserve the formatting. Ability and flavor text share the full text box and shrink together when needed, including for seven lines. The optional **Szöveg igazítása** sliders adjust their size and vertical position within the available space. Flavor text is shown centered, italicized, and in Hungarian quotation marks.
 
 For a number inside an inline Építő, Áldozás, VP, SZK, Nekron, ZSZ, Oltalom, or Reakció drágítás icon, put the number before its name in the token, for example `[3VP]` or `[2Reakció drágítás]`. Unnumbered tokens such as `[VP]` still work.
 

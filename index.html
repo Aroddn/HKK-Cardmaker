@@ -179,12 +179,12 @@
               <span class="field-hint">Bármilyen kombináció • szám vagy X</span>
             </div>
             <div class="cost-grid">
-              <label class="cost-input cost-vp"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/VP_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">VP</span><input class="cost-value" name="vp" type="text" value="1" aria-label="VP költség"></span><span class="cost-name">VP</span></label>
-              <label class="cost-input cost-szk"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/Csont_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">SZK</span><input class="cost-value" name="szk" type="text" value="1" aria-label="SZK költség"></span><span class="cost-name">SZK</span></label>
-              <label class="cost-input cost-builder"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/Építő_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">É</span><input class="cost-value" name="epito" type="text" value="1" aria-label="Építő költség"></span><span class="cost-name">Építő</span></label>
-              <label class="cost-input cost-zanszilank"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/ZSZ_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">Z</span><input class="cost-value" name="zanszilank" type="text" value="1" aria-label="Zanszilánk költség"></span><span class="cost-name">Zanszilánk</span></label>
-              <label class="cost-input cost-nekron"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/Nekron_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">N</span><input class="cost-value" name="nekron" type="text" value="1" aria-label="Nekron költség"></span><span class="cost-name">Nekron</span></label>
-              <label class="cost-input cost-sacrifice"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/Áldozás_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">Á</span><input class="cost-value" name="aldozas" type="text" value="1" aria-label="Áldozás költség"></span><span class="cost-name">Áldozás</span></label>
+              <label class="cost-input cost-vp"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/VP_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">VP</span><input class="cost-value" name="vp" type="text" aria-label="VP költség"></span><span class="cost-name">VP</span></label>
+              <label class="cost-input cost-szk"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/Csont_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">SZK</span><input class="cost-value" name="szk" type="text" aria-label="SZK költség"></span><span class="cost-name">SZK</span></label>
+              <label class="cost-input cost-builder"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/Építő_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">É</span><input class="cost-value" name="epito" type="text" aria-label="Építő költség"></span><span class="cost-name">Építő</span></label>
+              <label class="cost-input cost-zanszilank"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/ZSZ_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">Z</span><input class="cost-value" name="zanszilank" type="text" aria-label="Zanszilánk költség"></span><span class="cost-name">Zanszilánk</span></label>
+              <label class="cost-input cost-nekron"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/Nekron_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">N</span><input class="cost-value" name="nekron" type="text" aria-label="Nekron költség"></span><span class="cost-name">Nekron</span></label>
+              <label class="cost-input cost-sacrifice"><span class="cost-symbol"><img class="resource-image" src="resources/Cost/Áldozás_transparent.png" alt="" aria-hidden="true"><span class="cost-glyph" aria-hidden="true">Á</span><input class="cost-value" name="aldozas" type="text" aria-label="Áldozás költség"></span><span class="cost-name">Áldozás</span></label>
             </div>
             <p class="cost-warning" id="cost-warning" role="status" aria-live="polite" hidden>3-nál több különböző költség megadása esetén az ikonok összeérhetnek vagy átfedhetik a kártyanevet.</p>
           </div>
@@ -375,32 +375,41 @@
           <div class="field-row stat-grid">
             <div class="field-group">
               <label class="field-label" for="card-power">Erő</label>
-              <input id="card-power" name="power" type="text" value="1" maxlength="12" placeholder="0-9, X, +, -, *, /" aria-label="Erő értéke">
-              <label class="stat-icon-toggle"><input type="checkbox" name="powerIcon" disabled>Mágikus támadás (hamarosan)</label>
+              <input id="card-power" name="power" type="text" maxlength="12" placeholder="0-9, X, +, -, *, /" aria-label="Erő értéke">
+              <label class="stat-icon-toggle"><input type="checkbox" name="powerIcon" >Mágikus támadás</label>
             </div>
             <div class="field-group">
               <label class="field-label" id="card-secondary-stat-label" for="card-toughness">Védettség</label>
-              <input id="card-toughness" name="toughness" type="text" value="1" maxlength="12" placeholder="0-9, X, +, -, *, /" aria-label="Védettség értéke">
-              <label class="stat-icon-toggle"><input type="checkbox" name="secondaryStatIcon" disabled>Védekezés (hamarosan)</label>
+              <input id="card-toughness" name="toughness" type="text" maxlength="12" placeholder="0-9, X, +, -, *, /" aria-label="Védettség értéke">
+              <label class="stat-icon-toggle"><input type="checkbox" name="secondaryStatIcon">Mágikus védelem</label>
             </div>
           </div>
 
           <div class="field-row text-field">
             <label class="field-label" for="card-text">Kártyaszöveg</label>
-            <textarea id="card-text" name="text" rows="4" maxlength="260" placeholder="Írd le a szabályszöveget...">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</textarea>
+            <textarea id="card-text" name="text" rows="4" placeholder="Írd le a szabályszöveget..."></textarea>
             <div class="text-meta">
               <span class="text-insert-buttons" id="rules-text-icon-buttons">
                 <button class="text-insert-button" id="bold-rules-text" type="button" title="Kijelölt szöveg félkövérré formázása" aria-label="Kijelölt szöveg félkövérré formázása"><strong>B</strong> Félkövér</button>
+                <button class="text-insert-button" id="italic-rules-text" type="button" title="Kijelölt szöveg dőltté formázása" aria-label="Kijelölt szöveg dőltté formázása"><em>I</em> Dőlt</button>
               </span>
-              <span><b id="text-count">0</b> / 260</span>
+              <span><b id="text-count">0</b> karakter</span>
             </div>
-            <span class="field-hint">Jelöld ki a szöveget a félkövér gombhoz. A hosszú szöveg automatikusan kisebb lesz. Az ikon a kijelölt helyre kerül. Számot is adhatsz az Építő, Áldozás, VP, SZK, Nekron, ZSZ, Oltalom és Reakció drágítás ikonokhoz, például [3VP].</span>
+            <span class="field-hint">Jelöld ki a szöveget a Félkövér vagy Dőlt gombhoz. A hosszú szöveg automatikusan kisebb lesz. Az ikon a kijelölt helyre kerül. Számot is adhatsz az Építő, Áldozás, VP, SZK, Nekron, ZSZ, Oltalom és Reakció drágítás ikonokhoz, például [3VP].</span>
           </div>
 
           <div class="field-row text-field">
             <label class="field-label" for="card-flavor-text">Ízszöveg</label>
-            <textarea id="card-flavor-text" name="flavorText" rows="2" maxlength="180" placeholder="Írd le a kártya hangulati szövegét...">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</textarea>
+            <textarea id="card-flavor-text" name="flavorText" rows="2" maxlength="180" placeholder="Írd le a kártya hangulati szövegét..."></textarea>
           </div>
+          <fieldset class="field-row text-adjustments">
+            <legend class="field-label">Szöveg igazítása <span class="optional-label">OPCIONÁLIS</span></legend>
+            <label for="text-size">Méret <output id="text-size-value" for="text-size">100%</output></label>
+            <input id="text-size" name="textSize" type="range" min="70" max="130" step="1" value="100">
+            <label for="text-position">Függőleges helyzet <output id="text-position-value" for="text-position">0%</output></label>
+            <input id="text-position" name="textPosition" type="range" min="-100" max="100" step="1" value="0">
+            <span class="field-hint text-fit-warning" id="text-fit-warning" role="status" hidden>A szöveg túl hosszú a kártyához; rövidítsd le.</span>
+          </fieldset>
         </form>
 
         <div class="editor-footnote"><span class="footnote-gem">&#9670;</span> A módosítások azonnal látszanak a kártyán.</div>

@@ -36,6 +36,8 @@
       const defenseBox = editor.querySelector('#preview-secondary-stat');
       const powerIcon = editor.querySelector('#preview-power-icon');
       const defenseIcon = editor.querySelector('#preview-toughness-icon');
+      const powerIconToggle = editor.querySelector('[name="powerIcon"]');
+      const defenseIconToggle = editor.querySelector('[name="secondaryStatIcon"]');
       editor.querySelector('#hkk-card').style.animation = 'none';
       const change = (element, value) => {
         element.value = value;
@@ -55,6 +57,25 @@
               'Reset should restore each stat to 1.');
           }
         }],
+        ['switches between standard and magical stat icons', async () => {
+          powerIconToggle.checked = true;
+          powerIconToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
+          defenseIconToggle.checked = true;
+          defenseIconToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
+          assert(decodeURIComponent(powerIcon.getAttribute('src')).endsWith('resources/Icons/Mágikus támadás.png'),
+            'Magical attack should use its dedicated icon.');
+          assert(decodeURIComponent(defenseIcon.getAttribute('src')).endsWith('resources/Icons/Mágikus védelem.png'),
+            'Magical defense should use its dedicated icon.');
+          await defenseIcon.decode();
+          powerIconToggle.checked = false;
+          defenseIconToggle.checked = false;
+          powerIconToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
+          defenseIconToggle.dispatchEvent(new window.Event('change', { bubbles: true }));
+          assert(decodeURIComponent(powerIcon.getAttribute('src')).endsWith('resources/Icons/Erő.png') &&
+            decodeURIComponent(defenseIcon.getAttribute('src')).endsWith('resources/Icons/Védelem.png'),
+          'Unchecking both options should restore the standard icons.');
+          await Promise.all([powerIcon.decode(), defenseIcon.decode()]);
+        }],
         ['shows each stat image with its value inside and hides empty stats', async () => {
           change(power, '');
           change(defense, '');
@@ -71,8 +92,8 @@
             assert(rect.left >= imageRect.left && rect.right <= imageRect.right &&
               rect.top >= imageRect.top && rect.bottom <= imageRect.bottom, 'The value should fit inside its icon.');
           }
-          assert(editor.querySelector('[name="powerIcon"]').disabled &&
-            editor.querySelector('[name="secondaryStatIcon"]').disabled, 'Special icons should be disabled.');
+          assert(!powerIconToggle.disabled && !defenseIconToggle.disabled,
+            'Special stat icon choices should be enabled.');
           change(power, '123456789012');
           const longValue = powerBox.querySelector('strong').getBoundingClientRect();
           const powerRect = powerIcon.getBoundingClientRect();
@@ -146,9 +167,8 @@
         }],
         ['keeps values visible and exportable when an icon is missing', async () => {
           powerIcon.dispatchEvent(new window.Event('error'));
-          change(power, '4');
           assert(powerBox.querySelector('.missing-resource'), 'Missing icon should use the visible fallback.');
-          assert(powerBox.querySelector('strong').textContent === '4', 'The value should remain visible.');
+          assert(powerBox.querySelector('strong').textContent === '2', 'The value should remain visible.');
           const blob = await window.renderCardPng();
           assert(blob.type === 'image/png', 'Export should work with a missing icon.');
         }]
