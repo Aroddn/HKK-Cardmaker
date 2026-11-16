@@ -14,8 +14,13 @@ const secondaryStatInput = form.querySelector('#card-toughness');
 const rulesTextInput = form.querySelector('#card-text');
 const typeTextColorToggle = document.querySelector('#toggle-type-text-color');
 const centerIconSelectionOrder = new Set();
+const cardRarityIconAssets = new Map([
+  ['Ritka', 'resources/Icons/Kocka icon ritka.png'],
+  ['Nem gyakori', 'resources/Icons/Kocka icon nem gyakori.png'],
+  ['Gyakori', 'resources/Icons/Kocka icon gyakori.png']
+]);
 const cardBandIconAssets = new Map([
-  ['védekezés', 'Védekezés'],
+  ['védekezés', 'Védekezés_middle'],
   ['életkioltó', 'Életkioltó'],
   ['élőholt', 'Élőholt'],
   ['ereklye', 'Ereklye'],
@@ -29,7 +34,7 @@ const cardBandIconAssets = new Map([
   ['idézés', 'Idézés'],
   ['isteni', 'Isteni'],
   ['kegy', 'Kegy'],
-  ['KF', 'KF'],
+  ['KF', 'KF_middle'],
   ['kincs', 'Kincs'],
   ['köd', 'Köd'],
   ['legendás', 'Legendás'],
@@ -47,6 +52,16 @@ const cardBandIconAssets = new Map([
   ['Oltalom', 'Oltalom'],
   ['Szörnykomponens', 'Szörnykomponens']
 ].map(([value, name]) => [value, name && `resources/Icons/${name}.png`]));
+form.querySelectorAll('.icon-option-group input[name="icon"], .icon-option-group input[name="sideIcon"]').forEach((input) => {
+  const assetPath = cardBandIconAssets.get(input.value);
+  if (!assetPath) throw new Error(`Missing card icon asset for "${input.value}".`);
+  const image = document.createElement('img');
+  image.className = 'icon-choice-preview';
+  image.src = assetPath;
+  image.alt = '';
+  image.setAttribute('aria-hidden', 'true');
+  input.insertAdjacentElement('afterend', image);
+});
 // Center-row y is a vertical offset; positioned icons use card x/y percentages.
 // Size is a percentage of the card width.
 const cardIconLayouts = new Map([
@@ -72,12 +87,12 @@ const cardIconLayouts = new Map([
   ['védekezés', { group: 'center', y: -9, size:8.5 }],
   ['villám', { group: 'center', y: -17, size: 8.5 }],
 
-  ['élőholt', { group: 'side', x: 5.1, size: 8.5 }],
-  ['hegymélyi', { group: 'side', x: 4, size: 9.5 }],
-  ['erőd', { group: 'side', x: 4, size: 10.5 }],
-  ['horgony', { group: 'side', x: 3.5, size: 10.5 }],
-  ['kegy', { group: 'side', x: 4.5, size: 8 }],
-  ['őrző', { group: 'side', x: 6, size: 8 }],
+  ['élőholt', { group: 'side', x: 5.6, size: 9 }],
+  ['hegymélyi', { group: 'side', x: 4, size: 10 }],
+  ['erőd', { group: 'side', x: 4, size: 11 }],
+  ['horgony', { group: 'side', x: 3.5, size: 11 }],
+  ['kegy', { group: 'side', x: 4.5, size: 8.5 }],
+  ['őrző', { group: 'side', x: 6, size: 8.5 }],
 
   ['isteni', { group: 'positioned', x: 94, y: 55.8, size: 3.8 }],
   ['repül-left', { group: 'positioned', x: 2, y: 70, size: 11 }],
@@ -525,7 +540,7 @@ function updateFactionControls(message) {
 
 function renderRulesText(element, text) {
   element.replaceChildren();
-  const segments = new RegExp(`\\*\\*([\\s\\S]+?)\\*\\*|\\*([^*]+?)\\*(?!\\*)|(${rulesTextIconTokenPattern})|\\[(\\d+)(${numberedRulesTextIconPattern})\\]`, 'g');
+  const segments = new RegExp(`\\*\\*([\\s\\S]+?)\\*\\*|\\*([^*]+?)\\*(?!\\*)|(${rulesTextIconTokenPattern})|\\[([\\p{L}\\p{N}-]{1,3})(${numberedRulesTextIconPattern})\\]`, 'gu');
   let position = 0;
   for (const match of text.matchAll(segments)) {
     if (match.index > position) element.append(document.createTextNode(text.slice(position, match.index)));
@@ -543,18 +558,30 @@ function renderRulesText(element, text) {
       const image = document.createElement('img');
       image.className = 'rules-inline-icon';
       if (icon.alt === 'VP' && !amount) image.classList.add('rules-inline-vp');
+      if (icon.alt === 'SZK' && !amount) image.classList.add('rules-inline-szk');
+      if (icon.alt === 'ZSZ' && !amount) image.classList.add('rules-inline-zsz');
+      if (icon.alt === 'Szörnykomponens' && !amount) image.classList.add('rules-inline-monster-component');
+      if (icon.alt === 'Építő' && !amount) image.classList.add('rules-inline-builder');
+      if (icon.alt === 'Nekron' && !amount) image.classList.add('rules-inline-nekron');
       image.src = icon.path;
       image.alt = amount ? `${amount} ${icon.alt}` : icon.alt;
       if (amount) {
         const container = document.createElement('span');
         container.className = 'rules-inline-numbered';
         if (icon.alt === 'VP') container.classList.add('rules-inline-vp');
+        if (icon.alt === 'SZK') container.classList.add('rules-inline-szk');
+        if (icon.alt === 'ZSZ') container.classList.add('rules-inline-zsz');
+        if (icon.alt === 'Szörnykomponens') container.classList.add('rules-inline-monster-component');
+        if (icon.alt === 'Építő') container.classList.add('rules-inline-builder');
+        if (icon.alt === 'Nekron') container.classList.add('rules-inline-nekron');
         if (icon.alt === 'Áldozás') container.classList.add('rules-inline-sacrifice');
         const value = document.createElement('span');
         value.className = 'rules-inline-value';
         value.textContent = amount;
         value.setAttribute('aria-hidden', 'true');
-        value.style.fontSize = `${Math.min(0.65, 1.15 / amount.length)}em`;
+        const valueScaleX = Math.min(1, 1.15 / (amount.length * 0.65));
+        value.style.fontSize = '0.65em';
+        value.style.setProperty('--rules-inline-value-scale-x', String(valueScaleX));
         container.append(image, value);
         element.append(container);
       } else {
@@ -653,8 +680,10 @@ function drawDomText(context, element, renderRect, scaleX, scaleY) {
       context.textAlign = 'center';
       context.textBaseline = 'middle';
       context.letterSpacing = '0px';
-      context.strokeText(value.textContent, valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
-      context.fillText(value.textContent, valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
+      context.translate(valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
+      context.scale(Number.parseFloat(style.getPropertyValue('--rules-inline-value-scale-x')) || 1, 1);
+      context.strokeText(value.textContent, 0, 0);
+      context.fillText(value.textContent, 0, 0);
       context.restore();
     } else if (node instanceof HTMLImageElement) {
       if (node.complete && node.naturalWidth) {
@@ -733,15 +762,38 @@ function updatePreview() {
   const selectedFactions = values.getAll('faction');
   const type = String(values.get('type') || '').trim();
   const subtype = String(values.get('subtype') || '').trim();
+  const typeScale = Number(values.get('typeScale') || 100);
+  const subtypeScale = Number(values.get('subtypeScale') || 100);
+  const typeOffset = Number(values.get('typeOffset') || 0);
+  const subtypeOffset = Number(values.get('subtypeOffset') || 0);
   const power = String(values.get('power') || '').trim();
   const toughness = String(values.get('toughness') || '').trim();
   const secondaryStatLabel = cardRuleInput.value === 'building' ? 'Strukturális pont' : 'Védettség';
 
+  card.dataset.longName = String([...name].length >= 20);
+  const rarityIcon = document.querySelector('#preview-rarity-icon');
+  const rarityIconAsset = cardRarityIconAssets.get(String(values.get('rarity') || ''));
+  if (rarityIconAsset) {
+    if (rarityIcon.getAttribute('src') !== rarityIconAsset) rarityIcon.src = rarityIconAsset;
+  } else {
+    rarityIcon.removeAttribute('src');
+  }
+  rarityIcon.hidden = !rarityIconAsset;
   document.querySelector('#preview-name').textContent = name;
-  document.querySelector('#preview-card-type').textContent = type;
-  document.querySelector('#preview-card-type').hidden = !type;
-  document.querySelector('#preview-subtype').textContent = subtype;
-  document.querySelector('#preview-subtype').hidden = !subtype;
+  const previewType = document.querySelector('#preview-card-type');
+  previewType.textContent = type;
+  previewType.hidden = !type;
+  previewType.style.fontSize = `${4.8 * typeScale / 100}cqw`;
+  previewType.style.setProperty('--metadata-offset-y', `${typeOffset}%`);
+  const previewSubtype = document.querySelector('#preview-subtype');
+  previewSubtype.textContent = subtype;
+  previewSubtype.hidden = !subtype;
+  previewSubtype.style.fontSize = `${4.8 * subtypeScale / 100}cqw`;
+  previewSubtype.style.setProperty('--metadata-offset-y', `${subtypeOffset}%`);
+  document.querySelector('#card-type-scale-value').textContent = `${typeScale}%`;
+  document.querySelector('#card-subtype-scale-value').textContent = `${subtypeScale}%`;
+  document.querySelector('#card-type-offset-value').textContent = `${typeOffset > 0 ? '+' : ''}${typeOffset}%`;
+  document.querySelector('#card-subtype-offset-value').textContent = `${subtypeOffset > 0 ? '+' : ''}${subtypeOffset}%`;
   const previewRulesText = document.querySelector('#preview-text');
   renderRulesText(previewRulesText, text);
   previewRulesText.hidden = !text;
@@ -815,9 +867,11 @@ function updatePreview() {
     if (!selectedCenterIcons.includes(icon)) centerIconSelectionOrder.delete(icon);
   }
   selectedCenterIcons.forEach((icon) => centerIconSelectionOrder.add(icon));
+  const selectedSideIcons = values.getAll('sideIcon');
+  card.dataset.hasSideIcon = String(selectedSideIcons.length > 0);
   const selectedIcons = [
     ...centerIconSelectionOrder,
-    ...values.getAll('sideIcon'),
+    ...selectedSideIcons,
     ...values.getAll('separateIcon')
   ].filter(Boolean);
   const selectedBandIcons = selectedIcons
@@ -1257,6 +1311,8 @@ function drawContain(context, image, rect) {
 async function renderCardPng() {
   await Promise.all([...document.querySelectorAll('#preview-text .rules-inline-numbered img')]
     .map((image) => image.decode()));
+  const rarityIcon = document.querySelector('#preview-rarity-icon');
+  if (!rarityIcon.hidden) await rarityIcon.decode();
   const renderRect = document.querySelector('#base-color-layers').getBoundingClientRect();
   const baseImage = card.querySelector('#base-color-layers img');
   const exportWidth = baseImage?.naturalWidth || 1061;
@@ -1305,6 +1361,9 @@ async function renderCardPng() {
 
   if (card.dataset.backgroundImageMode !== 'true' && !previewImage.hidden && previewImage.naturalWidth) {
     drawCover(context, previewImage, getCanvasRect(document.querySelector('.art-frame'), renderRect, scaleX, scaleY));
+  }
+  if (!rarityIcon.hidden) {
+    drawContain(context, rarityIcon, getCanvasRect(rarityIcon, renderRect, scaleX, scaleY));
   }
 
   const nameElement = document.querySelector('#preview-name');

@@ -10,9 +10,8 @@ Other: can pick and choose anything(this should be the default when loading in)
 
 Known small issues:
 Zoomed in costs have different sizes when downlaoded
-Maximum card name lenght
-Custom icon for rarity(pálinkás pohár)
 Add missing icons like: kincs, isteni, őrző
+Cost text move resize, speciall with "X-Y" stuff
+Text in cardtext resize
 
 Known big issues:
-Mágikus támadás and Védekezés need their own images

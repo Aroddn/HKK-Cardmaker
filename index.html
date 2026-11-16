@@ -193,6 +193,16 @@
             <div class="field-group">
               <label class="field-label" for="card-type">Típus</label>
               <textarea id="card-type" name="type" rows="2" placeholder="Írj be tetszőleges típust...">valami</textarea>
+              <div class="metadata-scale-control">
+                <label for="card-type-scale">Méret</label>
+                <input id="card-type-scale" name="typeScale" type="range" min="80" max="100" step="1" value="100" aria-label="Típus mérete">
+                <output id="card-type-scale-value" for="card-type-scale">100%</output>
+              </div>
+              <div class="metadata-scale-control">
+                <label for="card-type-offset">Függőleges</label>
+                <input id="card-type-offset" name="typeOffset" type="range" min="-2" max="2" step="0.25" value="0" aria-label="Típus függőleges helyzete">
+                <output id="card-type-offset-value" for="card-type-offset">0%</output>
+              </div>
               <label class="field-label subtype-picker-label" for="type-picker">Típus hozzáadása a listából</label>
               <div class="select-wrap">
                 <select id="type-picker" aria-label="Típus kiválasztása a listából">
@@ -231,6 +241,16 @@
             <div class="field-group">
               <label class="field-label" for="card-subtype">Altípus</label>
               <textarea id="card-subtype" name="subtype" rows="2" placeholder="Írj be tetszőleges altípust...">mégvalami</textarea>
+              <div class="metadata-scale-control">
+                <label for="card-subtype-scale">Méret</label>
+                <input id="card-subtype-scale" name="subtypeScale" type="range" min="80" max="100" step="1" value="100" aria-label="Altípus mérete">
+                <output id="card-subtype-scale-value" for="card-subtype-scale">100%</output>
+              </div>
+              <div class="metadata-scale-control">
+                <label for="card-subtype-offset">Függőleges</label>
+                <input id="card-subtype-offset" name="subtypeOffset" type="range" min="-2" max="2" step="0.25" value="0" aria-label="Altípus függőleges helyzete">
+                <output id="card-subtype-offset-value" for="card-subtype-offset">0%</output>
+              </div>
               <label class="field-label subtype-picker-label" for="subtype-picker">Altípus hozzáadása a listából</label>
               <div class="select-wrap">
                 <select id="subtype-picker" aria-label="Altípus kiválasztása a listából">
@@ -365,6 +385,7 @@
                 <select id="card-rarity" name="rarity">
                   <option value="" selected>--nincs--</option>
                   <option value="Gyakori">Gyakori</option>
+                  <option value="Nem gyakori">Nem gyakori</option>
                   <option value="Ritka">Ritka</option>
                   <option value="Ultra ritka">Ultra ritka</option>
                 </select>
@@ -408,7 +429,7 @@
             <input id="text-size" name="textSize" type="range" min="70" max="130" step="1" value="100">
             <label for="text-position">Függőleges helyzet <output id="text-position-value" for="text-position">0%</output></label>
             <input id="text-position" name="textPosition" type="range" min="-100" max="100" step="1" value="0">
-            <span class="field-hint text-fit-warning" id="text-fit-warning" role="status" hidden>A szöveg túl hosszú a kártyához; rövidítsd le.</span>
+            <span class="field-hint text-fit-warning" id="text-fit-warning" role="status" hidden></span>
           </fieldset>
         </form>
 
@@ -437,6 +458,7 @@
                   </div>
                 </div>
               </header>
+              <img id="preview-rarity-icon" class="card-rarity-icon" alt="" aria-hidden="true" hidden>
               <div class="art-frame">
                 <img id="preview-image" class="preview-image" alt="Feltöltött kártyaművészet" hidden>
               </div>
