@@ -65,7 +65,7 @@ form.querySelectorAll('.icon-option-group input[name="icon"], .icon-option-group
 // Center-row y is a vertical offset; positioned icons use card x/y percentages.
 // Size is a percentage of the card width.
 const cardIconLayouts = new Map([
-  ['életkioltó', { group: 'center', y: -15, size: 11 }],
+  ['életkioltó', { group: 'center', y: -15, size: 10 }],
   ['ereklye', { group: 'center', y: -17.5, size: 7.1 }],
   ['fa', { group: 'center', y: -17, size: 9.5 }],
   ['fém', { group: 'center', y: -25, size: 7.7  }],

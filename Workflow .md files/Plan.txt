@@ -11,5 +11,9 @@ Other: can pick and choose anything(this should be the default when loading in)
 Known small issues:
 Add missing icons like: kincs, isteni, őrző
 UR icon
+Icon cost size not same when image is downloaded
+Tharr base background swords fix
+Szörnykomponens más icon középre
+Életkioltó kicsit kisebb
 
 Known big issues:
