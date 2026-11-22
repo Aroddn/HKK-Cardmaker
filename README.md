@@ -7,6 +7,8 @@ Unofficial HKK Card Maker is a lightweight browser-based card designer for creat
 - Build cards with a name, text, faction/base combinations, and optional illustration
 - Enter a card type and subtype, or add common values from their preset lists
 - Select custom card icons and resource-based cost symbols
+- Longer cost values automatically narrow to fit their icons in the preview and PNG
+- Start with Rhatt as the base color and a VP cost of 1; reset restores these defaults
 - Mix up to two base colors with built-in validation rules; Színtelen, Bufa, and Narancs lap are exclusive
 - Download the final card as an image
 - Use transparent PNG base-card images where available, with JPG and fallback-color alternatives
@@ -62,7 +64,7 @@ The card-creation rule selector above the faction choices restricts colors, cost
 
 In the card-text field, select text and use the **Félkövér** button to mark it bold. The preview and PNG export both preserve the formatting. Ability and flavor text share the full text box and shrink together when needed, including for seven lines. The optional **Szöveg igazítása** sliders adjust their size and vertical position within the available space. Flavor text is shown centered, italicized, and in Hungarian quotation marks.
 
-For a number inside an inline Építő, Áldozás, VP, SZK, Nekron, ZSZ, Oltalom, or Reakció drágítás icon, put the number before its name in the token, for example `[3VP]` or `[2Reakció drágítás]`. Unnumbered tokens such as `[VP]` still work.
+For a number inside an inline Építő, Áldozás, VP, SZK, Nekron, ZSZ, Oltalom, or Reakció drágítás icon, put the number before its name in the token, for example `[3VP]`, `[+1VP]`, or `[2Reakció drágítás]`. Unnumbered tokens such as `[VP]` still work.
 
 ## Notes
 

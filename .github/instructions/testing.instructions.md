@@ -1,5 +1,5 @@
 ---
-description: 'Use these guidelines when generating or updating tests.'
+description: 'Use these guidelines when specifically asked to do'
 applyTo: tests/**
 ---
 # [Project Name] Testing Guidelines

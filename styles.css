@@ -290,7 +290,7 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .cost-input.cost-builder .cost-symbol, .card-cost.builder b { background: #667f50; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
 .cost-input.cost-sacrifice .cost-symbol, .card-cost.sacrifice b { background: #a0473f; clip-path: polygon(50% 0, 100% 25%, 85% 85%, 50% 100%, 15% 85%, 0 25%); }
 .cost-input .cost-symbol.has-resource-image, .card-cost b.has-resource-image { background: transparent; border: 0; border-radius: 0; box-shadow: none; clip-path: none; }
-.cost-value { position: relative; z-index: 1; width: 100%; min-width: 0; height: 100%; padding: 5px 0 0; color: #000; background: transparent; border: 0; border-radius: inherit; outline: 0; font-family: Cambria, 'Times New Roman', Georgia, serif; font-size: 11px; font-weight: 1000; line-height: 1; text-align: center; text-shadow: none; }
+.cost-value { position: relative; z-index: 1; width: 100%; min-width: 0; height: 100%; padding: 0px 0 0; color: #000; background: transparent; border: 0; border-radius: inherit; outline: 0; font-family: Cambria, 'Times New Roman', Georgia, serif; font-size: 11px; font-weight: 1000; line-height: 1; text-align: center; text-shadow: none; }
 .cost-value:focus-visible { background: #ffffff22; }
 .cost-name { color: #68767a; font-size: 9px; line-height: 1; }
 .cost-warning { margin: 7px 0 0; color: #8d5126; font-size: 10px; line-height: 1.35; }
@@ -532,10 +532,10 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .card-costs { display: flex; gap: 3px; }
 .card-cost { display: inline-flex; color: #000; text-shadow: none; }
 .card-cost b { font-family: 'DM Mono', Consolas, monospace; font-size: 2.14cqw; font-style: normal; }
-.card-cost .cost-amount { position: absolute; z-index: 1; top: 50%; left: 50%; margin: 0; transform: translate(-50%, -50%); color: #000; font-family: Cambria, 'Times New Roman', Georgia, serif; font-size: 4.5cqw; font-style: normal; font-weight: 1000; line-height: 1; letter-spacing: 0.17cqw; text-align: center; text-shadow: none; white-space: nowrap; }
-.card-titlebar .card-cost b { width: min(16cqw, 52px); height: min(16cqw, 52px); }
+.card-cost .cost-amount { position: absolute; z-index: 1; top: 50%; left: 50%; margin: 0; transform: translate(-50%, -50%) scaleX(var(--cost-amount-scale-x, 1)); color: #000; font-family: Cambria, 'Times New Roman', Georgia, serif; font-size: 4.5cqw; font-style: normal; font-weight: 1000; line-height: 1; letter-spacing: 0.17cqw; text-align: center; text-shadow: none; white-space: nowrap; }
+.card-titlebar .card-cost b { width: 13cqw; height: 13cqw; }
 .card-titlebar .cost-glyph { top: 1.5cqw; font-size: 3cqw; }
-.card-titlebar .card-cost .cost-amount { font-size: 4.5cqw; }
+.card-titlebar .card-cost .cost-amount { font-size: 5cqw; }
 .page-footer { display: flex; justify-content: space-between; align-items: center; min-height: 31px; padding: 0 20px; color: #728084; background: linear-gradient(180deg, #dfe1d8 0%, #d1d4cd 100%); border-top: 1px solid #c1c8c0; font-size: 8px; text-shadow: 0 1px 0 rgba(255,255,255,0.6); }
 .footer-center { color: #899493; font-size: 7px; }
 .footer-star { color: #a88a4a; }

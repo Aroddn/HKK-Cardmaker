@@ -540,7 +540,7 @@ function updateFactionControls(message) {
 
 function renderRulesText(element, text) {
   element.replaceChildren();
-  const segments = new RegExp(`\\*\\*([\\s\\S]+?)\\*\\*|\\*([^*]+?)\\*(?!\\*)|(${rulesTextIconTokenPattern})|\\[([\\p{L}\\p{N}-]{1,3})(${numberedRulesTextIconPattern})\\]`, 'gu');
+  const segments = new RegExp(`\\*\\*([\\s\\S]+?)\\*\\*|\\*([^*]+?)\\*(?!\\*)|(${rulesTextIconTokenPattern})|\\[(\\+?[\\p{L}\\p{N}-]{1,3})(${numberedRulesTextIconPattern})\\]`, 'gu');
   let position = 0;
   for (const match of text.matchAll(segments)) {
     if (match.index > position) element.append(document.createTextNode(text.slice(position, match.index)));
@@ -1008,6 +1008,7 @@ function updatePreview() {
   }).join('');
 
   watchResourceImages(document.querySelector('#preview-costs'));
+  fitCostAmounts();
 }
 
 typeTextColorToggle.addEventListener('click', () => {
@@ -1245,6 +1246,15 @@ function getEffectiveCssZoom(element) {
   return zoom;
 }
 
+function fitCostAmounts() {
+  document.querySelectorAll('#preview-costs .cost-amount').forEach((amount) => {
+    const textWidth = Number.parseFloat(getComputedStyle(amount).width);
+    const badgeWidth = Number.parseFloat(getComputedStyle(amount.parentElement).width);
+    const scale = textWidth > 0 ? Math.min(1, badgeWidth * 0.5 / textWidth) : 1;
+    amount.style.setProperty('--cost-amount-scale-x', String(scale));
+  });
+}
+
 function fitBandIconValues() {
   document.querySelectorAll('#preview-band-icons .card-band-icon-value').forEach((value) => {
     const icon = value.closest('.card-band-icon');
@@ -1446,7 +1456,9 @@ async function renderCardPng() {
     context.letterSpacing = `${parseFloat(amountStyle.letterSpacing) * amountZoom * scaleX}px`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillText(amount.textContent, rect.x + rect.width / 2, amountRect.y + amountRect.height / 2, rect.width * .9);
+    context.translate(rect.x + rect.width / 2, amountRect.y + amountRect.height / 2);
+    context.scale(Number.parseFloat(amount.style.getPropertyValue('--cost-amount-scale-x')) || 1, 1);
+    context.fillText(amount.textContent, 0, 0);
     context.restore();
   });
 
@@ -1629,6 +1641,7 @@ downloadButton.addEventListener('click', async () => {
 const cardResizeObserver = new ResizeObserver(() => {
   fitPreviewText();
   fitBandIconValues();
+  fitCostAmounts();
 });
 cardResizeObserver.observe(card);
 watchResourceImages();
@@ -1638,4 +1651,5 @@ updatePreview();
 document.fonts.ready.then(() => {
   fitPreviewText();
   fitBandIconValues();
+  fitCostAmounts();
 });
