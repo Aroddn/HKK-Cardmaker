@@ -127,7 +127,7 @@
                   <label class="icon-choice"><input type="checkbox" name="icon" value="hideg">hideg</label>
                   <label class="icon-choice"><input type="checkbox" name="icon" value="idézés">idézés</label>
                   <label class="icon-choice"><input type="checkbox" name="icon" value="KF">KF</label>
-                  <label class="icon-choice"><input type="checkbox" name="icon" value="kincs">kincs</label>
+                  <label class="icon-choice"><input type="checkbox" name="icon" value="kincs" disabled>kincs</label>
                   <label class="icon-choice"><input type="checkbox" name="icon" value="köd">köd</label>
                   <label class="icon-choice"><input type="checkbox" name="icon" value="legendás">legendás</label>
                   <label class="icon-choice"><input type="checkbox" name="icon" value="mentális">mentális</label>
@@ -158,14 +158,14 @@
                   <label class="icon-choice"><input type="checkbox" name="sideIcon" value="hegymélyi">hegymélyi</label>
                   <label class="icon-choice"><input type="checkbox" name="sideIcon" value="horgony">horgony</label>
                   <label class="icon-choice"><input type="checkbox" name="sideIcon" value="kegy">kegy</label>
-                  <label class="icon-choice"><input type="checkbox" name="sideIcon" value="őrző">őrző</label>
+                  <label class="icon-choice"><input type="checkbox" name="sideIcon" value="őrző" disabled>őrző</label>
                 </div>
               </fieldset>
 
               <fieldset class="icon-option-group">
                 <legend>Külön elhelyezett ikonok</legend>
                 <div class="icon-choices">
-                  <label class="icon-choice"><input type="checkbox" name="separateIcon" value="isteni">isteni</label>
+                  <label class="icon-choice"><input type="checkbox" name="separateIcon" value="isteni" disabled>isteni</label>
                   <label class="icon-choice"><input type="checkbox" name="separateIcon" value="repül">repül</label>
                 </div>
               </fieldset>
@@ -189,7 +189,17 @@
             <p class="cost-warning" id="cost-warning" role="status" aria-live="polite" hidden>3-nál több különböző költség megadása esetén az ikonok összeérhetnek vagy átfedhetik a kártyanevet.</p>
           </div>
 
-          <div class="field-row metadata-grid subtype-row">
+          <div class="field-row" id="metadata-mode-row">
+            <label class="field-label" for="metadata-mode">Típus megjelenítése</label>
+            <div class="select-wrap">
+              <select id="metadata-mode">
+                <option value="type">Típus és altípus</option>
+                <option value="rule-card">Szabálylap szöveg</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row metadata-grid subtype-row" id="type-row">
             <div class="field-group">
               <label class="field-label" for="card-type">Típus</label>
               <textarea id="card-type" name="type" rows="2" placeholder="Írj be tetszőleges típust...">valami</textarea>
@@ -237,7 +247,7 @@
             </div>
           </div>
 
-          <div class="field-row metadata-grid subtype-row">
+          <div class="field-row metadata-grid subtype-row" id="subtype-row">
             <div class="field-group">
               <label class="field-label" for="card-subtype">Altípus</label>
               <textarea id="card-subtype" name="subtype" rows="2" placeholder="Írj be tetszőleges altípust...">mégvalami</textarea>
@@ -373,9 +383,21 @@
             </div>
           </div>
 
-          <div class="field-row type-text-style-control">
-            <button id="toggle-type-text-color" class="text-insert-button" type="button" aria-pressed="false">Kártyanév, típus és altípus színe: fekete</button>
-            <span class="field-hint">A kártyán és a letöltött képen is érvényes.</span>
+          <div class="field-row metadata-grid subtype-row" id="rule-card-text-row" hidden>
+            <div class="field-group">
+              <label class="field-label" for="card-rule-text">Szabálylap szöveg</label>
+              <textarea id="card-rule-text" name="ruleCardText" rows="2" placeholder="Írd be a szabálylap szövegét...">szabálylap</textarea>
+              <div class="metadata-scale-control">
+                <label for="card-rule-text-scale">Méret</label>
+                <input id="card-rule-text-scale" name="ruleCardTextScale" type="range" min="80" max="100" step="1" value="100" aria-label="Szabálylap szöveg mérete">
+                <output id="card-rule-text-scale-value" for="card-rule-text-scale">100%</output>
+              </div>
+              <div class="metadata-scale-control">
+                <label for="card-rule-text-offset">Függőleges</label>
+                <input id="card-rule-text-offset" name="ruleCardTextOffset" type="range" min="-2" max="2" step="0.25" value="0" aria-label="Szabálylap szöveg függőleges helyzete">
+                <output id="card-rule-text-offset-value" for="card-rule-text-offset">0%</output>
+              </div>
+            </div>
           </div>
 
           <div class="field-row metadata-grid rarity-row">

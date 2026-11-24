@@ -12,12 +12,17 @@ const costInputs = [...form.querySelectorAll('.cost-value')];
 const powerInput = form.querySelector('#card-power');
 const secondaryStatInput = form.querySelector('#card-toughness');
 const rulesTextInput = form.querySelector('#card-text');
-const typeTextColorToggle = document.querySelector('#toggle-type-text-color');
 const centerIconSelectionOrder = new Set();
+const whiteTextBases = new Set([
+  'bufa', 'chara-din', 'dornodon', 'leah', 'sheran', 'tharr',
+  'chara-din+leah', 'chara-din+sheran', 'chara-din+tharr',
+  'dornodon+sheran', 'dornodon+tharr', 'leah+sheran', 'leah+tharr', 'sheran+tharr'
+]);
 const cardRarityIconAssets = new Map([
-  ['Ritka', 'resources/Icons/Kocka icon ritka.png'],
-  ['Nem gyakori', 'resources/Icons/Kocka icon nem gyakori.png'],
-  ['Gyakori', 'resources/Icons/Kocka icon gyakori.png']
+  ['Ultra ritka', 'resources/Rarity/Ultra ritka.png'],
+  ['Ritka', 'resources/Rarity/Kocka icon ritka.png'],
+  ['Nem gyakori', 'resources/Rarity/Kocka icon nem gyakori.png'],
+  ['Gyakori', 'resources/Rarity/Kocka icon gyakori.png']
 ]);
 const cardBandIconAssets = new Map([
   ['védekezés', 'Védekezés_middle'],
@@ -50,7 +55,7 @@ const cardBandIconAssets = new Map([
   ['tűz', 'Tűz'],
   ['villám', 'Villám'],
   ['Oltalom', 'Oltalom'],
-  ['Szörnykomponens', 'Szörnykomponens']
+  ['Szörnykomponens', 'Szörnykomponens_middle']
 ].map(([value, name]) => [value, name && `resources/Icons/${name}.png`]));
 form.querySelectorAll('.icon-option-group input[name="icon"], .icon-option-group input[name="sideIcon"]').forEach((input) => {
   const assetPath = cardBandIconAssets.get(input.value);
@@ -138,7 +143,6 @@ const rulesTextIcons = [
     'Hideg',
     'Idézés',
     'KF',
-    'Kincs',
     'Köd',
     'Kötelék',
     'Legendás',
@@ -159,7 +163,6 @@ const rulesTextIcons = [
     'Hegymélyi',
     'Horgony',
     'Kegy',
-    'Őrző'
   ].map((name) => ({
     token: `[${name}]`,
     path: rulesTextCostKeys.has(name)
@@ -580,7 +583,7 @@ function renderRulesText(element, text) {
         value.textContent = amount;
         value.setAttribute('aria-hidden', 'true');
         const valueScaleX = Math.min(1, 1.15 / (amount.length * 0.65));
-        value.style.fontSize = '0.65em';
+        value.style.fontSize = '0.75em';
         value.style.setProperty('--rules-inline-value-scale-x', String(valueScaleX));
         container.append(image, value);
         element.append(container);
@@ -760,19 +763,30 @@ function updatePreview() {
   const text = values.get('text').trim();
   const flavorText = String(values.get('flavorText') || '').trim();
   const selectedFactions = values.getAll('faction');
-  const type = String(values.get('type') || '').trim();
-  const subtype = String(values.get('subtype') || '').trim();
+  card.dataset.typeTextColor = whiteTextBases.has([...selectedFactions].sort().join('+')) ? 'white' : 'black';
+  const canChooseMetadataMode = cardRuleInput.value === 'follower' || cardRuleInput.value === 'other';
+  const isRuleCard = canChooseMetadataMode && document.querySelector('#metadata-mode').value === 'rule-card';
+  document.querySelector('#metadata-mode-row').hidden = !canChooseMetadataMode;
+  document.querySelector('#type-row').hidden = isRuleCard;
+  document.querySelector('#subtype-row').hidden = isRuleCard;
+  document.querySelector('#rule-card-text-row').hidden = !isRuleCard;
+  const type = String(values.get(isRuleCard ? 'ruleCardText' : 'type') || '').trim();
+  const subtype = isRuleCard ? '' : String(values.get('subtype') || '').trim();
   const typeScale = Number(values.get('typeScale') || 100);
   const subtypeScale = Number(values.get('subtypeScale') || 100);
   const typeOffset = Number(values.get('typeOffset') || 0);
   const subtypeOffset = Number(values.get('subtypeOffset') || 0);
+  const ruleCardTextScale = Number(values.get('ruleCardTextScale') || 100);
+  const ruleCardTextOffset = Number(values.get('ruleCardTextOffset') || 0);
   const power = String(values.get('power') || '').trim();
   const toughness = String(values.get('toughness') || '').trim();
   const secondaryStatLabel = cardRuleInput.value === 'building' ? 'Strukturális pont' : 'Védettség';
 
   card.dataset.longName = String([...name].length >= 20);
   const rarityIcon = document.querySelector('#preview-rarity-icon');
-  const rarityIconAsset = cardRarityIconAssets.get(String(values.get('rarity') || ''));
+  const rarity = String(values.get('rarity') || '');
+  const rarityIconAsset = cardRarityIconAssets.get(rarity);
+  rarityIcon.classList.toggle('ultra-rare', rarity === 'Ultra ritka');
   if (rarityIconAsset) {
     if (rarityIcon.getAttribute('src') !== rarityIconAsset) rarityIcon.src = rarityIconAsset;
   } else {
@@ -783,8 +797,8 @@ function updatePreview() {
   const previewType = document.querySelector('#preview-card-type');
   previewType.textContent = type;
   previewType.hidden = !type;
-  previewType.style.fontSize = `${4.8 * typeScale / 100}cqw`;
-  previewType.style.setProperty('--metadata-offset-y', `${typeOffset}%`);
+  previewType.style.fontSize = `${4.8 * (isRuleCard ? ruleCardTextScale : typeScale) / 100}cqw`;
+  previewType.style.setProperty('--metadata-offset-y', `${isRuleCard ? ruleCardTextOffset : typeOffset}%`);
   const previewSubtype = document.querySelector('#preview-subtype');
   previewSubtype.textContent = subtype;
   previewSubtype.hidden = !subtype;
@@ -794,6 +808,8 @@ function updatePreview() {
   document.querySelector('#card-subtype-scale-value').textContent = `${subtypeScale}%`;
   document.querySelector('#card-type-offset-value').textContent = `${typeOffset > 0 ? '+' : ''}${typeOffset}%`;
   document.querySelector('#card-subtype-offset-value').textContent = `${subtypeOffset > 0 ? '+' : ''}${subtypeOffset}%`;
+  document.querySelector('#card-rule-text-scale-value').textContent = `${ruleCardTextScale}%`;
+  document.querySelector('#card-rule-text-offset-value').textContent = `${ruleCardTextOffset > 0 ? '+' : ''}${ruleCardTextOffset}%`;
   const previewRulesText = document.querySelector('#preview-text');
   renderRulesText(previewRulesText, text);
   previewRulesText.hidden = !text;
@@ -1010,13 +1026,6 @@ function updatePreview() {
   watchResourceImages(document.querySelector('#preview-costs'));
   fitCostAmounts();
 }
-
-typeTextColorToggle.addEventListener('click', () => {
-  const useWhite = typeTextColorToggle.getAttribute('aria-pressed') !== 'true';
-  typeTextColorToggle.setAttribute('aria-pressed', String(useWhite));
-  typeTextColorToggle.textContent = `Kártyanév, típus és altípus színe: ${useWhite ? 'fehér' : 'fekete'}`;
-  card.dataset.typeTextColor = useWhite ? 'white' : 'black';
-});
 
 function updateBackgroundImagePosition() {
   const horizontal = document.querySelector('#background-image-horizontal').value;
@@ -1266,16 +1275,6 @@ function fitBandIconValues() {
   });
 }
 
-function truncateCanvasText(context, text, maxWidth) {
-  const ellipsis = '…';
-  if (context.measureText(text).width <= maxWidth) return text;
-  const characters = [...text];
-  while (characters.length && context.measureText(`${characters.join('')}${ellipsis}`).width > maxWidth) {
-    characters.pop();
-  }
-  return context.measureText(ellipsis).width <= maxWidth ? `${characters.join('')}${ellipsis}` : '';
-}
-
 function traceCostShape(context, style, x, y, width, height) {
   context.beginPath();
   if (style === 'vp') {
@@ -1373,19 +1372,25 @@ async function renderCardPng() {
     drawCover(context, previewImage, getCanvasRect(document.querySelector('.art-frame'), renderRect, scaleX, scaleY));
   }
   if (!rarityIcon.hidden) {
-    drawContain(context, rarityIcon, getCanvasRect(rarityIcon, renderRect, scaleX, scaleY));
+    const rarityRect = getCanvasRect(rarityIcon, renderRect, scaleX, scaleY);
+    if (rarityIcon.classList.contains('ultra-rare')) {
+      context.drawImage(rarityIcon, rarityRect.x, rarityRect.y, rarityRect.width, rarityRect.height);
+    } else {
+      drawContain(context, rarityIcon, rarityRect);
+    }
   }
 
   const nameElement = document.querySelector('#preview-name');
   const nameRect = getCanvasRect(nameElement, renderRect, scaleX, scaleY);
   const nameStyle = getComputedStyle(nameElement);
   const nameZoom = getEffectiveCssZoom(nameElement);
+  const nameFontSize = parseFloat(nameStyle.fontSize) * nameZoom * scaleX;
   context.fillStyle = nameStyle.color;
-  context.font = `${nameStyle.fontWeight} ${parseFloat(nameStyle.fontSize) * nameZoom * scaleX}px ${nameStyle.fontFamily}`;
+  context.font = `${nameStyle.fontStyle} ${nameStyle.fontWeight} ${nameFontSize}px ${nameStyle.fontFamily}`;
   context.letterSpacing = `${parseFloat(nameStyle.letterSpacing) * nameZoom * scaleX}px`;
   context.textAlign = nameStyle.textAlign;
-  context.textBaseline = 'top';
-  context.shadowColor = 'rgba(255, 249, 232, .8)';
+  context.textBaseline = 'alphabetic';
+  context.shadowColor = card.dataset.typeTextColor === 'white' ? '#000' : 'rgba(255, 249, 232, .8)';
   context.shadowBlur = 3 * scaleY;
   context.shadowOffsetY = scaleY;
   const nameTextX = nameStyle.textAlign === 'right'
@@ -1393,7 +1398,11 @@ async function renderCardPng() {
     : nameStyle.textAlign === 'center'
       ? nameRect.x + nameRect.width / 2
       : nameRect.x;
-  context.fillText(truncateCanvasText(context, nameElement.textContent, nameRect.width), nameTextX, nameRect.y);
+  const nameMetrics = context.measureText(nameElement.textContent);
+  const nameAscent = nameMetrics.fontBoundingBoxAscent || nameFontSize * 0.8;
+  const nameDescent = nameMetrics.fontBoundingBoxDescent || nameFontSize * 0.2;
+  const nameBaseline = nameRect.y + (nameRect.height - nameAscent - nameDescent) / 2 + nameAscent;
+  context.fillText(nameElement.textContent, nameTextX, nameBaseline);
   context.shadowColor = 'transparent';
   context.shadowBlur = 0;
   context.shadowOffsetY = 0;

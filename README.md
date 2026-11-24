@@ -7,9 +7,12 @@ Unofficial HKK Card Maker is a lightweight browser-based card designer for creat
 - Build cards with a name, text, faction/base combinations, and optional illustration
 - Enter a card type and subtype, or add common values from their preset lists
 - Select custom card icons and resource-based cost symbols
+- Choose a rarity icon, including Ultra ritka, from the images in `resources/Rarity/`
+- Kincs, Isteni, and Őrző icons are temporarily unavailable, including in rules text
 - Longer cost values automatically narrow to fit their icons in the preview and PNG
 - Start with Rhatt as the base color and a VP cost of 1; reset restores these defaults
 - Mix up to two base colors with built-in validation rules; Színtelen, Bufa, and Narancs lap are exclusive
+- Card name, type, and subtype text color is determined by the selected base or combination, independently of selection order; white-text bases are listed in `whiteTextBases` in `app.js`
 - Download the final card as an image
 - Use transparent PNG base-card images where available, with JPG and fallback-color alternatives
 - Start with editable Lorem ipsum samples for rules and flavor text; insert inline ability icons, including once-per-turn and once-per-game variants
@@ -52,6 +55,8 @@ Other optional resources, such as cost symbols and icons, are loaded from `resou
 
 ## Adjusting card icon placement
 
+Adjust the `.card-rarity-icon.ultra-rare` rule in `styles.css` to change the Ultra ritka icon's position and dimensions. Its height can be changed independently to adjust its vertical compression; PNG exports use the same dimensions.
+
 Edit `cardIconLayouts` near the top of `app.js` to resize each card icon and adjust its vertical position. Center-row icons line up left to right in selection order; deselecting and selecting an icon again moves it to the end. Their `y` setting is a vertical offset within the row and `size` is a percentage of the card's width. Left-side and separately placed icons also have individual `x`/`y` positions. The left-side group allows one icon or **Nincs**; PNG exports use the same layout as the preview.
 
 The **Teszt** button beside **Ikonok** keeps the last selected icon visible in the preview while adjusting layouts, even after a page reload or form reset. The test-only icon does not appear in downloaded cards and the selection is remembered for the current browser tab session.
@@ -61,6 +66,8 @@ The **Teszt** button beside **Alap színek** similarly previews the last selecte
 The **Mágikus támadás** and **Védekezés** checkboxes under the stats toggle the Erő and Védettség/Strukturális pont indicators, respectively. They are not separate card icons.
 
 The card-creation rule selector above the faction choices restricts colors, costs, and stats for Varázslat/Tárgy, Lény, Építmény, Követő/Szabálylap, and Őslich. **Egyéb** is the unrestricted default. Switching rules clears values that are no longer allowed; the rule definitions and guidance are maintained in `cardRuleDefinitions` and `cardRuleGuidance` in `app.js`.
+
+For **Követő/Szabálylap** and **Egyéb**, choose between type and subtype or editable **Szabálylap szöveg**. Its size and vertical position can be adjusted independently; switching back restores the previous type and subtype.
 
 In the card-text field, select text and use the **Félkövér** button to mark it bold. The preview and PNG export both preserve the formatting. Ability and flavor text share the full text box and shrink together when needed, including for seven lines. The optional **Szöveg igazítása** sliders adjust their size and vertical position within the available space. Flavor text is shown centered, italicized, and in Hungarian quotation marks.
 

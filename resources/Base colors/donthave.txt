@@ -1,19 +1,36 @@
             Dornodon    Fairlight   Leah    Raia    Rhatt   Sheran  Tharr   Elenios     Chara-din 
+Dornodon                                                                                       
+Fairlight                                                                
+Leah                               
+Raia                                            
+Rhatt                                                    
+Sheran                                                               
+Tharr                                                         
+Elenios                                                                               
+Chara-din                                                                             
 
-Dornodon        x          ✅       ✅      ✅      ✅      ✅     ✅      ✅          ✅                       
+White:
+Dornodon, Dornodon Tharr, Dornodon Sheran, Dornodon Tharr
+Leah, Leah Sheran, Leah Chara-din
+Sheran, Sheran Tharr, Sheran Chara-din
+Tharr, Tharr Chara-din
+Chara-din
+Bufa
 
-Fairlight      ✅          x        ✅      ✅      ✅      ✅     ✅      ✅          ✅
+Black:
+Dornodon Fairlight, Dornodon Elenios, Dornodon Chara-din, Dornodon Leah, Dornodon Raia, Dornodon Rhatt
+Fairlight, Fairlight Leah, Fairlight Raia, Fairlight Rhatt, Fairlight Sheran, Fairlight Tharr, Fairlight Elenios, Fairlight Chara-din
+Leah Raia, Leah Rhatt, Leah Tharr, Leah Elenios
+Raia, Raia Rhatt, Raia Sheran, Raia Tharr, Raia Elenios, Raia Chara-din
+Rhatt, Rhatt Sheran, Rhatt Tharr, Rhatt Elenios, Rhatt Chara-din
+Sheran Elenios
+Tharr Elenios
+Elenios, Elenios Chara-din
+Narancs lap
+Szintelen
 
-Leah           ✅          ✅       x       ✅      ✅      ✅     ✅      ✅          ✅
 
-Raia           ✅          ✅       ✅      x       ✅      ✅     ✅      ✅          ✅
 
-Rhatt          ✅          ✅       ✅     ✅       x       ✅     ✅      ✅          ✅
 
-Sheran         ✅          ✅       ✅     ✅      ✅       x      ✅      ✅          ✅
 
-Tharr          ✅          ✅       ✅     ✅      ✅      ✅      x       ✅          ✅
 
-Elenios        ✅          ✅       ✅     ✅      ✅      ✅     ✅       x           ✅
-
-Chara-din      ✅          ✅       ✅     ✅      ✅      ✅     ✅      ✅           x
