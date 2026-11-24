@@ -84,7 +84,7 @@ const cardIconLayouts = new Map([
   ['mentális', { group: 'center', y: -16, size: 8.5 }],
   ['Oltalom', { group: 'center', y: -17, size: 8.8 }],
   ['Szörnykomponens', { group: 'center', y: -17, size: 9.5 }],
-  ['ősmágia', { group: 'center', y: -15, size: 9.5 }],
+  ['ősmágia', { group: 'center', y: -25, size: 11 }],
   ['Reakció drágítás', { group: 'center', y: -17, size: 9.5 }],
   ['rezisztencia', { group: 'center', y: -17, size: 9.5 }],
   ['sav', { group: 'center', y: -15, size: 8.5 }],
@@ -117,7 +117,7 @@ const rulesTextCostKeys = new Map([
   ['SZK', 'szk'],
   ['ZSZ', 'zanszilank']
 ]);
-const numberedRulesTextIcons = new Set(['Építő', 'Áldozás', 'VP', 'SZK', 'Nekron', 'ZSZ', 'Oltalom', 'Reakció drágítás']);
+const numberedRulesTextIcons = new Set(['Építő', 'Áldozás', 'VP', 'SZK', 'Nekron', 'ZSZ', 'Oltalom', 'Reakció drágítás', 'Szörnykomponens', 'Csont']);
 const rulesTextIcons = [
   ...[
     'Játékonként egyszer',
@@ -156,6 +156,7 @@ const rulesTextIcons = [
     'Tűz',
     'Villám',
     'Védekezés',
+    'Kincs',
     
 
     'Élőholt',
@@ -180,6 +181,74 @@ const numberedRulesTextIconPattern = [...numberedRulesTextIcons]
   .map((name) => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
   .sort((a, b) => b.length - a.length)
   .join('|');
+
+const frequencyLetterByName = new Map([
+  ['K', 'K'], ['Körönként', 'K'], ['Körönként egyszer', 'K'],
+  ['J', 'J'], ['Játékonként', 'J'], ['Játékonként egyszer', 'J'],
+  ['E', 'E'], ['Ell körében', 'E'], ['Ell körében egyszer', 'E'],
+  ['S', 'S'], ['Saját körben', 'S'], ['Saját körben egyszer', 'S'],
+]);
+
+const frequencyPathByLetter = new Map([
+  ['K', 'resources/Icons/Körönként egyszer.png'],
+  ['J', 'resources/Icons/Játékonként egyszer.png'],
+  ['E', 'resources/Icons/Ell körében egyszer.png'],
+  ['S', 'resources/Icons/Saját körben egyszer.png'],
+]);
+
+const frequencyAltByLetter = new Map([
+  ['K', 'Körönként egyszer'],
+  ['J', 'Játékonként egyszer'],
+  ['E', 'Ell körében egyszer'],
+  ['S', 'Saját körben egyszer'],
+]);
+
+const frequencyIconTokenPattern = `\\[(?:(Körönként(?: egyszer)?|Játékonként(?: egyszer)?|Ell körében(?: egyszer)?|Saját körben(?: egyszer)?|[KJES])\\s*([\\p{L}\\p{N}-]{1,2})|([\\p{L}\\p{N}-]{1,2})\\s*(Körönként(?: egyszer)?|Játékonként(?: egyszer)?|Ell körében(?: egyszer)?|Saját körben(?: egyszer)?|[KJES])|(Körönként(?: egyszer)?|Játékonként(?: egyszer)?|Ell körében(?: egyszer)?|Saját körben(?: egyszer)?|[KJES]))\\]`;
+
+const frequencyBadgeCache = new Map();
+function getFrequencyBadgeDataUrl(text) {
+  if (frequencyBadgeCache.has(text)) return frequencyBadgeCache.get(text);
+  const canvas = document.createElement('canvas');
+  const w = text.length > 2 ? 230 : 190;
+  const h = 135;
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return '';
+
+  const corner = 26;
+  const borderWidth = 12;
+  const pad = borderWidth / 2;
+
+  ctx.beginPath();
+  ctx.moveTo(pad + corner, pad);
+  ctx.lineTo(w - pad - corner, pad);
+  ctx.lineTo(w - pad, pad + corner);
+  ctx.lineTo(w - pad, h - pad - corner);
+  ctx.lineTo(w - pad - corner, h - pad);
+  ctx.lineTo(pad + corner, h - pad);
+  ctx.lineTo(pad, h - pad - corner);
+  ctx.lineTo(pad, pad + corner);
+  ctx.closePath();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = borderWidth;
+  ctx.lineJoin = 'miter';
+  ctx.stroke();
+
+  ctx.fillStyle = '#000000';
+  const fontSize = text.length > 2 ? 96 : 116;
+  ctx.font = `bold ${fontSize}px "Times New Roman", Times, Georgia, serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, w / 2, h / 2 + 7);
+
+  const url = canvas.toDataURL('image/png');
+  frequencyBadgeCache.set(text, url);
+  return url;
+}
 let imageUrl = null;
 
 const factions = [
@@ -543,7 +612,7 @@ function updateFactionControls(message) {
 
 function renderRulesText(element, text) {
   element.replaceChildren();
-  const segments = new RegExp(`\\*\\*([\\s\\S]+?)\\*\\*|\\*([^*]+?)\\*(?!\\*)|(${rulesTextIconTokenPattern})|\\[(\\+?[\\p{L}\\p{N}-]{1,3})(${numberedRulesTextIconPattern})\\]`, 'gu');
+  const segments = new RegExp(`\\*\\*([\\s\\S]+?)\\*\\*|\\*([^*]+?)\\*(?!\\*)|(${frequencyIconTokenPattern})|(${rulesTextIconTokenPattern})|\\[([\\p{L}\\p{N}+/*~.:-]{1,5})\\s*(${numberedRulesTextIconPattern})\\]`, 'gu');
   let position = 0;
   for (const match of text.matchAll(segments)) {
     if (match.index > position) element.append(document.createTextNode(text.slice(position, match.index)));
@@ -555,15 +624,47 @@ function renderRulesText(element, text) {
       const italic = document.createElement('em');
       renderRulesText(italic, match[2]);
       element.append(italic);
+    } else if (match[3]) {
+      const name = match[4] || match[7] || match[8];
+      const num = match[5] || match[6] || null;
+      const letter = frequencyLetterByName.get(name);
+      const image = document.createElement('img');
+      image.className = 'rules-inline-icon rules-inline-frequency';
+      if (num) {
+        const badgeText = `${letter}${num}`;
+        image.src = getFrequencyBadgeDataUrl(badgeText);
+        image.alt = `${frequencyAltByLetter.get(letter)} ${num}`;
+        image.classList.add('rules-inline-frequency-numbered');
+        if (badgeText.length >= 3) {
+          image.dataset.chars = String(badgeText.length);
+        }
+      } else {
+        image.src = frequencyPathByLetter.get(letter);
+        image.alt = frequencyAltByLetter.get(letter);
+      }
+      element.append(image);
+    } else if (match[9]) {
+      const icon = rulesTextIconByToken.get(match[9]);
+      const image = document.createElement('img');
+      image.className = 'rules-inline-icon';
+      if (icon.alt === 'VP') image.classList.add('rules-inline-vp');
+      if (icon.alt === 'SZK') image.classList.add('rules-inline-szk');
+      if (icon.alt === 'ZSZ') image.classList.add('rules-inline-zsz');
+      if (icon.alt === 'Szörnykomponens' || icon.alt === 'Csont') image.classList.add('rules-inline-monster-component');
+      if (icon.alt === 'Építő') image.classList.add('rules-inline-builder');
+      if (icon.alt === 'Nekron') image.classList.add('rules-inline-nekron');
+      image.src = icon.path;
+      image.alt = icon.alt;
+      element.append(image);
     } else {
-      const amount = match[4];
-      const icon = rulesTextIconByToken.get(match[3] || `[${match[5]}]`);
+      const amount = match[10];
+      const icon = rulesTextIconByToken.get(`[${match[11]}]`);
       const image = document.createElement('img');
       image.className = 'rules-inline-icon';
       if (icon.alt === 'VP' && !amount) image.classList.add('rules-inline-vp');
       if (icon.alt === 'SZK' && !amount) image.classList.add('rules-inline-szk');
       if (icon.alt === 'ZSZ' && !amount) image.classList.add('rules-inline-zsz');
-      if (icon.alt === 'Szörnykomponens' && !amount) image.classList.add('rules-inline-monster-component');
+      if ((icon.alt === 'Szörnykomponens' || icon.alt === 'Csont') && !amount) image.classList.add('rules-inline-monster-component');
       if (icon.alt === 'Építő' && !amount) image.classList.add('rules-inline-builder');
       if (icon.alt === 'Nekron' && !amount) image.classList.add('rules-inline-nekron');
       image.src = icon.path;
@@ -571,10 +672,13 @@ function renderRulesText(element, text) {
       if (amount) {
         const container = document.createElement('span');
         container.className = 'rules-inline-numbered';
+        if (amount.length >= 3) {
+          container.classList.add('rules-inline-large');
+        }
         if (icon.alt === 'VP') container.classList.add('rules-inline-vp');
         if (icon.alt === 'SZK') container.classList.add('rules-inline-szk');
         if (icon.alt === 'ZSZ') container.classList.add('rules-inline-zsz');
-        if (icon.alt === 'Szörnykomponens') container.classList.add('rules-inline-monster-component');
+        if (icon.alt === 'Szörnykomponens' || icon.alt === 'Csont') container.classList.add('rules-inline-monster-component');
         if (icon.alt === 'Építő') container.classList.add('rules-inline-builder');
         if (icon.alt === 'Nekron') container.classList.add('rules-inline-nekron');
         if (icon.alt === 'Áldozás') container.classList.add('rules-inline-sacrifice');
@@ -582,7 +686,9 @@ function renderRulesText(element, text) {
         value.className = 'rules-inline-value';
         value.textContent = amount;
         value.setAttribute('aria-hidden', 'true');
-        const valueScaleX = Math.min(1, 1.15 / (amount.length * 0.65));
+        const valueScaleX = amount.length >= 3
+          ? Math.min(1, 1.2 / (amount.length * 0.65))
+          : Math.min(1, 1.15 / (amount.length * 0.65));
         value.style.fontSize = '0.75em';
         value.style.setProperty('--rules-inline-value-scale-x', String(valueScaleX));
         container.append(image, value);
@@ -597,10 +703,11 @@ function renderRulesText(element, text) {
 }
 
 function drawDomText(context, element, renderRect, scaleX, scaleY) {
-  const rect = getCanvasRect(element, renderRect, scaleX, scaleY);
+  const clipContainer = element.closest('.card-rules') || element;
+  const rect = getCanvasRect(clipContainer, renderRect, scaleX, scaleY);
   context.save();
   context.beginPath();
-  context.rect(rect.x, rect.y, rect.width, rect.height);
+  context.rect(rect.x, rect.y - 10 * scaleY, rect.width, rect.height + 25 * scaleY);
   context.clip();
 
   const drawTextNode = (node) => {
@@ -757,6 +864,25 @@ function handleFactionChange(event) {
   updatePreview();
 }
 
+function formatFlavorQuotes(text) {
+  let open = true;
+  return text
+    .replace(/“/g, '„')
+    .replace(/(„|”|")/g, (match) => {
+      if (match === '„') {
+        open = false;
+        return match;
+      }
+      if (match === '”') {
+        open = true;
+        return match;
+      }
+      const quote = open ? '„' : '”';
+      open = !open;
+      return quote;
+    });
+}
+
 function updatePreview() {
   const values = new FormData(form);
   const name = values.get('name').trim();
@@ -814,7 +940,7 @@ function updatePreview() {
   renderRulesText(previewRulesText, text);
   previewRulesText.hidden = !text;
   const previewFlavorText = document.querySelector('#preview-flavor-text');
-  previewFlavorText.textContent = `„${flavorText}”`;
+  previewFlavorText.textContent = formatFlavorQuotes(flavorText);
   previewFlavorText.hidden = !flavorText;
   fitPreviewText();
   document.querySelector('#text-count').textContent = values.get('text').length;
@@ -829,10 +955,17 @@ function updatePreview() {
     document.querySelector('#preview-toughness-icon'),
     values.has('secondaryStatIcon') ? 'resources/Icons/Mágikus védelem.png' : 'resources/Icons/Védelem.png'
   );
+  const powerLength = Math.max(power.length, 1);
+  const toughnessLength = Math.max(toughness.length, 1);
+  const powerScaleX = powerLength >= 3 ? Math.min(1, 2.2 / powerLength) : 1;
+  const toughnessScaleX = toughnessLength >= 3 ? Math.min(1, 2.2 / toughnessLength) : 1;
+
   powerValue.textContent = power;
   toughnessValue.textContent = toughness;
-  powerValue.style.setProperty('--stat-length', Math.max(power.length, 1));
-  toughnessValue.style.setProperty('--stat-length', Math.max(toughness.length, 1));
+  powerValue.style.setProperty('--stat-length', String(powerLength));
+  powerValue.style.setProperty('--stat-scale-x', String(powerScaleX));
+  toughnessValue.style.setProperty('--stat-length', String(toughnessLength));
+  toughnessValue.style.setProperty('--stat-scale-x', String(toughnessScaleX));
   const powerStat = document.querySelector('.stat-power');
   const secondaryStat = document.querySelector('#preview-secondary-stat');
   document.querySelector('#card-secondary-stat-label').textContent = secondaryStatLabel;
@@ -1318,8 +1451,8 @@ function drawContain(context, image, rect) {
 }
 
 async function renderCardPng() {
-  await Promise.all([...document.querySelectorAll('#preview-text .rules-inline-numbered img')]
-    .map((image) => image.decode()));
+  await Promise.all([...document.querySelectorAll('#preview-text img')]
+    .map((image) => image.decode().catch(() => {})));
   const rarityIcon = document.querySelector('#preview-rarity-icon');
   if (!rarityIcon.hidden) await rarityIcon.decode();
   const renderRect = document.querySelector('#base-color-layers').getBoundingClientRect();
@@ -1566,10 +1699,15 @@ async function renderCardPng() {
         const valueRect = getCanvasRect(value, renderRect, scaleX, scaleY);
         const valueStyle = getComputedStyle(value);
         context.fillStyle = valueStyle.color;
+        const horizontalScale = Number.parseFloat(value.style.getPropertyValue('--stat-scale-x')) || 1;
+        context.save();
         context.font = `${valueStyle.fontWeight} ${parseFloat(valueStyle.fontSize) * getEffectiveCssZoom(value) * scaleX}px ${valueStyle.fontFamily}`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
-        context.fillText(value.textContent, valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
+        context.translate(valueRect.x + valueRect.width / 2, valueRect.y + valueRect.height / 2);
+        context.scale(horizontalScale, 1);
+        context.fillText(value.textContent, 0, 0);
+        context.restore();
       }
     });
   }

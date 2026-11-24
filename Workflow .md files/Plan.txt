@@ -9,6 +9,8 @@ Other: can pick and choose anything(this should be the default when loading in)
 
 
 Known small issues:
+Őrző, Kincs, Isteni
+
 Icon cost size not same when image is downloaded(maybe fixed)
 
 Known big issues:

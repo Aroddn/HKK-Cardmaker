@@ -317,7 +317,10 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .subtype-picker-label { margin-top: 7px; }
 #card-power, #card-toughness { text-align: center; }
 #card-text, #card-flavor-text { display: block; min-height: 70px; padding: 9px 10px; resize: none; font-size: 12px; line-height: 1.45; text-align: center; }
-#card-text { min-height: 87px; font-family: Georgia, 'Times New Roman', serif; }
+#card-text { 
+  min-height: 87px; 
+  font-family: Georgia, 'Times New Roman', serif; 
+}
 .text-adjustments { display: grid; grid-template-columns: auto minmax(100px, 1fr); align-items: center; gap: 5px 10px; padding: 7px; background: #f3f1e9; border: 1px solid #d4d8d0; border-radius: 2px; }
 .text-adjustments legend { padding: 0 4px; }
 .text-adjustments label { color: #586b71; font-size: 10px; }
@@ -336,18 +339,37 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .rules-inline-icon[alt="Játékonként egyszer"],
 .rules-inline-icon[alt="Ell körében egyszer"],
 .rules-inline-icon[alt="Körönként egyszer"],
-.rules-inline-icon[alt="Saját körben egyszer"]
-{
+.rules-inline-icon[alt="Saját körben egyszer"],
+.rules-inline-frequency {
   width: 1.1em;
   height: 1.1em;
   transform: translateY(-.12em);
 }
+.rules-inline-frequency-numbered {
+  width: 1.35em;
+  height: 1.1em;
+  transform: translateY(-.03em);
+}
+.rules-inline-frequency-numbered[data-chars="3"] {
+  width: 1.88em;
+}
 .rules-inline-icon[alt="Passzivizálás"] {
   width: 0.93em;
 }
+.rules-inline-icon[alt="Védekezés"]{
+  transform: translateY(.12em);
+}
 .rules-inline-numbered { position: relative; display: inline-block; width: 1.25em; height: 1.25em; vertical-align: -.2em; }
+.rules-inline-numbered.rules-inline-large { width: 1.6em; height: 1.6em; vertical-align: -.32em; }
 .rules-inline-numbered .rules-inline-icon { display: block; width: 100%; height: 100%; }
-.rules-inline-value { position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%) scaleX(var(--rules-inline-value-scale-x, 1)); color: #000; font-family: Cambria, 'Times New Roman', Georgia, serif; font-weight: 100; -webkit-text-stroke: 0.05em currentColor; paint-order: stroke fill; line-height: 1; white-space: nowrap; }
+.rules-inline-value { 
+  position: absolute; top: 50%; left: 50%; 
+  transform: translate(-50%, -50%) scaleX(var(--rules-inline-value-scale-x, 1)); 
+  color: #000; 
+  font-weight: 700;
+  font-family: "Times New Roman", Times, Georgia, serif;
+  paint-order: stroke fill; line-height: 1; white-space: nowrap; 
+}
 .rules-inline-sacrifice .rules-inline-value { top: 58%; }
 .editor-footnote { display: flex; align-items: center; gap: 7px; margin-top: 3px; padding-top: 12px; color: #829090; border-top: 1px dotted #ccd1c9; font-size: 10px; }
 .footnote-gem { color: #bb9951; font-size: 12px; }
@@ -497,13 +519,27 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .card-band-icon-side-item { position: relative; flex: none; }
 .card-band-icon img { display: block; width: 100%; height: 100%; object-fit: contain; }
 /* Increase font size to enlarge values; positive offsets move them right/down. */
-.card-band-icon-value { --band-icon-value-font-size: 6cqw; --band-icon-value-offset-x: 0px; --band-icon-value-offset-y: 4.3px; --band-icon-value-scale-x: 1; position: absolute; z-index: 1; left: 50%; display: grid; place-items: center; width: max-content; overflow: visible; color: #171717; font-family: 'Cinzel', serif; font-size: clamp(5px, var(--band-icon-value-font-size), 28px); font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; transform: translate(calc(-50% + var(--band-icon-value-offset-x)), var(--band-icon-value-offset-y)) scaleX(var(--band-icon-value-scale-x)); }
+.card-band-icon-value { 
+  --band-icon-value-font-size: 6cqw; 
+  --band-icon-value-offset-x: 0px; 
+  --band-icon-value-offset-y: 4.3px; 
+  --band-icon-value-scale-x: 1; 
+  position: absolute; z-index: 1; left: 50%; 
+  display: grid; place-items: center; width: 
+  max-content; overflow: visible; color: #171717; 
+  font-family: 'Cinzel', serif; 
+  font-size: clamp(5px, var(--band-icon-value-font-size), 28px); 
+  font-weight: 700; line-height: 1; text-align: center; 
+  white-space: nowrap; 
+  transform: translate(calc(-50% + var(--band-icon-value-offset-x)), var(--band-icon-value-offset-y)) scaleX(var(--band-icon-value-scale-x)); }
 .card-band-icon-value-reaction-surcharge { --band-icon-value-font-size: 5.5cqw; }
 .card-band-icon-placeholder { color: #292c2b; background: #fffdf7; border: 1px solid #514b3b; border-radius: 50%; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(7px, 2.4cqw, 12px); font-weight: 700; line-height: 1; }
 .card-icon { display: inline-block; max-width: 100%; min-height: 2.4cqw; overflow: hidden; padding: 0.24cqw 0.48cqw; color: #e4e0d4; background: #292d2ccc; border: 1px solid #777970; border-radius: 1px; box-shadow: inset 0 1px #ffffff22; font-size: 1.2cqw; line-height: 1; font-weight: 700; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
 .card-rules { position: absolute; top: 61.5%; left: 8%; width: 84%; height: 32%; display: flex; flex-direction: column; justify-content: center; gap: 4%; overflow: hidden; padding: 4% 5% 2%; color: #292c2b; background: transparent; border: 0; box-shadow: none; }
 .card-rules::before { content: none; }
-.card-rules p { position: relative; z-index: 1; flex: none; margin: 0; font-family: Cambria, 'Times New Roman', Georgia, serif; font-size: 5.2cqw; font-weight: 400; line-height: 1.2; text-align: center; white-space: pre-wrap; overflow-wrap: anywhere; transform: translateY(var(--text-position-offset, 0px)); }
+.card-rules p { position: relative; z-index: 1; flex: none; margin: 0; 
+  font-family: "Times New Roman", Times, Georgia, serif;
+  font-size: 5.2cqw; font-weight: 400; line-height: 1.2; text-align: center; white-space: pre-wrap; overflow-wrap: anywhere; transform: translateY(var(--text-position-offset, 0px)); }
 .card-rules p[hidden] { display: none; }
 #preview-text strong { font-weight: 700; }
 .card-rules .card-flavor { font-size: 5.2cqw; font-weight: 400; font-style: italic; line-height: 1.2; text-align: center; }
@@ -526,15 +562,15 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .stat-content.missing-resource .stat-icon { display: none; }
 .stat-icon { display: block; width: 100%; height: 100%; object-fit: contain; }
 .stat-power { left: 6%; width: 16.7%; aspect-ratio: 1094 / 790; }
-.stat-toughness { right: 7%; bottom: 4.1%; width: 9.3%; aspect-ratio: 110 / 143; }
+.stat-toughness { right: 7%;  width: 9.3%; aspect-ratio: 110 / 143; }
 .stat-box strong {
   position: absolute;
   top: 45%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scaleX(var(--stat-scale-x, 1));
   color: #171717;
-  font-family: Cambria, 'Times New Roman', Georgia, serif;
-  font-size: min(4.5cqw, calc(12cqw / var(--stat-length, 1)));
+  font-family: Cambria, 'Times New Roman', Times, Georgia, serif; 
+  font-size: 5cqw;
   font-weight: 1000;
   line-height: 1;
   text-align: center;
@@ -544,7 +580,7 @@ button, select, input[type="checkbox"], .upload-button { cursor: pointer; }
 .card-costs { display: flex; gap: 3px; }
 .card-cost { display: inline-flex; color: #000; text-shadow: none; }
 .card-cost b { font-family: 'DM Mono', Consolas, monospace; font-size: 2.14cqw; font-style: normal; }
-.card-cost .cost-amount { position: absolute; z-index: 1; top: 50%; left: 50%; margin: 0; transform: translate(-50%, -50%) scaleX(var(--cost-amount-scale-x, 1)); color: #000; font-family: Cambria, 'Times New Roman', Georgia, serif; font-size: 4.5cqw; font-style: normal; font-weight: 1000; line-height: 1; letter-spacing: 0.17cqw; text-align: center; text-shadow: none; white-space: nowrap; }
+.card-cost .cost-amount { position: absolute; z-index: 1; top: 50%; left: 50%; margin: 0; transform: translate(-50%, -50%) scaleX(var(--cost-amount-scale-x, 1)); color: #000; font-family: "Times New Roman", Times, Georgia, serif;; font-size: 4.5cqw; font-style: normal; font-weight: 1000; line-height: 1; letter-spacing: 0.17cqw; text-align: center; text-shadow: none; white-space: nowrap; }
 .card-titlebar .card-cost b { width: 12cqw; height: 12cqw; }
 .card-titlebar .cost-glyph { top: 1.5cqw; font-size: 3cqw; }
 .card-titlebar .card-cost .cost-amount { font-size: 4.5cqw; }
